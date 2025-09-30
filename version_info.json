@@ -1,8 +1,8 @@
 {
-  "versionCode": 15,
-  "versionName": "1.9.0",
+  "versionCode": 16,
+  "versionName": "2.0.0",
   "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app.apk",
   "fileName": "inventario_app.apk",
-  "description": "🚀 ¡Nueva versión 1.9.0 disponible! Mejoras y correcciones:\n\n✨ Sistema de actualización con GitHub funcionando perfectamente\n🔧 Corrección de inserción automática de productos\n📱 Mejoras en la estabilidad de la aplicación\n🛡️ Optimizaciones de rendimiento\n🎨 Mejor experiencia de usuario\n⚡ Sistema de actualización completamente funcional\n\n¡Ahora las actualizaciones son instantáneas y confiables!",
+  "description": "🎉 ¡Nueva versión 2.0.0 disponible! Grandes mejoras y correcciones:\n\n✨ CORRECCIONES IMPORTANTES:\n🔧 Botones se actualizan correctamente a verde cuando hay datos\n📊 Cálculo de totales de empanadas corregido en promedios\n🚫 Eliminado mensaje molesto de inserción automática\n⚡ Actualizaciones de botones más rápidas y confiables\n\n🛠️ MEJORAS TÉCNICAS:\n📱 Sistema de actualización completamente funcional con GitHub\n🔄 Broadcast mejorado para actualizaciones inmediatas\n📈 Cálculos de promedios más precisos\n🎯 Debug mejorado para mejor seguimiento\n\n🎨 EXPERIENCIA DE USUARIO:\n✅ Indicadores visuales más confiables\n📊 Totales correctos en reportes\n🚀 Rendimiento optimizado\n💡 Interfaz más intuitiva\n\n¡Esta versión resuelve todos los problemas reportados y mejora significativamente la experiencia de usuario!",
   "forceUpdate": false
 }
