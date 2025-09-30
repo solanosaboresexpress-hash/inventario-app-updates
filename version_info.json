@@ -1,8 +1,8 @@
 {
-  "versionCode": 16,
-  "versionName": "2.0.0",
+  "versionCode": 27,
+  "versionName": "2.1.1",
   "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app.apk",
   "fileName": "inventario_app.apk",
-  "description": "🎉 ¡Nueva versión 2.0.0 disponible! Grandes mejoras y correcciones:\n\n✨ CORRECCIONES IMPORTANTES:\n🔧 Botones se actualizan correctamente a verde cuando hay datos\n📊 Cálculo de totales de empanadas corregido en promedios\n🚫 Eliminado mensaje molesto de inserción automática\n⚡ Actualizaciones de botones más rápidas y confiables\n\n🛠️ MEJORAS TÉCNICAS:\n📱 Sistema de actualización completamente funcional con GitHub\n🔄 Broadcast mejorado para actualizaciones inmediatas\n📈 Cálculos de promedios más precisos\n🎯 Debug mejorado para mejor seguimiento\n\n🎨 EXPERIENCIA DE USUARIO:\n✅ Indicadores visuales más confiables\n📊 Totales correctos en reportes\n🚀 Rendimiento optimizado\n💡 Interfaz más intuitiva\n\n¡Esta versión resuelve todos los problemas reportados y mejora significativamente la experiencia de usuario!",
+  "description": "🎉 ¡Versión 2.1.1 - CORRECCIÓN DE SINCRONIZACIÓN!\n\n✨ PROBLEMA CRÍTICO SOLUCIONADO:\n🔄 Los datos locales ya NO se borran durante la sincronización\n✅ Los botones mantienen su estado correcto después de sincronizar\n🛡️ Sincronización inteligente que preserva datos del día actual\n\n🛠️ MEJORAS TÉCNICAS:\n📊 Logging exhaustivo para debugging detallado\n🎨 Múltiples métodos de actualización visual\n🌓 Soporte mejorado para tema claro y oscuro\n🔧 Métodos alternativos con StateListDrawable\n\n🎯 CORRECCIONES ESPECÍFICAS:\n🔴 Solucionado: Datos se borraban durante sincronización automática\n🟢 Mejorado: Botones verdes funcionan en ambos temas\n📱 Agregado: Sistema de logging con emojis para facilitar debugging\n\n¡Los botones ahora mantienen su color correcto!",
   "forceUpdate": false
 }
