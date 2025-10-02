@@ -1,8 +1,8 @@
 {
-  "versionCode": 32,
-  "versionName": "2.1.6",
+  "versionCode": 33,
+  "versionName": "2.1.7",
   "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app.apk",
   "fileName": "inventario_app.apk",
-  "description": "🎉 Nueva versión 2.1.6 disponible!\n\n✅ MEJORAS PRINCIPALES:\n• Sistema de actualizaciones completamente renovado\n• Configuración de alarmas dinámicas por local\n• Barra deslizante para porcentaje extra\n• Corrección de problemas de guardado de hora\n\n🔧 CORRECCIONES TÉCNICAS:\n• Detección más precisa de versiones nuevas\n• Validación completa de archivos APK\n• Limpieza automática de archivos temporales\n• Prevención de descargas duplicadas\n• Logging mejorado para debugging\n\n🎚️ NUEVAS CARACTERÍSTICAS:\n• Selector de hora personalizado para alertas\n• Configuración se guarda automáticamente en Firebase\n• Alarmas se reprograman dinámicamente\n• Interfaz más intuitiva con controles deslizantes\n\n🔔 SISTEMA DE NOTIFICACIONES:\n• Las alarmas funcionan con la app cerrada\n• Cada local puede tener su hora personalizada\n• Configuración sincronizada en la nube",
+  "description": "🎉 Nueva versión 2.1.7 disponible!\n\n🔧 CORRECCIÓN CRÍTICA:\n• Mensaje de instalación ahora muestra la versión correcta\n• Eliminado mensaje confuso durante instalación\n\n✅ MEJORAS PRINCIPALES:\n• Sistema de actualizaciones completamente renovado\n• Configuración de alarmas dinámicas por local\n• Barra deslizante para porcentaje extra\n• Corrección de problemas de guardado de hora\n\n🔧 CORRECCIONES TÉCNICAS:\n• Detección más precisa de versiones nuevas\n• Validación completa de archivos APK\n• Limpieza automática de archivos temporales\n• Prevención de descargas duplicadas\n• Logging mejorado para debugging\n\n🎚️ NUEVAS CARACTERÍSTICAS:\n• Selector de hora personalizado para alertas\n• Configuración se guarda automáticamente en Firebase\n• Alarmas se reprograman dinámicamente\n• Interfaz más intuitiva con controles deslizantes\n\n🔔 SISTEMA DE NOTIFICACIONES:\n• Las alarmas funcionan con la app cerrada\n• Cada local puede tener su hora personalizada\n• Configuración sincronizada en la nube",
   "forceUpdate": false
 }
