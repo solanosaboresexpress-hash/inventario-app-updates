@@ -1,8 +1,8 @@
 {
-  "versionCode": 27,
-  "versionName": "2.1.1",
+  "versionCode": 28,
+  "versionName": "2.1.2",
   "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app.apk",
   "fileName": "inventario_app.apk",
-  "description": "🎉 ¡Versión 2.1.1 - CORRECCIÓN DE SINCRONIZACIÓN!\n\n✨ PROBLEMA CRÍTICO SOLUCIONADO:\n🔄 Los datos locales ya NO se borran durante la sincronización\n✅ Los botones mantienen su estado correcto después de sincronizar\n🛡️ Sincronización inteligente que preserva datos del día actual\n\n🛠️ MEJORAS TÉCNICAS:\n📊 Logging exhaustivo para debugging detallado\n🎨 Múltiples métodos de actualización visual\n🌓 Soporte mejorado para tema claro y oscuro\n🔧 Métodos alternativos con StateListDrawable\n\n🎯 CORRECCIONES ESPECÍFICAS:\n🔴 Solucionado: Datos se borraban durante sincronización automática\n🟢 Mejorado: Botones verdes funcionan en ambos temas\n📱 Agregado: Sistema de logging con emojis para facilitar debugging\n\n¡Los botones ahora mantienen su color correcto!",
+  "description": "🎉 ¡Versión 2.1.2 - CORRECCIÓN DE ERRORES DE COMPILACIÓN!\n\n🔧 PROBLEMAS CRÍTICOS SOLUCIONADOS:\n✅ Corregido error de compilación 'Unresolved reference: ScrollView'\n✅ Solucionado conflicto de AlertDialog.Builder setView overload ambiguity\n📱 La app ahora compila correctamente sin errores\n\n🛠️ CORRECCIONES TÉCNICAS:\n📦 Agregado import faltante: android.widget.ScrollView\n🎯 Resuelto ambigüedad con cast explícito (scrollView as View)\n🔍 Selector de fechas funciona perfectamente\n💡 Toast informativo muestra fechas con datos disponibles\n\n✨ FUNCIONALIDAD MEJORADA:\n📅 DatePicker nativo limpio y funcional\n📊 Información automática de fechas con datos completos/parciales\n🎨 Interfaz consistente y profesional\n🚀 Experiencia de usuario optimizada\n\n🎯 ESTADO ACTUAL:\n🟢 Compilación exitosa garantizada\n🟢 Todos los errores de Kotlin resueltos\n🟢 Funcionalidad completa del selector de fechas\n\n¡Lista para compilar y usar sin problemas!",
   "forceUpdate": false
 }
