@@ -1,8 +1,8 @@
 {
-  "versionCode": 31,
-  "versionName": "2.1.5",
+  "versionCode": 32,
+  "versionName": "2.1.6",
   "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app.apk",
   "fileName": "inventario_app.apk",
-  "description": "🎉 ¡Versión 2.1.5 - PRUEBA FINAL DE ACTUALIZACIONES!\n\n🧪 VERSIÓN DE PRUEBA FINAL:\n✅ Confirmación definitiva del sistema de actualizaciones\n🔄 Verificación de que las correcciones de caché funcionan\n📱 Prueba completa del flujo de actualización automática\n\n🛠️ SISTEMA COMPLETAMENTE FUNCIONAL:\n⏰ Timestamp anti-caché implementado y funcionando\n🌐 Headers HTTP anti-caché activos\n🔍 Detección correcta de nuevas versiones\n📊 Logging completo para debugging\n\n✨ FUNCIONALIDADES CONFIRMADAS:\n🎯 Sistema de actualizaciones 100% operativo\n📅 Selector de fechas con información detallada\n🟢 Compilación perfecta sin errores\n🔄 Descarga e instalación automática desde GitHub\n💡 Toast informativo con versión actual visible\n\n🎯 OBJETIVO DE ESTA VERSIÓN:\n🧪 Prueba final del sistema de actualizaciones\n📈 Verificar incremento correcto de versionCode (30→31)\n✅ Confirmar detección de versión 2.1.5\n🔄 Validar que todo el flujo funciona perfectamente\n🎊 Celebrar el sistema funcionando al 100%\n\n¡SISTEMA DE ACTUALIZACIONES COMPLETAMENTE FUNCIONAL!",
+  "description": "🎉 Nueva versión 2.1.6 disponible!\n\n✅ MEJORAS PRINCIPALES:\n• Sistema de actualizaciones completamente renovado\n• Configuración de alarmas dinámicas por local\n• Barra deslizante para porcentaje extra\n• Corrección de problemas de guardado de hora\n\n🔧 CORRECCIONES TÉCNICAS:\n• Detección más precisa de versiones nuevas\n• Validación completa de archivos APK\n• Limpieza automática de archivos temporales\n• Prevención de descargas duplicadas\n• Logging mejorado para debugging\n\n🎚️ NUEVAS CARACTERÍSTICAS:\n• Selector de hora personalizado para alertas\n• Configuración se guarda automáticamente en Firebase\n• Alarmas se reprograman dinámicamente\n• Interfaz más intuitiva con controles deslizantes\n\n🔔 SISTEMA DE NOTIFICACIONES:\n• Las alarmas funcionan con la app cerrada\n• Cada local puede tener su hora personalizada\n• Configuración sincronizada en la nube",
   "forceUpdate": false
 }
