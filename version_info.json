@@ -1,8 +1,8 @@
 {
-  "versionCode": 28,
-  "versionName": "2.1.2",
+  "versionCode": 29,
+  "versionName": "2.1.3",
   "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app.apk",
   "fileName": "inventario_app.apk",
-  "description": "🎉 ¡Versión 2.1.2 - CORRECCIÓN DE ERRORES DE COMPILACIÓN!\n\n🔧 PROBLEMAS CRÍTICOS SOLUCIONADOS:\n✅ Corregido error de compilación 'Unresolved reference: ScrollView'\n✅ Solucionado conflicto de AlertDialog.Builder setView overload ambiguity\n📱 La app ahora compila correctamente sin errores\n\n🛠️ CORRECCIONES TÉCNICAS:\n📦 Agregado import faltante: android.widget.ScrollView\n🎯 Resuelto ambigüedad con cast explícito (scrollView as View)\n🔍 Selector de fechas funciona perfectamente\n💡 Toast informativo muestra fechas con datos disponibles\n\n✨ FUNCIONALIDAD MEJORADA:\n📅 DatePicker nativo limpio y funcional\n📊 Información automática de fechas con datos completos/parciales\n🎨 Interfaz consistente y profesional\n🚀 Experiencia de usuario optimizada\n\n🎯 ESTADO ACTUAL:\n🟢 Compilación exitosa garantizada\n🟢 Todos los errores de Kotlin resueltos\n🟢 Funcionalidad completa del selector de fechas\n\n¡Lista para compilar y usar sin problemas!",
+  "description": "🎉 ¡Versión 2.1.3 - PRUEBA DE ACTUALIZACIÓN AUTOMÁTICA!\n\n🧪 VERSIÓN DE PRUEBA:\n✅ Verificación del sistema de actualizaciones automáticas\n🔄 Confirmación de que las versiones se detectan correctamente\n📱 Prueba de descarga e instalación automática\n\n🛠️ MEJORAS INCLUIDAS:\n📊 Toast mejorado con información más detallada de fechas\n🎨 Mensajes de actualización más informativos\n🔧 Sistema de versionado funcionando correctamente\n💡 Mejor experiencia de usuario en actualizaciones\n\n✨ FUNCIONALIDADES CONFIRMADAS:\n📅 Selector de fechas completamente funcional\n🟢 Compilación sin errores garantizada\n🔍 Información automática de datos disponibles\n🎯 Interfaz limpia y profesional\n\n🎯 OBJETIVO DE ESTA VERSIÓN:\n🧪 Probar que el sistema de actualizaciones funciona\n📈 Verificar incremento correcto de versionCode (28→29)\n🔄 Confirmar descarga automática desde GitHub\n✅ Validar instalación exitosa de nueva versión\n\n¡Versión de prueba para verificar actualizaciones!",
   "forceUpdate": false
 }
