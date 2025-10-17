@@ -1,6 +1,6 @@
 {
-  "versionCode": 61,
-  "versionName": "2.1.35",
+  "versionCode": 62,
+  "versionName": "2.1.36",
   "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app.apk",
   "fileName": "inventario_app.apk",
   "description": "🙏 Gracias por tu paciencia durante la fase beta.\n\n🔧 CORRECCIONES CRÍTICAS v2.1.35:\n\n✅ ZONA HORARIA CORREGIDA:\n• La app mostraba día incorrecto (ej: Viernes a las 21:04 cuando era Jueves)\n• Solución: Zona horaria 'America/Argentina/Buenos_Aires' forzada en toda la app\n• Ahora muestra siempre el día correcto según hora de Argentina\n\n✅ CONFIGURACIÓN HISTÓRICA:\n• Al ver fecha histórica y volver, quedaba con configuración vieja\n• Ahora restaura correctamente la configuración actual al volver al día de hoy\n\n✅ CARGA DE CONFIGURACIÓN EN PEDIDO FÁBRICA:\n• Configuración no se cargaba al volver a entrar\n• Ahora carga correctamente porcentaje y días de entrega guardados\n\n✅ PRODUCTO NUEVO: CRIOLLITO\n• Agregado en sección OTROS (después de Chipa)\n• Disponible en todas las secciones\n• Múltiplo de 120 unidades\n\n✅ DATOS HISTÓRICOS CORREGIDOS:\n• Ahora muestra porcentaje y días correctos del día histórico\n• Guardado correcto de días de entrega en Firebase\n\n✅ LÓGICA DE DÍAS DE ENTREGA:\n• Validación: mañana debe tener entrega obligatoriamente\n• Suma correcta de días sin entrega hasta próximo día con entrega\n\n✅ MEJORAS ADICIONALES:\n• Skeleton loading en Ingreso/Stock Final\n• Sistema de alertas mejorado con fechas compactas\n• Sincronización directa desde Firebase\n• Switch 'No recibí mercadería' funciona correctamente",
