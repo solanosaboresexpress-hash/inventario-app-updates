@@ -1,8 +1,8 @@
 {
-  "versionCode": 3,
-  "versionName": "1.2.0",
+  "versionCode": 2,
+  "versionName": "1.1.0",
   "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/administracion_se.apk",
   "fileName": "administracion_se.apk",
-  "description": "🚀 ACTUALIZACIÓN v1.2.0 - MEJORAS Y CORRECCIONES:\n\n✅ NUEVAS FUNCIONALIDADES:\n• Logs de depuración para actualizaciones\n• Mejor manejo de errores en la red\n• Optimización del sistema de verificación\n\n✅ MEJORAS DE RENDIMIENTO:\n• APK firmado y optimizado para producción\n• Código minificado y ofuscado\n• Recursos comprimidos\n• Mejor velocidad de instalación\n• Menor consumo de datos\n\n✅ FUNCIONALIDADES MANTENIDAS:\n• Sistema de actualizaciones automáticas\n• Login con credenciales guardadas\n• Panel maestro y supervisor completo\n• Sistema de pendientes con áreas y urgencias\n• Gestión de gastos con aprobación\n• Notificaciones automáticas\n• Alertas de vencimientos administrativos\n• Filtros avanzados\n• Interfaz responsive y moderna",
+  "description": "🚀 ACTUALIZACIÓN v1.1.0 - MEJORAS DEL SISTEMA:\n\n✅ NUEVAS FUNCIONALIDADES:\n• Sistema de actualizaciones automáticas mejorado\n• Diálogo de actualización optimizado con AlertDialog\n• Logs de depuración para seguimiento\n• Mejor manejo de errores en la verificación\n\n✅ MEJORAS DE RENDIMIENTO:\n• APK optimizado y firmado (5.45 MB)\n• Código minificado y ofuscado\n• Recursos comprimidos\n• Mejor velocidad de carga\n• Menor consumo de datos\n\n✅ FUNCIONALIDADES MANTENIDAS:\n• Login con credenciales guardadas\n• Panel maestro y supervisor completo\n• Sistema de pendientes con áreas y urgencias\n• Gestión de gastos con aprobación\n• Notificaciones automáticas optimizadas\n• Alertas de vencimientos administrativos\n• Filtros avanzados por local, área y urgencia\n• Interfaz responsive y moderna",
   "forceUpdate": false
 }
