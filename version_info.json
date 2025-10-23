@@ -1,8 +1,8 @@
 {
-  "versionCode": 63,
-  "versionName": "2.1.37",
+  "versionCode": 64,
+  "versionName": "2.1.38",
   "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app.apk",
   "fileName": "inventario_app.apk",
-  "description": "🎨 MEJORAS DE INTERFAZ v2.1.37:\n\n✅ GESTIÓN DE LOCALES MEJORADA:\n• Botones perfectamente alineados (misma altura)\n• Texto acortado: 'CONTRASEÑA' en lugar de 'CAMBIAR CONTRASEÑA'\n• Altura fija de 160px para todos los botones\n• Márgenes simétricos y padding optimizado\n\n✅ CORRECCIONES PREVIAS MANTENIDAS:\n• Zona horaria Argentina corregida\n• Configuración histórica funcional\n• Producto CRIOLLITO disponible\n• Sistema de alertas mejorado\n• Sincronización Firebase optimizada",
+  "description": "📊 CORRECCIÓN CRÍTICA - PROMEDIOS v2.1.38:\n\n✅ CÁLCULO DE PROMEDIOS CORREGIDO:\n• Problema: Productos nuevos mostraban promedios incorrectos\n• Los días sin datos (0 ventas) se incluían en el cálculo\n• Ejemplo CRIOLLITO: 2 días con ventas / 7 días = promedio bajo\n• SOLUCIÓN: Ahora solo cuenta días con ventas reales > 0\n• Resultado: Promedios precisos para todos los productos\n\n✅ MEJORAS ANTERIORES:\n• Botones de Gestión de Locales alineados\n• Zona horaria Argentina corregida\n• Producto CRIOLLITO disponible en todas las secciones",
   "forceUpdate": false
 }
