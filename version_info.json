@@ -3,6 +3,6 @@
   "versionName": "2.1.38",
   "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app.apk",
   "fileName": "inventario_app.apk",
-  "description": "📊 CORRECCIÓN CRÍTICA - PROMEDIOS v2.1.38:\n\n✅ CÁLCULO DE PROMEDIOS CORREGIDO:\n• Problema: Productos nuevos mostraban promedios incorrectos\n• Los días sin datos (0 ventas) se incluían en el cálculo\n• Ejemplo CRIOLLITO: 2 días con ventas / 7 días = promedio bajo\n• SOLUCIÓN: Ahora solo cuenta días con ventas reales > 0\n• Resultado: Promedios precisos para todos los productos\n\n✅ MEJORAS ANTERIORES:\n• Botones de Gestión de Locales alineados\n• Zona horaria Argentina corregida\n• Producto CRIOLLITO disponible en todas las secciones",
+  "description": "🔔 SISTEMA DE ALERTAS v2.1.38:\n\n✅ ALERTAS EN PANTALLA PRINCIPAL:\n• Ícono rojo visible junto al nombre del local\n• Alertas de stock bajo (umbral personalizado por producto)\n• Detecta datos faltantes (Ingreso/Stock Final)\n• Detecta cargas incorrectas (todo en ceros)\n• Fechas en español (LUN, MAR, MIÉ, etc.)\n\n✅ MEJORAS DE INTERFAZ:\n• Menú hamburguesa visible en modo oscuro\n• Alertas con mejor legibilidad\n• Diseño responsivo y optimizado",
   "forceUpdate": false
 }
