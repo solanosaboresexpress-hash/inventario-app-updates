@@ -1,8 +1,8 @@
 {
-  "versionCode": 64,
-  "versionName": "2.1.38",
+  "versionCode": 65,
+  "versionName": "2.1.39",
   "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app.apk",
   "fileName": "inventario_app.apk",
-  "description": "🔔 SISTEMA DE ALERTAS v2.1.38:\n\n✅ ALERTAS EN PANTALLA PRINCIPAL:\n• Ícono rojo visible junto al nombre del local\n• Alertas de stock bajo (umbral personalizado por producto)\n• Detecta datos faltantes (Ingreso/Stock Final)\n• Detecta cargas incorrectas (todo en ceros)\n• Fechas en español (LUN, MAR, MIÉ, etc.)\n\n✅ MEJORAS DE INTERFAZ:\n• Menú hamburguesa visible en modo oscuro\n• Alertas con mejor legibilidad\n• Diseño responsivo y optimizado",
+  "description": "🎉 SISTEMA DE ROLES Y BIENVENIDA v2.1.39:\n\n✅ SISTEMA DE ROLES JERÁRQUICO:\n• Usuario Maestro: Lucas PIARRISTEGUY (acceso completo)\n• Supervisores: Gestión de locales asignados\n• Dropdown de usuarios en gestión de locales\n• Botón para ver contraseñas de supervisores\n• Conteo correcto de locales asignados\n\n✅ MENSAJE DE BIENVENIDA:\n• Locales nuevos reciben mensaje de bienvenida\n• Instrucciones claras para primera carga\n• Botón verde \"¡BIENVENIDO!\" en lugar de alertas\n• Guía paso a paso: Stock Inicial + Ingreso de hoy\n\n✅ CORRECCIONES DE ALERTAS:\n• No más alertas falsas para locales nuevos\n• Detección inteligente de locales sin historial\n• Alertas solo para locales con datos históricos",
   "forceUpdate": false
 }
