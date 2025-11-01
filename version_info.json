@@ -1,8 +1,8 @@
 {
-  "versionCode": 65,
-  "versionName": "2.1.39",
+  "versionCode": 66,
+  "versionName": "2.1.40",
   "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app.apk",
   "fileName": "inventario_app.apk",
-  "description": "🎉 SISTEMA DE ROLES Y BIENVENIDA v2.1.39:\n\n✅ SISTEMA DE ROLES JERÁRQUICO:\n• Usuario Maestro: Lucas PIARRISTEGUY (acceso completo)\n• Supervisores: Gestión de locales asignados\n• Dropdown de usuarios en gestión de locales\n• Botón para ver contraseñas de supervisores\n• Conteo correcto de locales asignados\n\n✅ MENSAJE DE BIENVENIDA:\n• Locales nuevos reciben mensaje de bienvenida\n• Instrucciones claras para primera carga\n• Botón verde \"¡BIENVENIDO!\" en lugar de alertas\n• Guía paso a paso: Stock Inicial + Ingreso de hoy\n\n✅ CORRECCIONES DE ALERTAS:\n• No más alertas falsas para locales nuevos\n• Detección inteligente de locales sin historial\n• Alertas solo para locales con datos históricos",
+  "description": "🔧 CORRECCIONES PEDIDO A FÁBRICA v2.1.40:\n\n✅ CONFIGURACIÓN PERSISTENTE:\n• El porcentaje extra ahora se guarda correctamente en Firebase\n• Al salir y volver a entrar, se mantiene la configuración (30% en vez de 1%)\n• Sincronización automática entre porcentajeSeleccionado y configuracion\n\n✅ PEDIDOS HISTÓRICOS COMPLETOS:\n• Se guarda el porcentaje usado ese día\n• Se guarda la configuración de días de entrega\n• Se guarda cuándo se hizo el pedido (fecha de creación)\n• Se guarda para cuándo era el pedido (ej: \"Martes + Miércoles\")\n• Al ver un pedido histórico, se muestra toda esta información\n\n✅ RESTAURACIÓN AUTOMÁTICA:\n• Al volver al día de hoy, recupera tu configuración guardada\n• La configuración se mantiene entre sesiones\n• Datos históricos completos para auditoría",
   "forceUpdate": false
 }
