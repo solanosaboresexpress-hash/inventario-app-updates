@@ -1,8 +1,8 @@
 {
-  "versionCode": 67,
-  "versionName": "2.1.41",
-  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.41.apk",
-  "fileName": "inventario_app_v2.1.41.apk",
-  "description": "🔧 CORRECCIONES PEDIDO A FÁBRICA v2.1.41:\n\n✅ CONFIGURACIÓN PERSISTENTE:\n• El porcentaje extra ahora se guarda correctamente en Firebase\n• Al salir y volver a entrar, se mantiene la configuración (30% en vez de 1%)\n• Sincronización automática entre porcentajeSeleccionado y configuracion\n\n✅ PEDIDOS HISTÓRICOS COMPLETOS:\n• Se guarda el porcentaje usado ese día\n• Se guarda la configuración de días de entrega\n• Se guarda cuándo se hizo el pedido (fecha de creación)\n• Se guarda para cuándo era el pedido (ej: \"Martes + Miércoles\")\n• Al ver un pedido histórico, se muestra toda esta información\n\n✅ RESTAURACIÓN AUTOMÁTICA:\n• Al volver al día de hoy, recupera tu configuración guardada\n• La configuración se mantiene entre sesiones\n• Datos históricos completos para auditoría",
+  "versionCode": 68,
+  "versionName": "2.1.42",
+  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.42.apk",
+  "fileName": "inventario_app_v2.1.42.apk",
+  "description": "🔧 FIXES PEDIDO A FÁBRICA v2.1.42:\n\n✅ FÓRMULA CORREGIDA:\n• Ahora resta correctamente el stock que te va a quedar al final del día\n• Fórmula: Suma Promedios - Stock Final Hoy (antes sumaba incorrectamente)\n• Evita pedir de más innecesariamente\n• Sugerencias más precisas y ajustadas\n\n✅ SUGERENCIAS DINÁMICAS:\n• Las sugerencias se actualizan en tiempo real al cambiar el stock\n• Lógica adaptativa para locales con o sin datos históricos\n• Funciona aunque no tengas Stock Inicial cargado\n\n✅ CONFIGURACIÓN PERSISTENTE:\n• El porcentaje extra se guarda correctamente en Firebase\n• Pedidos históricos muestran configuración completa\n• Días de entrega y fechas guardadas",
   "forceUpdate": false
 }
