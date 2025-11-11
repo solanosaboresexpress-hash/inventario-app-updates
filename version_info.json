@@ -1,8 +1,8 @@
 {
-  "versionCode": 68,
-  "versionName": "2.1.42",
-  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.42.apk",
-  "fileName": "inventario_app_v2.1.42.apk",
-  "description": "🔧 FIXES PEDIDO A FÁBRICA v2.1.42:\n\n✅ FÓRMULA CORREGIDA:\n• Ahora resta correctamente el stock que te va a quedar al final del día\n• Fórmula: Suma Promedios - Stock Final Hoy (antes sumaba incorrectamente)\n• Evita pedir de más innecesariamente\n• Sugerencias más precisas y ajustadas\n\n✅ SUGERENCIAS DINÁMICAS:\n• Las sugerencias se actualizan en tiempo real al cambiar el stock\n• Lógica adaptativa para locales con o sin datos históricos\n• Funciona aunque no tengas Stock Inicial cargado\n\n✅ CONFIGURACIÓN PERSISTENTE:\n• El porcentaje extra se guarda correctamente en Firebase\n• Pedidos históricos muestran configuración completa\n• Días de entrega y fechas guardadas",
+  "versionCode": 69,
+  "versionName": "2.1.43",
+  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.43.apk",
+  "fileName": "inventario_app_v2.1.43.apk",
+  "description": "🎉 SISTEMA DE VENCIMIENTOS + FIXES v2.1.43:\n\n✅ NUEVO: CONTROL DE VENCIMIENTOS:\n• Botón '📅 Vencimientos' en menú principal de locales\n• Carga de lotes por producto con fecha de vencimiento\n• Múltiples fechas por producto (ej: J&Q 200→10/11, 300→12/11)\n• Descuento automático FIFO al guardar Stock Final\n• Lotes más viejos se descartan primero automáticamente\n\n✅ SUPERVISOR - VER STOCK:\n• Botón 'Ver Stock y Vencimientos' en Gestión de Locales\n• Vista completa de stock + vencimientos por local\n• Alertas visuales: 🔴 vence hoy, 🟡 mañana, 🟢 OK\n• Badge en lista de locales mostrando productos críticos\n• Validación de consistencia entre lotes y stock\n\n✅ PEDIDO A FÁBRICA - WHATSAPP:\n• Ahora envía cantidades literales (sin multiplicar)\n• Pizzas, pastelitos, medialunas: muestra lo que escribiste\n\n✅ FÓRMULA SUGERENCIAS CORREGIDA:\n• Stock Final Hoy se resta correctamente\n• Sugerencias más precisas, evita pedir de más",
   "forceUpdate": false
 }
