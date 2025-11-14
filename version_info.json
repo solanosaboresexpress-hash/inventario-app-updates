@@ -1,8 +1,8 @@
 {
-  "versionCode": 70,
-  "versionName": "2.1.44",
-  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.44.apk",
-  "fileName": "inventario_app_v2.1.44.apk",
-  "description": "🎉 SISTEMA DE VENCIMIENTOS + FIXES v2.1.44:\n\n✅ NUEVO: CONTROL DE VENCIMIENTOS:\n• Botón '📅 Vencimientos' en menú principal de locales\n• Carga de lotes por producto con fecha de vencimiento\n• Múltiples fechas por producto (ej: J&Q 200→10/11, 300→12/11)\n• Descuento automático FIFO al guardar Stock Final\n• Lotes más viejos se descartan primero automáticamente\n\n✅ SUPERVISOR - VER STOCK:\n• Botón 'Ver Stock y Vencimientos' en Gestión de Locales\n• Vista completa de stock + vencimientos por local\n• Alertas visuales: 🔴 vence hoy, 🟡 mañana, 🟢 OK\n• Badge en lista de locales mostrando productos críticos\n• Validación de consistencia entre lotes y stock\n\n✅ PEDIDO A FÁBRICA - WHATSAPP:\n• Ahora envía cantidades literales (sin multiplicar)\n• Pizzas, pastelitos, medialunas: muestra lo que escribiste\n\n✅ FÓRMULA SUGERENCIAS CORREGIDA:\n• Stock Final Hoy se resta correctamente\n• Sugerencias más precisas, evita pedir de más",
+  "versionCode": 71,
+  "versionName": "2.1.45",
+  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.45.apk",
+  "fileName": "inventario_app_v2.1.45.apk",
+  "description": "🎉 MEJORAS DE USABILIDAD v2.1.45:\n\n✅ GESTIÓN DE LOCALES - ASIGNACIÓN A SUPERVISORES:\n• Diálogo mejorado con dos secciones visibles simultáneamente\n• Sección izquierda: Locales Asignados (verde)\n• Sección derecha: Locales Disponibles (azul)\n• Scroll independiente en cada sección para listas largas\n• Botones siempre visibles (ASIGNAR/Cancelar)\n• Colores mejorados para mejor visualización\n• Contadores en títulos mostrando cantidad de locales\n\n✅ FIX - TECLADO EN DIÁLOGOS:\n• Teclado aparece automáticamente al crear local\n• Teclado aparece automáticamente al crear supervisor\n• Foco automático en primer campo de texto\n• Configuración correcta para dispositivos móviles\n\n✅ FIX - REPORTE DE STOCK BAJO:\n• Fechas y cantidades ahora se muestran correctamente\n• Formato mejorado: 📅 dd/MM/yyyy → X unidades restantes\n• ScrollView agregado para listas largas\n• Texto negro sobre fondo gris claro (visible)\n• Logs de debug para diagnóstico\n\n✅ MEJORAS VISUALES:\n• Colores de fondo mejorados en diálogos\n• Mejor espaciado y padding en elementos\n• Indicadores visuales más claros",
   "forceUpdate": false
 }
