@@ -1,8 +1,8 @@
 {
-  "versionCode": 74,
-  "versionName": "2.1.48",
-  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.48.apk",
-  "fileName": "inventario_app_v2.1.48.apk",
-  "description": "🌎 ZONA HORARIA ARGENTINA v2.1.48:\n\n✅ ZONA HORARIA UNIFICADA:\n• Toda la aplicación ahora usa zona horaria de Argentina (America/Argentina/Buenos_Aires)\n• Fechas y horas consistentes en todos los dispositivos\n• Cálculos de \"ayer/hoy\" correctos independientemente de la zona del dispositivo\n• DateHelper centralizado para manejo de fechas\n\n✅ MEJORAS EN VENCIMIENTOS:\n• Cálculo de stock mejorado con respaldo desde Firebase\n• Logs detallados para diagnóstico de problemas de sincronización\n• Mejor manejo cuando no hay datos locales disponibles\n\n✅ ACTUALIZACIONES TÉCNICAS:\n• 24 archivos actualizados con zona horaria Argentina\n• SimpleDateFormat y Calendar reemplazados por DateHelper\n• Funciones helper para fechas: obtenerFechaAnterior, obtenerFechaSiguiente, formatearFecha\n• Sin errores de compilación\n\n✅ FIXES:\n• Corrección de imports faltantes\n• Consistencia en manejo de fechas en toda la aplicación",
+  "versionCode": 75,
+  "versionName": "2.1.49",
+  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.49.apk",
+  "fileName": "inventario_app_v2.1.49.apk",
+  "description": "🌍 SISTEMA MULTI-REGION v2.1.49:\n\n✅ SISTEMA MULTI-REGION COMPLETO:\n• Selector de región integrado en header amarillo del login\n• Soporte dinámico para múltiples regiones (sin límites)\n• Inicialización automática de Firebase según región seleccionada\n• Limpieza automática de datos locales al cambiar de región\n• Persistencia de región seleccionada entre sesiones\n• Carga automática del nombre del maestro desde Firebase\n\n✅ REGIONES CONFIGURADAS:\n• Región 1: Lucas PIARRISTEGUY (proyecto por defecto)\n• Región 2: region2-99f04\n• Región 3: region3-e704a (nueva)\n\n✅ MEJORAS DE UI:\n• Selector de región con hint \"Región\" en lugar de \"Maestro\"\n• Tamaño de fuente optimizado para mostrar nombre completo del maestro\n• Colores explícitos para compatibilidad con modo oscuro\n• Corrección de duplicación del header amarillo\n\n✅ DOCUMENTACIÓN:\n• Guía completa para agregar nuevas regiones\n• Sistema completamente escalable y dinámico",
   "forceUpdate": false
 }
