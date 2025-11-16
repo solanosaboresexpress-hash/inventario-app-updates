@@ -1,8 +1,8 @@
 {
-  "versionCode": 75,
-  "versionName": "2.1.49",
-  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.49.apk",
-  "fileName": "inventario_app_v2.1.49.apk",
-  "description": "🌍 SISTEMA MULTI-REGION v2.1.49:\n\n✅ SISTEMA MULTI-REGION COMPLETO:\n• Selector de región integrado en header amarillo del login\n• Soporte dinámico para múltiples regiones (sin límites)\n• Inicialización automática de Firebase según región seleccionada\n• Limpieza automática de datos locales al cambiar de región\n• Persistencia de región seleccionada entre sesiones\n• Carga automática del nombre del maestro desde Firebase\n\n✅ REGIONES CONFIGURADAS:\n• Región 1: Lucas PIARRISTEGUY (proyecto por defecto)\n• Región 2: region2-99f04\n• Región 3: region3-e704a (nueva)\n\n✅ MEJORAS DE UI:\n• Selector de región con hint \"Región\" en lugar de \"Maestro\"\n• Tamaño de fuente optimizado para mostrar nombre completo del maestro\n• Colores explícitos para compatibilidad con modo oscuro\n• Corrección de duplicación del header amarillo\n\n✅ DOCUMENTACIÓN:\n• Guía completa para agregar nuevas regiones\n• Sistema completamente escalable y dinámico",
+  "versionCode": 76,
+  "versionName": "2.1.50",
+  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.50.apk",
+  "fileName": "inventario_app_v2.1.50.apk",
+  "description": "🌍 SISTEMA MULTI-REGION v2.1.50:\n\n✅ CORRECCIONES CRÍTICAS:\n• Teclado ahora aparece automáticamente al agregar local/supervisor\n• Layout mejorado con TextInputLayout de Material Design\n• Campos de texto con background visible y mejor UX\n\n✅ CORRECCIONES MODO OSCURO:\n• Dropdowns de locales, regiones y supervisores visibles en modo oscuro\n• Layout personalizado para items del dropdown con colores adaptativos\n• Texto y fondo correctos en todos los spinners\n• Compatibilidad completa con modo claro y oscuro\n\n✅ SISTEMA MULTI-REGION:\n• Selector de región integrado en header amarillo del login\n• Soporte dinámico para múltiples regiones (sin límites)\n• Inicialización automática de Firebase según región seleccionada\n• Limpieza automática de datos locales al cambiar de región\n• Persistencia de región seleccionada entre sesiones\n• Carga automática del nombre del maestro desde Firebase\n\n✅ REGIONES CONFIGURADAS:\n• Región 1: Lucas PIARRISTEGUY (proyecto por defecto)\n• Región 2: region2-99f04\n• Región 3: region3-e704a\n\n✅ MEJORAS DE UI:\n• Selector de región con hint \"Región\" en lugar de \"Maestro\"\n• Tamaño de fuente optimizado para mostrar nombre completo del maestro\n• Colores explícitos para compatibilidad con modo oscuro\n• Corrección de duplicación del header amarillo",
   "forceUpdate": false
 }
