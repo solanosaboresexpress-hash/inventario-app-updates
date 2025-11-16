@@ -1,8 +1,8 @@
 {
-  "versionCode": 73,
-  "versionName": "2.1.47",
-  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.47.apk",
-  "fileName": "inventario_app_v2.1.47.apk",
-  "description": "🎉 MEJORAS EN CARGA DE VENCIMIENTOS v2.1.47:\n\n✅ NAVEGACIÓN MEJORADA:\n• Flechas de navegación para fecha (◀ ▶) sin abrir calendario\n• Flechas de navegación para productos (▲ ▼) sin abrir lista\n• Navegación circular: al llegar al final vuelve al inicio\n\n✅ AUTO-COMPLETADO INTELIGENTE:\n• Campo cantidad se completa automáticamente con stock faltante\n• Calcula: Stock Actual - Lotes Cargados = Cantidad Faltante\n• Se actualiza al cambiar producto o agregar lotes\n• Muestra \"Todo lotado\" cuando no falta nada\n• Texto seleccionado para editar fácilmente\n\n✅ VALIDACIÓN DE STOCK MEJORADA:\n• Verificación en tiempo real de stock vs lotes\n• Indicadores visuales: ✅ Coincide / ⚠️ Faltan / ⚠️ Sobran\n• Advertencia destacada de productos con stock sin lotes\n• Mensaje \"✅ TODO EN ORDEN\" cuando todo está correcto\n• Solo muestra productos con control de vencimientos\n\n✅ FIXES:\n• Historial de vencimientos corregido (mejor manejo de índices)\n• Normalización de códigos mejorada\n• Logs detallados para diagnóstico\n• Mejor manejo de productos fuera de categorías estándar",
+  "versionCode": 74,
+  "versionName": "2.1.48",
+  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.48.apk",
+  "fileName": "inventario_app_v2.1.48.apk",
+  "description": "🌎 ZONA HORARIA ARGENTINA v2.1.48:\n\n✅ ZONA HORARIA UNIFICADA:\n• Toda la aplicación ahora usa zona horaria de Argentina (America/Argentina/Buenos_Aires)\n• Fechas y horas consistentes en todos los dispositivos\n• Cálculos de \"ayer/hoy\" correctos independientemente de la zona del dispositivo\n• DateHelper centralizado para manejo de fechas\n\n✅ MEJORAS EN VENCIMIENTOS:\n• Cálculo de stock mejorado con respaldo desde Firebase\n• Logs detallados para diagnóstico de problemas de sincronización\n• Mejor manejo cuando no hay datos locales disponibles\n\n✅ ACTUALIZACIONES TÉCNICAS:\n• 24 archivos actualizados con zona horaria Argentina\n• SimpleDateFormat y Calendar reemplazados por DateHelper\n• Funciones helper para fechas: obtenerFechaAnterior, obtenerFechaSiguiente, formatearFecha\n• Sin errores de compilación\n\n✅ FIXES:\n• Corrección de imports faltantes\n• Consistencia en manejo de fechas en toda la aplicación",
   "forceUpdate": false
 }
