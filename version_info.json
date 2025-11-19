@@ -1,8 +1,8 @@
 {
-  "versionCode": 80,
-  "versionName": "2.1.54",
-  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.54.apk",
-  "fileName": "inventario_app_v2.1.54.apk",
-  "description": "📦 VENCIMIENTOS v2.1.54:\n\n✅ RECARGA AUTOMÁTICA SOLO PRIMERA VEZ:\n• Al entrar por primera vez a la sección de vencimientos, se simula automáticamente salir y volver a entrar\n• Esto asegura que todos los datos se carguen correctamente desde el inicio\n• Recarga completa de lotes y stock solo la primera vez que se abre la actividad\n• En entradas posteriores, no recarga automáticamente (solo al agregar lotes)\n• Mejora la visualización de textos de validación (coincide, faltan, sobran)\n\n✅ MEJORAS EN SINCRONIZACIÓN:\n• Sincronización siempre activa en segundo plano para obtener datos más recientes\n• Recarga automática de lotes después de sincronizar con Firebase\n• Actualización forzada de la UI después de sincronización\n• Mejor manejo de estados de carga\n\n✅ CORRECCIONES:\n• Recarga automática solo la primera vez (no en cada entrada)\n• Mejora en la visibilidad de textos de categorías (EMPANADAS, PIZZAS, PASTELITOS)\n• Corrección en el cálculo de stock para validación de lotes\n• Mejor manejo de estados de carga para evitar bloqueos",
+  "versionCode": 81,
+  "versionName": "2.1.55",
+  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.55.apk",
+  "fileName": "inventario_app_v2.1.55.apk",
+  "description": "📦 VENCIMIENTOS v2.1.55:\n\n✅ CORRECCIÓN DE TEXTOS DE VALIDACIÓN:\n• Los textos de coincidencia de stock con lotes ahora aparecen correctamente en la primera carga\n• VencimientosActivity (Local) ahora funciona igual que StockVencimientosActivity (Supervisor)\n• El stock se calcula y pasa directamente como parámetro, eliminando problemas de búsqueda\n• Normalización correcta de códigos de productos en ambas secciones\n\n✅ MEJORA EN CÁLCULO DE STOCK:\n• StockVencimientosActivity ahora prioriza 'Stock Final de HOY' si está disponible (igual que Local)\n• Cálculo más preciso del stock actual en ambas secciones\n• Mejor sincronización entre códigos de productos y lotes\n\n✅ MEJORAS EN INTERFAZ:\n• Botón de eliminar lote ahora es más grande y fácil de presionar (textSize 14f, padding aumentado)\n• Eliminada recarga automática no deseada en VencimientosActivity\n• Mejor visibilidad de elementos de la interfaz\n\n✅ CORRECCIONES:\n• Eliminada toda lógica de recarga automática en onResume\n• Normalización de códigos corregida en StockVencimientosActivity\n• Sincronización en segundo plano sin recargar UI automáticamente",
   "forceUpdate": false
 }
