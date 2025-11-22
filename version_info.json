@@ -1,8 +1,9 @@
 {
-  "versionCode": 86,
-  "versionName": "2.1.60",
-  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.60.apk",
-  "fileName": "inventario_app_v2.1.60.apk",
-  "description": "🎨 MEJORAS DE TEMA OSCURO Y NAVEGACIÓN v2.1.60:\n\n✅ MARCA DE AGUA:\n• Marca de agua ahora se muestra difuminada (30% opacidad) en modo oscuro\n• Visible pero no intrusiva en todas las pantallas (Login, Main, Gestión de Locales)\n• Se adapta automáticamente al cambiar entre modo claro y oscuro\n\n✅ VENCIMIENTOS - SELECTOR DE PRODUCTOS:\n• Spinner de productos con fondo y texto adaptados al modo oscuro\n• EditText de cantidad con fondo oscuro y borde dorado en modo oscuro\n• Búsqueda automática del primer producto con stock sin lotes al iniciar\n• Navegación automática mejorada entre productos\n\n✅ VENTAS POR VOLUMEN:\n• Tabla de productos con fondos y textos adaptados al modo oscuro\n• Filas de productos con bordes visibles en modo oscuro\n• Headers y totales visibles en ambos temas\n• Menú de promedios con colores correctos\n\n✅ CARGA DE LOTES - MEJORAS:\n• Sistema de carga mejorado para evitar bloqueos\n• Navegación automática al siguiente producto cuando se completa uno\n• Búsqueda automática del primer producto pendiente al iniciar\n• Loading siempre se oculta correctamente, incluso si hay errores\n\n✅ CORRECCIONES ANTERIORES:\n• Diálogos \"CARGAR STOCK\" con fondo correcto en modo oscuro\n• Pantallas de pedidos con colores adaptados\n• Selector de días de entrega visible en modo oscuro",
+  "versionCode": 87,
+  "versionName": "2.1.61",
+  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/releases/download/v2.1.61/inventario_app_v2.1.61.apk",
+  "fileName": "inventario_app_v2.1.61.apk",
+  "description": "🎨 MEJORAS DE TEMA OSCURO Y NAVEGACIÓN v2.1.61:\n\n✅ MEJORAS GENERALES:\n• Script automatizado para subir APK a GitHub Releases\n• Corrección de problemas con archivos APK corruptos en Git\n• Documentación mejorada para el proceso de actualización\n\n✅ MEJORAS ANTERIORES (v2.1.60):\n• Marca de agua difuminada (30% opacidad) en modo oscuro\n• Selector de productos en Vencimientos adaptado al modo oscuro\n• Tabla de Ventas por Volumen con colores correctos\n• Sistema de carga de lotes mejorado\n• Diálogos \"CARGAR STOCK\" con fondo correcto en modo oscuro\n• Pantallas de pedidos con colores adaptados",
   "forceUpdate": false
 }
+
