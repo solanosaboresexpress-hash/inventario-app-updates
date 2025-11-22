@@ -1,8 +1,8 @@
 {
-  "versionCode": 84,
-  "versionName": "2.1.58",
-  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.58.apk",
-  "fileName": "inventario_app_v2.1.58.apk",
-  "description": "🔧 MEJORAS DE ESTABILIDAD Y PREVENCIÓN DE MEMORY LEAKS v2.1.58:\n\n✅ PREVENCIÓN DE MEMORY LEAKS:\n• Remoción correcta de TextWatcher listeners en GestionLocalesActivity\n• Listeners ahora se guardan y remueven en onDestroy() para prevenir memory leaks\n• Verificaciones isFinishing agregadas en callbacks de TextWatcher\n\n✅ MEJORAS DE ESTABILIDAD:\n• Verificaciones isFinishing || isDestroyed agregadas en todos los Flow.collect()\n• Previene actualizaciones de UI en actividades destruidas\n• Mejora la estabilidad general de la aplicación\n• Aplicado en: PedidoFabricaActivity, CargaActivity, PromedioVentasActivity, VentaVolumenActivity, MainActivity\n\n✅ CORRECCIONES ANTERIORES:\n• Sistema de vencimientos mejorado con detección precisa de diferencias\n• Botón de vencimientos en MainActivity con estados correctos (verde/dorado)\n• Interfaz mejorada con botones uniformes y texto ajustable\n• Dropdowns en LoginActivity funcionando correctamente\n\n📝 NOTA: Estas mejoras son preventivas y no afectan la funcionalidad existente. Mejoran la estabilidad y previenen problemas a largo plazo.",
+  "versionCode": 85,
+  "versionName": "2.1.59",
+  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.59.apk",
+  "fileName": "inventario_app_v2.1.59.apk",
+  "description": "🎨 CORRECCIONES DE TEMA OSCURO v2.1.59:\n\n✅ DIÁLOGOS \"CARGAR STOCK\":\n• Fondo del diálogo ahora es negro en modo oscuro y blanco en modo claro\n• Texto \"CARGAR STOCK\" visible en ambos temas (blanco en oscuro, negro en claro)\n• Texto informativo del diálogo corregido para modo oscuro\n• Cambio de \"CARGAR STOCK 15:30\" a \"CARGAR STOCK\" en todos los diálogos\n• EditText dentro del diálogo con fondo y texto correctos según tema\n• TextViews (producto, sugerencia) adaptados al tema oscuro\n\n✅ PANTALLA PRINCIPAL (Pedido Fabrica/Panificadora):\n• EditText de Stock, Pedido y Sugerencia con fondo correcto en modo oscuro\n• Headers de tabla adaptados al tema oscuro\n• Textos de productos visibles en ambos temas\n\n✅ MEJORAS ANTERIORES:\n• Prevención de memory leaks en GestionLocalesActivity\n• Verificaciones isFinishing en Flow.collect()\n• Sistema de vencimientos mejorado\n• Interfaz con botones uniformes y texto ajustable\n\n📝 NOTA: Todas las correcciones de tema oscuro aplicadas en PedidoFabricaActivity y PedidoPanificadoraActivity.",
   "forceUpdate": false
 }
