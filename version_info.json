@@ -1,9 +1,10 @@
 {
   "versionCode": 87,
   "versionName": "2.1.61",
-  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/releases/download/v2.1.61/inventario_app_v2.1.61.apk",
+  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.61.apk",
   "fileName": "inventario_app_v2.1.61.apk",
   "description": "🎨 MEJORAS DE TEMA OSCURO Y NAVEGACIÓN v2.1.61:\n\n✅ MEJORAS GENERALES:\n• Script automatizado para subir APK a GitHub Releases\n• Corrección de problemas con archivos APK corruptos en Git\n• Documentación mejorada para el proceso de actualización\n\n✅ MEJORAS ANTERIORES (v2.1.60):\n• Marca de agua difuminada (30% opacidad) en modo oscuro\n• Selector de productos en Vencimientos adaptado al modo oscuro\n• Tabla de Ventas por Volumen con colores correctos\n• Sistema de carga de lotes mejorado\n• Diálogos \"CARGAR STOCK\" con fondo correcto en modo oscuro\n• Pantallas de pedidos con colores adaptados",
   "forceUpdate": false
 }
+
 
