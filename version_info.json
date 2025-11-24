@@ -1,10 +1,8 @@
 {
-  "versionCode": 87,
-  "versionName": "2.1.61",
-  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.61.apk",
-  "fileName": "inventario_app_v2.1.61.apk",
-  "description": "🎨 MEJORAS DE TEMA OSCURO Y NAVEGACIÓN v2.1.61:\n\n✅ MEJORAS GENERALES:\n• Script automatizado para subir APK a GitHub Releases\n• Corrección de problemas con archivos APK corruptos en Git\n• Documentación mejorada para el proceso de actualización\n\n✅ MEJORAS ANTERIORES (v2.1.60):\n• Marca de agua difuminada (30% opacidad) en modo oscuro\n• Selector de productos en Vencimientos adaptado al modo oscuro\n• Tabla de Ventas por Volumen con colores correctos\n• Sistema de carga de lotes mejorado\n• Diálogos \"CARGAR STOCK\" con fondo correcto en modo oscuro\n• Pantallas de pedidos con colores adaptados",
+  "versionCode": 88,
+  "versionName": "2.1.62",
+  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.62.apk",
+  "fileName": "inventario_app_v2.1.62.apk",
+  "description": "🔧 CORRECCIONES CRÍTICAS DE VENCIMIENTOS Y PREVISUALIZACIÓN v2.1.62:\n\n✅ CORRECCIONES CRÍTICAS:\n• Botones de Guardar/Cancelar ahora siempre visibles en previsualización\n• Sistema FIFO mejorado: sincronización automática después del descuento\n• Validación mejorada: no crea lotes automáticos (evita fechas incorrectas)\n• Logs detallados para debugging de vencimientos\n• Ajuste automático cuando hay más lotes que stock final\n\n✅ MEJORAS DE PREVISUALIZACIÓN:\n• ScrollView con altura dinámica (no oculta botones)\n• Diálogo con altura máxima del 80% de pantalla\n• Botones siempre visibles en la parte inferior\n\n✅ MEJORAS DE VENCIMIENTOS:\n• Sincronización automática de lotes con stock final\n• Advertencias claras cuando faltan lotes por cargar\n• Mejor manejo de diferencias entre lotes y stock\n\n✅ MEJORAS ANTERIORES (v2.1.61):\n• Script automatizado para subir APK a GitHub Releases\n• Corrección de problemas con archivos APK corruptos en Git\n• Documentación mejorada para el proceso de actualización",
   "forceUpdate": false
 }
-
-
