@@ -1,8 +1,8 @@
 {
-  "versionCode": 89,
-  "versionName": "2.1.63",
-  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.63.apk",
-  "fileName": "inventario_app_v2.1.63.apk",
-  "description": "📱 MEJORA DE MENSAJE WHATSAPP PARA VENCIMIENTOS v2.1.63:\n\n✅ MEJORAS DE MENSAJE WHATSAPP:\n• Formato simplificado: solo códigos de productos (JQ, PB, CS, etc.)\n• Fechas más claras en próximos vencimientos (sin texto 'vence')\n• Mensaje más limpio y fácil de leer\n• Formato optimizado para WhatsApp\n\n✅ MEJORAS ANTERIORES (v2.1.62):\n• Botones de Guardar/Cancelar siempre visibles en previsualización\n• Sistema FIFO mejorado: sincronización automática después del descuento\n• Validación mejorada: no crea lotes automáticos (evita fechas incorrectas)\n• Logs detallados para debugging de vencimientos\n• Ajuste automático cuando hay más lotes que stock final\n• ScrollView con altura dinámica (no oculta botones)\n• Diálogo con altura máxima del 80% de pantalla\n• Sincronización automática de lotes con stock final\n• Advertencias claras cuando faltan lotes por cargar",
+  "versionCode": 90,
+  "versionName": "2.1.64",
+  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.64.apk",
+  "fileName": "inventario_app_v2.1.64.apk",
+  "description": "📱 MEJORAS DE DIÁLOGO DE ALERTAS Y DETECCIÓN DE PROBLEMAS v2.1.64:\n\n✅ DIÁLOGO DE ALERTAS MEJORADO:\n• Diseño igual a la versión web con header rojo, cards clickeables y footer\n• Soporte completo para tema oscuro y claro (fondo y textos dinámicos)\n• Cards de problemas con efecto ripple y navegación directa\n• Mensaje introductorio con estilo amarillo adaptado al tema\n• Fondo opaco (no transparente) para mejor visibilidad\n\n✅ DETECCIÓN DE PROBLEMAS MEJORADA:\n• Detecta Stock Final con todos los productos en 0 (incluso fechas pasadas)\n• Verifica todos los registros históricos, no solo los de hoy\n• Respeta flag noRecibioMercaderia para Ingreso de Mercadería\n• Diálogo automático al entrar al local si hay problemas\n• Botones de navegación directa a completar cada problema\n\n✅ MEJORAS ANTERIORES (v2.1.63):\n• Formato simplificado de mensaje WhatsApp para vencimientos\n• Sistema FIFO mejorado con sincronización automática",
   "forceUpdate": false
 }
