@@ -3,6 +3,6 @@
   "versionName": "2.1.64",
   "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.64.apk",
   "fileName": "inventario_app_v2.1.64.apk",
-  "description": "📱 MEJORAS DE DIÁLOGO DE ALERTAS Y DETECCIÓN DE PROBLEMAS v2.1.64:\n\n✅ DIÁLOGO DE ALERTAS MEJORADO:\n• Diseño igual a la versión web con header rojo, cards clickeables y footer\n• Soporte completo para tema oscuro y claro (fondo y textos dinámicos)\n• Cards de problemas con efecto ripple y navegación directa\n• Mensaje introductorio con estilo amarillo adaptado al tema\n• Fondo opaco (no transparente) para mejor visibilidad\n\n✅ DETECCIÓN DE PROBLEMAS MEJORADA:\n• Detecta Stock Final con todos los productos en 0 (incluso fechas pasadas)\n• Verifica todos los registros históricos, no solo los de hoy\n• Respeta flag noRecibioMercaderia para Ingreso de Mercadería\n• Diálogo automático al entrar al local si hay problemas\n• Botones de navegación directa a completar cada problema\n\n✅ MEJORAS ANTERIORES (v2.1.63):\n• Formato simplificado de mensaje WhatsApp para vencimientos\n• Sistema FIFO mejorado con sincronización automática",
+  "description": "📱 v2.1.64 - Diálogo de alertas mejorado:\n• Diseño igual a la versión web con tema oscuro/claro\n• Detecta Stock Final e Ingreso con productos en 0\n• Navegación directa a completar problemas\n• Respeta flag noRecibioMercaderia",
   "forceUpdate": false
 }
