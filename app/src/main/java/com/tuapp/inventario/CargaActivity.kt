@@ -1043,20 +1043,32 @@ class CargaActivity : AppCompatActivity() {
                     actualizarPromedioGeneral(fecha, productosConCantidad)
                 }
                 
-                // 🔥 Si es Stock Final y es la PRIMERA VEZ, procesar descuentos FIFO de vencimientos
-                // ⚠️ NO procesar descuentos si es MODIFICACIÓN (ya se procesaron la primera vez)
-                if (tipo == "Stock Final" && resultadoVerificacion != null && resultadoVerificacion.debeProcesar && resultadoVerificacion.esPrimeraVez) {
-                    // Solo procesar descuentos si es PRIMERA VEZ
-                    Log.d("VENCIMIENTOS", "✅ Primera vez guardando Stock Final - Procesará descuentos FIFO")
-                    
-                    // Guardar estado inicial ANTES de procesar descuentos
-                    guardarEstadoInicialVencimientos(fecha)
-                    
-                    // Procesar descuentos
-                    procesarDescuentosVencimientos(fecha, productosConCantidad)
-                    
-                    // Guardar estado final DESPUÉS de procesar descuentos
-                    guardarEstadoFinalVencimientos(fecha)
+                // 🔥 Si es Stock Final de HOY y debe procesar, ejecutar descuentos FIFO de vencimientos
+                // ✅ FIX: Ejecutar descuentos tanto en primera vez como en modificaciones (si los datos cambiaron)
+                // ⚠️ NO procesar descuentos si es RECARGA (mismos datos) o fecha pasada
+                if (tipo == "Stock Final" && resultadoVerificacion != null && resultadoVerificacion.debeProcesar) {
+                    // Verificar que sea fecha de hoy (no procesar descuentos para fechas pasadas)
+                    val fechaHoy = DateHelper.getFechaActual()
+                    if (fecha == fechaHoy) {
+                        if (resultadoVerificacion.esPrimeraVez) {
+                            Log.d("VENCIMIENTOS", "✅ Primera vez guardando Stock Final de HOY - Procesará descuentos FIFO")
+                        } else {
+                            Log.d("VENCIMIENTOS", "✅ Modificación de Stock Final de HOY - Procesará descuentos FIFO (datos cambiaron)")
+                        }
+                        
+                        // Guardar estado inicial ANTES de procesar descuentos (solo si es primera vez)
+                        if (resultadoVerificacion.esPrimeraVez) {
+                            guardarEstadoInicialVencimientos(fecha)
+                        }
+                        
+                        // Procesar descuentos
+                        procesarDescuentosVencimientos(fecha, productosConCantidad)
+                        
+                        // Guardar estado final DESPUÉS de procesar descuentos
+                        guardarEstadoFinalVencimientos(fecha)
+                    } else {
+                        Log.d("VENCIMIENTOS", "⏭️ Stock Final para fecha pasada ($fecha) - NO procesará descuentos FIFO")
+                    }
                 } else if (tipo == "Ingreso de Mercadería") {
                     // Guardar estado inicial cuando se carga el ingreso (inicio del día)
                     guardarEstadoInicialVencimientos(fecha)
@@ -1769,7 +1781,7 @@ class CargaActivity : AppCompatActivity() {
      * Igual que "Venta por Volumen" pero guarda los resultados en Firebase
      * Esto evita tener que recalcular todos los promedios cada vez que se necesitan
      */
-    private suspend fun actualizarPromedioGeneral(fecha: String, stockFinalProductos: List<Producto>) {
+    private suspend fun actualizarPromedioGeneral(_fecha: String, _stockFinalProductos: List<Producto>) {
         try {
             Log.d("PROMEDIO_GENERAL", "🔄 Calculando TODOS los promedios históricos (como Venta por Volumen)")
             
@@ -1920,7 +1932,7 @@ class CargaActivity : AppCompatActivity() {
         promediosPorDia.forEach { (dia, productos) ->
             promediosGenerales[dia] = mutableMapOf()
             
-            productos.forEach { (producto, promedio) ->
+            productos.forEach { (producto, _) ->
                 // Obtener todas las ventas de este producto en este día de la semana
                 val ventasDelProducto = ventasPorDiaSemana[dia]
                     ?.mapNotNull { it[producto] }

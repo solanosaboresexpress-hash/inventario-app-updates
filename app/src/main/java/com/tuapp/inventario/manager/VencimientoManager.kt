@@ -18,6 +18,7 @@ class VencimientoManager(private val repository: VencimientoRepository) {
     /**
      * Procesa el descuento FIFO de vencimientos basado en la venta del día
      * Se ejecuta automáticamente al guardar el Stock Final
+     * ✅ OPTIMIZACIÓN: Carga todos los lotes una vez, luego procesa en memoria
      */
     suspend fun procesarDescuentosFIFO(
         localId: String,
@@ -30,6 +31,16 @@ class VencimientoManager(private val repository: VencimientoRepository) {
         Log.d(TAG, "🏪 Local: $localId")
         Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         
+        // ✅ OPTIMIZACIÓN: Cargar todos los lotes una vez (usa cache si está disponible)
+        val todosLosLotes = repository.obtenerLotesActivos(localId)
+        Log.d(TAG, "📦 Lotes cargados una vez: ${todosLosLotes.size} lotes totales")
+        
+        // Agrupar lotes por producto para acceso rápido
+        val lotesPorProducto = todosLosLotes
+            .filter { it.cantidad > 0 }
+            .groupBy { it.productoCodigo }
+            .mapValues { (_, lotes) -> lotes.sortedBy { it.fechaVencimiento } }  // FIFO: más viejo primero
+        
         ventasPorProducto.forEach { (productoCodigo, cantidadVendida) ->
             if (cantidadVendida <= 0) {
                 Log.d(TAG, "⏭️ Saltando $productoCodigo (sin venta)")
@@ -39,7 +50,9 @@ class VencimientoManager(private val repository: VencimientoRepository) {
             Log.d(TAG, "\n🔍 Procesando: $productoCodigo")
             Log.d(TAG, "   Vendido: $cantidadVendida uds")
             
-            descontarVencimientosFIFO(localId, productoCodigo, cantidadVendida, fecha)
+            // ✅ Usar lotes ya cargados en memoria
+            val lotesProducto = lotesPorProducto[productoCodigo] ?: emptyList()
+            descontarVencimientosFIFOConLotes(localId, productoCodigo, cantidadVendida, fecha, lotesProducto)
         }
         
         Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
@@ -49,16 +62,15 @@ class VencimientoManager(private val repository: VencimientoRepository) {
     
     /**
      * Descuenta la cantidad vendida de los lotes más viejos (FIFO)
+     * ✅ OPTIMIZACIÓN: Versión que recibe lotes ya cargados (evita lecturas adicionales)
      */
-    private suspend fun descontarVencimientosFIFO(
+    private suspend fun descontarVencimientosFIFOConLotes(
         localId: String,
         productoCodigo: String,
         cantidadVendida: Int,
-        fecha: String
+        fecha: String,
+        lotes: List<VencimientoLote>
     ) {
-        // 1. Obtener lotes ordenados por fecha de vencimiento (más viejo primero)
-        val lotes = repository.obtenerLotesActivosProducto(localId, productoCodigo)
-        
         if (lotes.isEmpty()) {
             Log.w(TAG, "⚠️ No hay lotes activos para $productoCodigo")
             return
@@ -121,9 +133,9 @@ class VencimientoManager(private val repository: VencimientoRepository) {
      * Calcula la venta por producto basándose en los registros de inventario
      */
     suspend fun calcularVentasPorProducto(
-        localId: String,
-        fecha: String,
-        productos: List<String>
+        _localId: String,
+        _fecha: String,
+        _productos: List<String>
     ): Map<String, Int> {
         // Esta función se implementará usando los registros existentes
         // Por ahora retorna un mapa vacío
@@ -134,6 +146,7 @@ class VencimientoManager(private val repository: VencimientoRepository) {
      * Sincroniza los lotes con el stock final real
      * Si el stock final es 0, elimina TODOS los lotes
      * Si el stock final > 0, ajusta los lotes para que sumen exactamente el stock final
+     * ✅ OPTIMIZACIÓN: Carga todos los lotes una vez, luego procesa en memoria
      */
     suspend fun sincronizarLotesConStockFinal(
         localId: String,
@@ -146,13 +159,31 @@ class VencimientoManager(private val repository: VencimientoRepository) {
         Log.d(TAG, "🏪 Local: $localId")
         Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         
+        // ✅ OPTIMIZACIÓN: Cargar todos los lotes una vez (usa cache si está disponible)
+        val todosLosLotes = repository.obtenerLotesActivos(localId)
+        Log.d(TAG, "📦 Lotes cargados una vez: ${todosLosLotes.size} lotes totales")
+        
+        // Agrupar lotes por producto para acceso rápido
+        val lotesPorProducto = todosLosLotes
+            .groupBy { it.productoCodigo }
+            .mapValues { (_, lotes) -> lotes.sortedBy { it.fechaVencimiento } }  // FIFO: más viejo primero
+        
         stockFinalPorProducto.forEach { (productoCodigo, stockFinal) ->
-            val lotes = repository.obtenerLotesActivosProducto(localId, productoCodigo)
+            val lotes = lotesPorProducto[productoCodigo] ?: emptyList()
             val sumaLotes = lotes.sumOf { it.cantidad }
             
             Log.d(TAG, "\n🔍 Sincronizando: $productoCodigo")
             Log.d(TAG, "   Stock Final: $stockFinal")
             Log.d(TAG, "   Suma Lotes: $sumaLotes")
+            Log.d(TAG, "   Cantidad de lotes: ${lotes.size}")
+            
+            // Log detallado de cada lote
+            if (lotes.isNotEmpty()) {
+                Log.d(TAG, "   📦 Lotes detallados:")
+                lotes.forEachIndexed { index, lote ->
+                    Log.d(TAG, "      ${index + 1}. ${lote.cantidad} uds → Vto ${lote.fechaVencimiento} (ID: ${lote.id})")
+                }
+            }
             
             // Si el stock final es 0, eliminar TODOS los lotes
             if (stockFinal == 0) {
@@ -243,7 +274,10 @@ class VencimientoManager(private val repository: VencimientoRepository) {
         productoCodigo: String,
         stockActual: Int
     ): Boolean {
-        val lotes = repository.obtenerLotesActivosProducto(localId, productoCodigo)
+        // ✅ OPTIMIZACIÓN: Usar cache si está disponible (más rápido)
+        val todosLosLotes = repository.obtenerLotesActivos(localId)
+        val lotes = todosLosLotes
+            .filter { it.productoCodigo == productoCodigo && it.cantidad > 0 }
         val sumaLotes = lotes.sumOf { it.cantidad }
         
         val coincide = sumaLotes == stockActual

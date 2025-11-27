@@ -1,8 +1,8 @@
 {
-  "versionCode": 88,
-  "versionName": "2.1.62",
-  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.62.apk",
-  "fileName": "inventario_app_v2.1.62.apk",
-  "description": "🔧 CORRECCIONES CRÍTICAS DE VENCIMIENTOS Y PREVISUALIZACIÓN v2.1.62:\n\n✅ CORRECCIONES CRÍTICAS:\n• Botones de Guardar/Cancelar ahora siempre visibles en previsualización\n• Sistema FIFO mejorado: sincronización automática después del descuento\n• Validación mejorada: no crea lotes automáticos (evita fechas incorrectas)\n• Logs detallados para debugging de vencimientos\n• Ajuste automático cuando hay más lotes que stock final\n\n✅ MEJORAS DE PREVISUALIZACIÓN:\n• ScrollView con altura dinámica (no oculta botones)\n• Diálogo con altura máxima del 80% de pantalla\n• Botones siempre visibles en la parte inferior\n\n✅ MEJORAS DE VENCIMIENTOS:\n• Sincronización automática de lotes con stock final\n• Advertencias claras cuando faltan lotes por cargar\n• Mejor manejo de diferencias entre lotes y stock\n\n✅ MEJORAS ANTERIORES (v2.1.61):\n• Script automatizado para subir APK a GitHub Releases\n• Corrección de problemas con archivos APK corruptos en Git\n• Documentación mejorada para el proceso de actualización",
+  "versionCode": 91,
+  "versionName": "2.1.65",
+  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.65.apk",
+  "fileName": "inventario_app_v2.1.65.apk",
+  "description": "v2.1.65 - Fixes: login regiones, diálogo actualización, descuento FIFO",
   "forceUpdate": false
 }
