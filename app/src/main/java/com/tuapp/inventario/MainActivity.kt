@@ -31,6 +31,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import com.tuapp.inventario.update.UpdateDialog
 import com.tuapp.inventario.update.ApkInstaller
 import com.tuapp.inventario.util.DateHelper
@@ -44,6 +46,7 @@ import com.tuapp.inventario.notification.NotificationHelper
 import com.tuapp.inventario.utils.FooterHelper
 import com.tuapp.inventario.utils.FirebaseRegionManager
 import com.tuapp.inventario.repository.VencimientoRepository
+import com.google.firebase.Timestamp
 import com.tuapp.inventario.model.VencimientoLote
 import com.tuapp.inventario.InventarioApplication
 import android.Manifest
@@ -75,6 +78,73 @@ class MainActivity : AppCompatActivity() {
         private const val REQUEST_CODE_CARGA = 1001
         var promediosReales: Map<String, Map<String, Double>> = emptyMap()
         var promediosCargados = false
+        
+        // Cache para reducir lecturas de Firebase
+        private var cacheRegistrosCalendario: Map<String, Set<String>>? = null // fecha -> tipos
+        private var cacheRegistrosCalendarioTimestamp: Long = 0
+        private var cacheRegistrosAlertas: List<RegistroInventario>? = null
+        private var cacheRegistrosAlertasTimestamp: Long = 0
+        private var cacheRegistrosAlertasLocalId: String = "" // ID del local al que pertenece el cache
+        private var cacheProductos: List<com.tuapp.inventario.Producto>? = null
+        private var cacheProductosTimestamp: Long = 0
+        private var cacheRegistrosPromedios: List<RegistroInventario>? = null
+        private var cacheRegistrosPromediosTimestamp: Long = 0
+        
+        // Cache para stock calculado (evitar consultas duplicadas)
+        private var cacheStockCalculado: Map<String, Int>? = null
+        private var cacheStockCalculadoTimestamp: Long = 0
+        private var cacheStockCalculadoLocalId: String = ""
+        
+        // 📈 Cache para tendencias de ventas (calculadas una vez al día)
+        var cacheTendencias: Map<String, Double>? = null
+        var cacheTendenciasFecha: String = ""
+        var cacheTendenciasLocalId: String = ""
+        
+        // Flag para evitar verificaciones simultáneas
+        @Volatile
+        private var verificacionVencimientosEnProgreso = false
+        
+        private const val CACHE_DURATION_MS = 5 * 60 * 1000L // 5 minutos
+        private const val CACHE_PRODUCTOS_DURATION_MS = 15 * 60 * 1000L // 15 minutos (productos cambian raramente)
+        private const val CACHE_PROMEDIOS_DURATION_MS = 30 * 60 * 1000L // 30 minutos (promedios cambian lentamente)
+        private const val CACHE_STOCK_DURATION_MS = 2 * 60 * 1000L // 2 minutos (stock cambia frecuentemente)
+        
+        fun isCacheValid(timestamp: Long): Boolean {
+            return (System.currentTimeMillis() - timestamp) < CACHE_DURATION_MS
+        }
+        
+        fun isProductosCacheValid(timestamp: Long): Boolean {
+            return (System.currentTimeMillis() - timestamp) < CACHE_PRODUCTOS_DURATION_MS
+        }
+        
+        fun isPromediosCacheValid(timestamp: Long): Boolean {
+            return (System.currentTimeMillis() - timestamp) < CACHE_PROMEDIOS_DURATION_MS
+        }
+        
+        fun clearCache() {
+            cacheRegistrosCalendario = null
+            cacheRegistrosCalendarioTimestamp = 0
+            cacheRegistrosAlertas = null
+            cacheRegistrosAlertasTimestamp = 0
+            cacheRegistrosAlertasLocalId = ""
+            cacheProductos = null
+            cacheProductosTimestamp = 0
+            cacheRegistrosPromedios = null
+            cacheRegistrosPromediosTimestamp = 0
+            cacheStockCalculado = null
+            cacheStockCalculadoTimestamp = 0
+            cacheStockCalculadoLocalId = ""
+        }
+        
+        fun isAlertasCacheValid(timestamp: Long, localId: String): Boolean {
+            return (System.currentTimeMillis() - timestamp) < CACHE_DURATION_MS &&
+                   cacheRegistrosAlertasLocalId == localId
+        }
+        
+        fun isStockCacheValid(timestamp: Long, localId: String): Boolean {
+            return (System.currentTimeMillis() - timestamp) < CACHE_STOCK_DURATION_MS &&
+                   cacheStockCalculadoLocalId == localId
+        }
     }
     
     // Variables para controlar actualizaciones de botones
@@ -98,11 +168,36 @@ class MainActivity : AppCompatActivity() {
     private val actualizarBotonesReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == "com.tuapp.inventario.ACTUALIZAR_BOTONES") {
-                Log.d("MainActivity", "📡 Broadcast recibido: Actualizar botones")
+                val tipo = intent.getStringExtra("tipo")
+                val localIdBroadcast = intent.getStringExtra("localId")
+                
+                Log.d("MainActivity", "📡 Broadcast recibido: Actualizar botones - tipo: $tipo")
+                
+                // ✅ Limpiar cache cuando se guardan nuevos datos
+                clearCache()
+                Log.d("MainActivity", "🗑️ Cache limpiado debido a nuevo registro guardado")
+                
                 // Esperar un poco para asegurar que la transacción de Room se complete
                 lifecycleScope.launch {
                     kotlinx.coroutines.delay(500) // Delay para asegurar que Room complete la transacción
                     verificarRegistrosExistentes()
+                    
+                    // 📈 Si es Stock Final, calcular tendencias
+                    Log.d("TENDENCIAS", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                    Log.d("TENDENCIAS", "🔍 Verificando si calcular tendencias...")
+                    Log.d("TENDENCIAS", "   Tipo: $tipo")
+                    Log.d("TENDENCIAS", "   Local broadcast: $localIdBroadcast")
+                    Log.d("TENDENCIAS", "   Local actual: ${usuarioActual?.localId}")
+                    Log.d("TENDENCIAS", "   Condición cumplida: ${tipo == "Stock Final" && localIdBroadcast == usuarioActual?.localId}")
+                    
+                    if (tipo == "Stock Final" && localIdBroadcast == usuarioActual?.localId) {
+                        Log.d("TENDENCIAS", "✅ Condición cumplida → Calculando tendencias...")
+                        Log.d("TENDENCIAS", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                        calcularYGuardarTendencias()
+                    } else {
+                        Log.d("TENDENCIAS", "⏭️ Condición NO cumplida → No se calculan tendencias")
+                        Log.d("TENDENCIAS", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                    }
                     
                     // Verificar nuevamente después de un delay adicional para capturar cualquier cambio
                     kotlinx.coroutines.delay(1000)
@@ -193,6 +288,10 @@ class MainActivity : AppCompatActivity() {
         
         // Configurar usuario
         configurarUsuario()
+        
+        // 📈 Calcular y guardar tendencias en background (no bloquea la UI)
+        // MOVIDO A CargaActivity: Se calcula al guardar Stock Final (tiene más sentido)
+        // calcularYGuardarTendencias()
         
         // Configurar marca de agua según modo oscuro
         configurarMarcaDeAgua()
@@ -449,31 +548,43 @@ class MainActivity : AppCompatActivity() {
             try {
                 val localId = obtenerLocalId()
                 
-                // ✅ CONSULTAR FIREBASE DIRECTAMENTE (como en verificarRegistrosExistentes)
-                // Esto asegura que siempre tengamos los datos más actualizados
-                val firestore = FirebaseRegionManager.getFirestore()
-                val registrosCollection = firestore.collection("locales").document(localId).collection("registros")
-                
-                // Obtener todos los registros de Firebase
-                val snapshot = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
-                    registrosCollection.get().await()
-                }
-                
-                // Procesar registros para determinar fechas completas y parciales
+                // ✅ OPTIMIZACIÓN: Usar cache para reducir lecturas de Firebase
                 val fechasCompletas = mutableSetOf<String>()
                 val fechasParciales = mutableSetOf<String>()
+                val registrosPorFecha: Map<String, Set<String>>
                 
-                // Agrupar por fecha y tipo
-                val registrosPorFecha = mutableMapOf<String, MutableSet<String>>()
-                
-                snapshot.documents.forEach { doc ->
-                    val fecha = doc.getString("fecha") ?: return@forEach
-                    val tipo = doc.getString("tipo") ?: return@forEach
+                // Verificar si el cache es válido
+                if (isCacheValid(cacheRegistrosCalendarioTimestamp) && cacheRegistrosCalendario != null) {
+                    Log.d("MainActivity", "📅 Calendario - Usando cache (ahorra lecturas de Firebase)")
+                    registrosPorFecha = cacheRegistrosCalendario!!
+                } else {
+                    Log.d("MainActivity", "📅 Calendario - Cache expirado o no existe, consultando Firebase...")
+                    val firestore = FirebaseRegionManager.getFirestore()
+                    val registrosCollection = firestore.collection("locales").document(localId).collection("registros")
                     
-                    if (!registrosPorFecha.containsKey(fecha)) {
-                        registrosPorFecha[fecha] = mutableSetOf()
+                    // Obtener todos los registros de Firebase (solo si el cache expiró)
+                    val snapshot = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                        registrosCollection.get().await()
                     }
-                    registrosPorFecha[fecha]!!.add(tipo)
+                    
+                    // Procesar registros para determinar fechas completas y parciales
+                    val registrosPorFechaMutable = mutableMapOf<String, MutableSet<String>>()
+                    
+                    snapshot.documents.forEach { doc ->
+                        val fecha = doc.getString("fecha") ?: return@forEach
+                        val tipo = doc.getString("tipo") ?: return@forEach
+                        
+                        if (!registrosPorFechaMutable.containsKey(fecha)) {
+                            registrosPorFechaMutable[fecha] = mutableSetOf()
+                        }
+                        registrosPorFechaMutable[fecha]!!.add(tipo)
+                    }
+                    
+                    // Guardar en cache
+                    cacheRegistrosCalendario = registrosPorFechaMutable.mapValues { it.value.toSet() }
+                    cacheRegistrosCalendarioTimestamp = System.currentTimeMillis()
+                    registrosPorFecha = cacheRegistrosCalendario!!
+                    Log.d("MainActivity", "📅 Calendario - Cache actualizado con ${registrosPorFecha.size} fechas")
                 }
                 
                 // Clasificar fechas
@@ -1112,9 +1223,22 @@ class MainActivity : AppCompatActivity() {
         val usuario = prefs.getString("usuario", "")
         val rol = prefs.getString("rol", "")
         
+        // Verificar si cambió el local (para limpiar cache de alertas)
+        val localIdAnterior = usuarioActual?.localId
+        val cambioLocal = localIdAnterior != null && localIdAnterior != localId
+        
         if (!localId.isNullOrEmpty() && !localNombre.isNullOrEmpty() && !usuarioId.isNullOrEmpty() && !usuario.isNullOrEmpty()) {
             usuarioActual = UsuarioActual(localId, localNombre, usuarioId, usuario, rol ?: "")
             txtLocalActual.text = "🏪 ${usuarioActual!!.localNombre}"
+            
+            // Si cambió el local, limpiar cache de alertas específicamente
+            if (cambioLocal) {
+                Log.d("MainActivity", "🔄 Cambio de local detectado: $localIdAnterior → $localId, limpiando cache de alertas")
+                cacheRegistrosAlertas = null
+                cacheRegistrosAlertasTimestamp = 0
+                cacheRegistrosAlertasLocalId = ""
+            }
+            
             // Inicializar repositorio con el localId
             repository = FirebaseInventarioRepository(usuarioActual!!.localId)
             // ✅ OPTIMIZACIÓN: NO cargar promedios aquí - se cargarán solo cuando se necesiten
@@ -1164,6 +1288,329 @@ class MainActivity : AppCompatActivity() {
     /**
      * Carga los promedios reales desde Firebase para toda la aplicación
      */
+    /**
+     * 📈 Calcula tendencias de ventas y las guarda en Firebase
+     * Se ejecuta en background al iniciar la app
+     */
+    private fun calcularYGuardarTendencias() {
+        Log.d("TENDENCIAS", "🚀 calcularYGuardarTendencias() INICIADA")
+        
+        if (usuarioActual == null) {
+            Log.e("TENDENCIAS", "❌ usuarioActual es NULL → ABORTANDO")
+            return
+        }
+        
+        val localId = usuarioActual!!.localId
+        val fechaHoy = DateHelper.getFechaActual()
+        
+        Log.d("TENDENCIAS", "✅ Usuario válido: $localId")
+        Log.d("TENDENCIAS", "📅 Fecha hoy: $fechaHoy")
+        Log.d("TENDENCIAS", "🔄 Lanzando coroutine en Dispatchers.IO...")
+        
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                Log.d("TENDENCIAS", "🏁 Coroutine INICIADA en background")
+                Log.d("TENDENCIAS", "📈 Iniciando cálculo de tendencias para $localId...")
+                
+                // 1. Intentar cargar desde Firebase primero (documento único)
+                val firestore = FirebaseRegionManager.getFirestore()
+                val docTendencias = firestore
+                    .collection("locales")
+                    .document(localId)
+                    .collection("cache_tendencias")
+                    .document("tendencias")  // Documento único que se sobrescribe
+                    .get()
+                    .await()
+                
+                if (docTendencias.exists()) {
+                    // Verificar si ya están calculadas para HOY
+                    val fechaActualizacion = docTendencias.getTimestamp("fechaActualizacion")
+                    val sdfFecha = DateHelper.getDateFormat("yyyy-MM-dd")
+                    val fechaDoc = if (fechaActualizacion != null) {
+                        sdfFecha.format(fechaActualizacion.toDate())
+                    } else {
+                        ""
+                    }
+                    
+                    if (fechaDoc == fechaHoy) {
+                        // Ya están calculadas para hoy
+                        @Suppress("UNCHECKED_CAST")
+                        val tendenciasGuardadas = docTendencias.data?.filterKeys { it != "fechaActualizacion" } as? Map<String, Double>
+                        if (tendenciasGuardadas != null && tendenciasGuardadas.isNotEmpty()) {
+                            cacheTendencias = tendenciasGuardadas
+                            cacheTendenciasFecha = fechaHoy
+                            cacheTendenciasLocalId = localId
+                            Log.d("TENDENCIAS", "✅ Tendencias cargadas desde Firebase: ${tendenciasGuardadas.size} productos (actualizado hoy)")
+                            return@launch
+                        }
+                    } else {
+                        Log.d("TENDENCIAS", "⚠️ Tendencias desactualizadas (última: $fechaDoc), recalculando para hoy ($fechaHoy)...")
+                    }
+                }
+                
+                // 2. Si no existen, calcularlas
+                Log.d("TENDENCIAS", "🔄 Calculando tendencias nuevas...")
+                
+                // 2.1 Cargar promedios si no están disponibles
+                if (!promediosCargados) {
+                    Log.d("TENDENCIAS", "📊 Cargando promedios primero...")
+                    try {
+                        val registros: List<RegistroInventario>
+                        
+                        if (isPromediosCacheValid(cacheRegistrosPromediosTimestamp) && cacheRegistrosPromedios != null) {
+                            registros = cacheRegistrosPromedios!!
+                        } else {
+                            val calendar = Calendar.getInstance()
+                            calendar.add(Calendar.DAY_OF_YEAR, -60)
+                            val fechaLimite = DateHelper.getDateFormat("yyyy-MM-dd").format(calendar.time)
+                            
+                            val snapshot = firestore
+                                .collection("locales")
+                                .document(localId)
+                                .collection("registros")
+                                .whereGreaterThanOrEqualTo("fecha", fechaLimite)
+                                .get()
+                                .await()
+                            
+                            registros = snapshot.documents.mapNotNull { document ->
+                                @Suppress("DEPRECATION")
+                                document.toObject(RegistroInventario::class.java)
+                            }
+                            
+                            cacheRegistrosPromedios = registros
+                            cacheRegistrosPromediosTimestamp = System.currentTimeMillis()
+                        }
+                        
+                        if (registros.isNotEmpty()) {
+                            val promediosPorDia = calcularPromediosPorDia(registros)
+                            promediosReales = promediosPorDia
+                            promediosCargados = true
+                            Log.d("TENDENCIAS", "✅ Promedios cargados: ${promediosPorDia.keys.size} días")
+                        }
+                    } catch (e: Exception) {
+                        Log.e("TENDENCIAS", "❌ Error cargando promedios: ${e.message}")
+                    }
+                }
+                
+                if (!promediosCargados) {
+                    Log.w("TENDENCIAS", "⚠️ No se pudieron cargar promedios, cancelando cálculo de tendencias")
+                    return@launch
+                }
+                
+                // 2.2 Usar lista hardcodeada de productos (más rápido y confiable)
+                val productos = listOf(
+                    // Empanadas
+                    "JQ", "PB", "CS", "PO", "CP", "HU", "ES", "CQ", "RJ", "QC", "CB", "CH",
+                    // Pizzas
+                    "MUZZARE", "JAMON", "PEPPERO",
+                    // Pastelitos
+                    "BATATA", "MEMBRIL",
+                    // Panificadora
+                    "MEDIALUNA_MANTECA", "MEDIALUNA_GRASA", "CHIPA", "CRIOLLITO"
+                )
+                
+                Log.d("TENDENCIAS", "📦 Productos a calcular: ${productos.size}")
+                
+                val tendencias = mutableMapOf<String, Double>()
+                
+                productos.forEach { codigo ->
+                    try {
+                        Log.d("TENDENCIAS", "  🔄 Calculando $codigo...")
+                        val tendencia = calcularTendenciaProducto(codigo, localId)
+                        tendencias[codigo] = tendencia
+                        if (tendencia != 0.0) {
+                            Log.d("TENDENCIAS", "  ✅ $codigo: ${String.format("%.1f", tendencia)}%")
+                        } else {
+                            Log.d("TENDENCIAS", "  ℹ️ $codigo: 0.0% (sin tendencia)")
+                        }
+                    } catch (e: Exception) {
+                        Log.w("TENDENCIAS", "  ⚠️ Error en $codigo: ${e.message}")
+                        e.printStackTrace()
+                        tendencias[codigo] = 0.0
+                    }
+                }
+                
+                Log.d("TENDENCIAS", "📊 Resumen: ${tendencias.filter { it.value != 0.0 }.size} productos con tendencia de ${tendencias.size} totales")
+                
+                // 3. Guardar en Firebase (documento único que se sobrescribe)
+                Log.d("TENDENCIAS", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                Log.d("TENDENCIAS", "💾 GUARDANDO EN FIREBASE")
+                Log.d("TENDENCIAS", "   📍 Ruta: locales/$localId/cache_tendencias/tendencias")
+                Log.d("TENDENCIAS", "   📦 Total items: ${tendencias.size}")
+                Log.d("TENDENCIAS", "   📈 Con tendencia: ${tendencias.filter { it.value != 0.0 }.size}")
+                Log.d("TENDENCIAS", "   📊 Datos: ${tendencias.filter { it.value != 0.0 }}")
+                
+                // Crear mapa con tipos mixtos (Double para tendencias, Timestamp para fecha)
+                val timestamp = com.google.firebase.Timestamp.now()
+                val datosParaGuardar = hashMapOf<String, Any>()
+                datosParaGuardar.putAll(tendencias)  // Agregar todas las tendencias
+                datosParaGuardar["fechaActualizacion"] = timestamp  // Agregar timestamp real
+                
+                Log.d("TENDENCIAS", "   🕒 Timestamp: ${timestamp.toDate()}")
+                Log.d("TENDENCIAS", "   📝 Preparando escritura a Firebase...")
+                
+                try {
+                    Log.d("TENDENCIAS", "   ⏳ Ejecutando firestore.set()...")
+                    
+                    firestore
+                        .collection("locales")
+                        .document(localId)
+                        .collection("cache_tendencias")
+                        .document("tendencias")  // Documento único que se sobrescribe
+                        .set(datosParaGuardar)
+                        .await()
+                    
+                    Log.d("TENDENCIAS", "   ✅ Firebase.set() completado exitosamente!")
+                    Log.d("TENDENCIAS", "✅ GUARDADO EN FIREBASE EXITOSO")
+                    Log.d("TENDENCIAS", "   📅 Fecha: $fechaHoy")
+                    Log.d("TENDENCIAS", "   📦 Productos: ${tendencias.size}")
+                    Log.d("TENDENCIAS", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                } catch (e: Exception) {
+                    Log.e("TENDENCIAS", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                    Log.e("TENDENCIAS", "❌ ERROR AL GUARDAR EN FIREBASE")
+                    Log.e("TENDENCIAS", "   Mensaje: ${e.message}")
+                    Log.e("TENDENCIAS", "   Tipo: ${e.javaClass.simpleName}")
+                    Log.e("TENDENCIAS", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                    e.printStackTrace()
+                }
+                
+                // 4. Guardar en caché local
+                Log.d("TENDENCIAS", "💾 Guardando en caché local...")
+                cacheTendencias = tendencias
+                cacheTendenciasFecha = fechaHoy
+                cacheTendenciasLocalId = localId
+                Log.d("TENDENCIAS", "✅ Caché local actualizado")
+                
+                Log.d("TENDENCIAS", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                Log.d("TENDENCIAS", "🏁 PROCESO COMPLETADO")
+                Log.d("TENDENCIAS", "   📦 Total productos: ${tendencias.size}")
+                Log.d("TENDENCIAS", "   📈 Con tendencia: ${tendencias.filter { it.value != 0.0 }.size}")
+                Log.d("TENDENCIAS", "   📅 Fecha: $fechaHoy")
+                Log.d("TENDENCIAS", "   🏪 Local: $localId")
+                Log.d("TENDENCIAS", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                
+            } catch (e: Exception) {
+                Log.e("TENDENCIAS", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                Log.e("TENDENCIAS", "❌ ERROR GENERAL EN calcularYGuardarTendencias()")
+                Log.e("TENDENCIAS", "   Mensaje: ${e.message}")
+                Log.e("TENDENCIAS", "   Tipo: ${e.javaClass.simpleName}")
+                Log.e("TENDENCIAS", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                e.printStackTrace()
+            }
+        }
+        
+        Log.d("TENDENCIAS", "🔚 calcularYGuardarTendencias() finalizó el lanzamiento de coroutine")
+    }
+    
+    /**
+     * Calcula la tendencia de un producto específico
+     */
+    private suspend fun calcularTendenciaProducto(codigo: String, localId: String): Double {
+        return withContext(Dispatchers.IO) {
+            try {
+                // Verificar que los promedios estén cargados
+                if (!promediosCargados || promediosReales.isEmpty()) {
+                    Log.w("TENDENCIAS", "  ⚠️ $codigo: Promedios no disponibles")
+                    return@withContext 0.0
+                }
+                
+                val firestore = FirebaseRegionManager.getFirestore()
+                val fechaHoy = DateHelper.getFechaActual()
+                val calendar = DateHelper.getCalendar()
+                val fechas = mutableListOf<String>()
+                
+                for (i in 1..7) {
+                    calendar.time = DateHelper.getDateFormat("yyyy-MM-dd").parse(fechaHoy) ?: java.util.Date()
+                    calendar.add(Calendar.DAY_OF_YEAR, -i)
+                    fechas.add(DateHelper.getDateFormat("yyyy-MM-dd").format(calendar.time))
+                }
+                
+                val diferencias = mutableListOf<Double>()
+                
+                var diasConDatos = 0
+                fechas.forEach { fecha ->
+                    try {
+                        val cal = DateHelper.getCalendar()
+                        cal.time = DateHelper.getDateFormat("yyyy-MM-dd").parse(fecha) ?: return@forEach
+                        val diaSemana = cal.get(Calendar.DAY_OF_WEEK)
+                        
+                        // Obtener promedio histórico (buscar por código o nombre completo)
+                        val nombreDia = obtenerNombreDia(diaSemana)
+                        val promediosDelDia = promediosReales[nombreDia] ?: emptyMap()
+                        
+                        // Buscar por código o por nombre que contenga el código
+                        val promedioHistorico = promediosDelDia[codigo] 
+                            ?: promediosDelDia.entries.find { it.key.startsWith("$codigo ") || it.key.startsWith("$codigo -") }?.value 
+                            ?: 0.0
+                        
+                        if (promedioHistorico <= 0) {
+                            return@forEach
+                        }
+                        
+                        // Calcular venta real
+                        val fechaAnterior = obtenerFechaAnterior(fecha)
+                        
+                        val stockAnterior = firestore.collection("locales").document(localId)
+                            .collection("registros").document("${fechaAnterior}_Stock_Final")
+                            .get().await()
+                            .toObject(RegistroInventario::class.java)
+                            ?.productos?.find { it.nombre.startsWith("$codigo ") || it.nombre.startsWith("$codigo -") }
+                            ?.cantidad ?: 0
+                        
+                        val ingreso = firestore.collection("locales").document(localId)
+                            .collection("registros").document("${fecha}_Ingreso_de_Mercadería")
+                            .get().await()
+                            .toObject(RegistroInventario::class.java)
+                            ?.productos?.find { it.nombre.startsWith("$codigo ") || it.nombre.startsWith("$codigo -") }
+                            ?.cantidad ?: 0
+                        
+                        val stockFinal = firestore.collection("locales").document(localId)
+                            .collection("registros").document("${fecha}_Stock_Final")
+                            .get().await()
+                            .toObject(RegistroInventario::class.java)
+                            ?.productos?.find { it.nombre.startsWith("$codigo ") || it.nombre.startsWith("$codigo -") }
+                            ?.cantidad ?: 0
+                        
+                        val ventaReal = stockAnterior + ingreso - stockFinal
+                        if (ventaReal <= 0) return@forEach
+                        
+                        val diferenciaPorcentual = ((ventaReal - promedioHistorico) / promedioHistorico) * 100
+                        diferencias.add(diferenciaPorcentual)
+                        diasConDatos++
+                        
+                    } catch (e: Exception) {
+                        // Silenciar errores individuales
+                    }
+                }
+                
+                Log.d("TENDENCIAS", "    📊 $codigo: $diasConDatos días con datos de ${fechas.size}")
+                
+                if (diferencias.isEmpty()) return@withContext 0.0
+                
+                val tendenciaPromedio = diferencias.average()
+                if (kotlin.math.abs(tendenciaPromedio) < 5.0) return@withContext 0.0
+                
+                tendenciaPromedio
+                
+            } catch (e: Exception) {
+                0.0
+            }
+        }
+    }
+    
+    private fun obtenerNombreDia(diaSemana: Int): String {
+        return when (diaSemana) {
+            Calendar.SUNDAY -> "DOMINGO"
+            Calendar.MONDAY -> "LUNES"
+            Calendar.TUESDAY -> "MARTES"
+            Calendar.WEDNESDAY -> "MIERCOLES"
+            Calendar.THURSDAY -> "JUEVES"
+            Calendar.FRIDAY -> "VIERNES"
+            Calendar.SATURDAY -> "SABADO"
+            else -> ""
+        }
+    }
+    
     private fun cargarPromediosReales() {
         if (usuarioActual == null) return
         
@@ -1171,21 +1618,52 @@ class MainActivity : AppCompatActivity() {
             try {
                 Log.d("MainActivity", "🔄 Cargando promedios reales para local: ${usuarioActual!!.localId}")
                 
-                repository.getAllRegistros().collect { registros ->
-                    if (isFinishing || isDestroyed) return@collect
+                // ✅ OPTIMIZACIÓN: Usar cache para reducir lecturas de Firebase
+                val registros: List<RegistroInventario>
+                
+                if (isPromediosCacheValid(cacheRegistrosPromediosTimestamp) && cacheRegistrosPromedios != null) {
+                    Log.d("MainActivity", "📊 Promedios - Usando cache (ahorra lecturas de Firebase)")
+                    registros = cacheRegistrosPromedios!!
+                } else {
+                    Log.d("MainActivity", "📊 Promedios - Cache expirado, consultando Firebase...")
+                    val localId = usuarioActual!!.localId
+                    val firestore = FirebaseRegionManager.getFirestore()
                     
-                    if (registros.isNotEmpty()) {
-                        val promediosPorDia = calcularPromediosPorDia(registros)
-                        promediosReales = promediosPorDia
-                        promediosCargados = true
-                        Log.d("MainActivity", "✅ Promedios reales cargados: ${promediosPorDia.keys}")
-                    } else {
-                        Log.w("MainActivity", "⚠️ No hay registros para calcular promedios")
+                    // ✅ OPTIMIZACIÓN: Limitar a últimos 60 días (suficiente para promedios)
+                    val calendar = Calendar.getInstance()
+                    calendar.add(Calendar.DAY_OF_YEAR, -60)
+                    val fechaLimite = DateHelper.getDateFormat("yyyy-MM-dd").format(calendar.time)
+                    
+                    val snapshot = firestore
+                        .collection("locales")
+                        .document(localId)
+                        .collection("registros")
+                        .whereGreaterThanOrEqualTo("fecha", fechaLimite)
+                        .get()
+                        .await()
+                    
+                    registros = snapshot.documents.mapNotNull { document ->
+                        @Suppress("DEPRECATION")
+                        document.toObject(RegistroInventario::class.java)
                     }
                     
-                    // NO actualizar botones aquí - se hará después de verificarAlertasLocal()
-                    // Esto evita verificaciones duplicadas y asegura que se ejecute después de la sincronización
+                    // Guardar en cache
+                    cacheRegistrosPromedios = registros
+                    cacheRegistrosPromediosTimestamp = System.currentTimeMillis()
+                    Log.d("MainActivity", "📊 Cache de promedios actualizado con ${registros.size} registros (últimos 60 días)")
                 }
+                
+                if (registros.isNotEmpty()) {
+                    val promediosPorDia = calcularPromediosPorDia(registros)
+                    promediosReales = promediosPorDia
+                    promediosCargados = true
+                    Log.d("MainActivity", "✅ Promedios reales cargados: ${promediosPorDia.keys}")
+                } else {
+                    Log.w("MainActivity", "⚠️ No hay registros para calcular promedios")
+                }
+                
+                // NO actualizar botones aquí - se hará después de verificarAlertasLocal()
+                // Esto evita verificaciones duplicadas y asegura que se ejecute después de la sincronización
             } catch (e: Exception) {
                 Log.e("MainActivity", "❌ Error cargando promedios reales: ${e.message}")
             }
@@ -1826,10 +2304,21 @@ class MainActivity : AppCompatActivity() {
      * y actualiza el botón de Vencimientos en consecuencia
      */
     private fun verificarVencimientosCoinciden() {
+        // Evitar verificaciones simultáneas
+        if (verificacionVencimientosEnProgreso) {
+            Log.d("MainActivity", "⏭️ Verificación de vencimientos ya en progreso, omitiendo...")
+            return
+        }
+        
+        verificacionVencimientosEnProgreso = true
+        
         lifecycleScope.launch {
             try {
                 val localId = obtenerLocalId()
-                if (localId.isEmpty()) return@launch
+                if (localId.isEmpty()) {
+                    verificacionVencimientosEnProgreso = false
+                    return@launch
+                }
                 
                 // Obtener stock actual (usando la misma lógica que VencimientosActivity)
                 val stockActual = calcularStockActualParaVencimientos(localId)
@@ -1996,6 +2485,8 @@ class MainActivity : AppCompatActivity() {
                 
             } catch (e: Exception) {
                 Log.e("MainActivity", "Error verificando vencimientos: ${e.message}", e)
+            } finally {
+                verificacionVencimientosEnProgreso = false
             }
         }
     }
@@ -2011,15 +2502,22 @@ class MainActivity : AppCompatActivity() {
     }
     
     /**
-     * Calcula el stock actual desde Firebase directamente (siempre consulta Firebase)
+     * Calcula el stock actual desde Firebase directamente (usa cache para evitar consultas duplicadas)
      */
     private suspend fun calcularStockActualDesdeFirebase(localId: String): Map<String, Int> {
+        // Verificar cache primero
+        if (cacheStockCalculado != null && 
+            isStockCacheValid(cacheStockCalculadoTimestamp, localId)) {
+            Log.d("MainActivity", "📦 Usando cache de stock calculado (ahorra lecturas Firebase)")
+            return cacheStockCalculado!!
+        }
+        
         return try {
             val firebaseRepo = FirebaseInventarioRepository(localId)
             val fechaHoy = DateHelper.getFechaActual()
             val fechaAyer = obtenerFechaAnterior(fechaHoy)
             
-            Log.d("MainActivity", "🔍 Obteniendo stock desde Firebase (como la web):")
+            Log.d("MainActivity", "🔍 Obteniendo stock desde Firebase (cache expirado o no existe):")
             Log.d("MainActivity", "   Fecha hoy: $fechaHoy")
             Log.d("MainActivity", "   Fecha ayer: $fechaAyer")
             Log.d("MainActivity", "   LocalId: $localId")
@@ -2071,6 +2569,12 @@ class MainActivity : AppCompatActivity() {
                     stockMap[codigo] = producto.cantidad
                 }
                 Log.d("MainActivity", "   ✅ Usando Stock Final de HOY desde Firebase: ${stockMap.size} productos")
+                
+                // Guardar en cache
+                cacheStockCalculado = stockMap
+                cacheStockCalculadoTimestamp = System.currentTimeMillis()
+                cacheStockCalculadoLocalId = localId
+                
                 return stockMap
             }
             
@@ -2096,6 +2600,12 @@ class MainActivity : AppCompatActivity() {
             }
             
             Log.d("MainActivity", "   ✅ Stock calculado desde Firebase (Ayer + Ingreso Hoy): ${stockMap.size} productos")
+            
+            // Guardar en cache
+            cacheStockCalculado = stockMap
+            cacheStockCalculadoTimestamp = System.currentTimeMillis()
+            cacheStockCalculadoLocalId = localId
+            
             stockMap
         } catch (e: Exception) {
             Log.e("MainActivity", "❌ Error obteniendo stock de Firebase: ${e.message}", e)
@@ -2241,50 +2751,71 @@ class MainActivity : AppCompatActivity() {
      * Usa la misma lógica que GestionLocalesActivity
      */
     private suspend fun verificarDatosEnCeroHoy(localId: String, fechaHoy: String, problemas: MutableList<String>) {
-        Log.d("MainActivity", "🔍 Verificando datos en 0 en TODOS los registros históricos para local: $localId")
+        Log.d("MainActivity", "🔍 Verificando datos en 0 en registros históricos para local: $localId")
         
         try {
-            // Usar la instancia correcta de Firestore según la región configurada
-            val firestore = FirebaseRegionManager.getFirestore()
+            // ✅ OPTIMIZACIÓN: Usar cache para reducir lecturas de Firebase
+            val registros: List<RegistroInventario>
             
-            // Obtener TODOS los registros históricos del local (como GestionLocalesActivity)
-            val snapshot = firestore
-                .collection("locales")
-                .document(localId)
-                .collection("registros")
-                .get()
-                .await()
+            if (isAlertasCacheValid(cacheRegistrosAlertasTimestamp, localId) && cacheRegistrosAlertas != null) {
+                Log.d("MainActivity", "🔍 Alertas - Usando cache (ahorra lecturas de Firebase) para local: $localId")
+                registros = cacheRegistrosAlertas!!
+            } else {
+                Log.d("MainActivity", "🔍 Alertas - Cache expirado, consultando Firebase...")
+                val firestore = FirebaseRegionManager.getFirestore()
+                
+                // ✅ OPTIMIZACIÓN: Limitar a últimos 30 días en lugar de todos los registros
+                val calendar = Calendar.getInstance()
+                calendar.add(Calendar.DAY_OF_YEAR, -30)
+                val fechaLimite = DateHelper.getDateFormat("yyyy-MM-dd").format(calendar.time)
+                
+                // Obtener registros de los últimos 30 días (reduce significativamente las lecturas)
+                val snapshot = firestore
+                    .collection("locales")
+                    .document(localId)
+                    .collection("registros")
+                    .whereGreaterThanOrEqualTo("fecha", fechaLimite)
+                    .get()
+                    .await()
+                
+                Log.d("MainActivity", "📊 Registros obtenidos (últimos 30 días): ${snapshot.documents.size}")
+                
+                registros = snapshot.documents.mapNotNull { document ->
+                    @Suppress("DEPRECATION")
+                    document.toObject(RegistroInventario::class.java)
+                }
+                
+                // Guardar en cache con el localId
+                cacheRegistrosAlertas = registros
+                cacheRegistrosAlertasTimestamp = System.currentTimeMillis()
+                cacheRegistrosAlertasLocalId = localId
+                Log.d("MainActivity", "🔍 Cache de alertas actualizado con ${registros.size} registros para local: $localId")
+            }
             
-            Log.d("MainActivity", "📊 Total de registros para verificar datos en 0: ${snapshot.documents.size}")
-            
-            snapshot.documents.forEach { document ->
-                @Suppress("DEPRECATION")
-                val registro = document.toObject(RegistroInventario::class.java)
-                if (registro != null) {
-                    // Verificar si todos los productos están en 0 (igual que GestionLocalesActivity)
-                    // Verificar que haya productos antes de verificar si están en 0
-                    val todosEnCero = registro.productos.isNotEmpty() && registro.productos.all { it.cantidad == 0 }
-                    
-                    Log.d("MainActivity", "📅 Verificando ${registro.tipo} - ${registro.fecha}: todosEnCero=$todosEnCero, productos.size=${registro.productos.size}, noRecibioMercaderia=${registro.noRecibioMercaderia}")
-                    
-                    when (registro.tipo) {
-                        "Ingreso de Mercadería" -> {
-                            // Si todos están en 0 y NO tiene el flag noRecibioMercaderia, mostrar alerta
-                            if (todosEnCero && !registro.noRecibioMercaderia) {
-                                val fechaFormateada = formatearFecha(registro.fecha)
-                                val problema = "📦 $fechaFormateada:\n Ingreso de Mercadería\n   ⚠️ Todos los productos en 0"
-                                problemas.add(problema)
-                                Log.d("MainActivity", "⚠️ Problema encontrado: ${registro.tipo} - ${registro.fecha}")
-                            }
+            registros.forEach { registro ->
+                // Verificar si todos los productos están en 0 (igual que GestionLocalesActivity)
+                // Verificar que haya productos antes de verificar si están en 0
+                val todosEnCero = registro.productos.isNotEmpty() && registro.productos.all { it.cantidad == 0 }
+                
+                Log.d("MainActivity", "📅 Verificando ${registro.tipo} - ${registro.fecha}: todosEnCero=$todosEnCero, productos.size=${registro.productos.size}, noRecibioMercaderia=${registro.noRecibioMercaderia}")
+                
+                when (registro.tipo) {
+                    "Ingreso de Mercadería" -> {
+                        // Si todos están en 0 y NO tiene el flag noRecibioMercaderia, mostrar alerta
+                        if (todosEnCero && !registro.noRecibioMercaderia) {
+                            val fechaFormateada = formatearFecha(registro.fecha)
+                            val problema = "📦 $fechaFormateada:\n Ingreso de Mercadería\n   ⚠️ Todos los productos en 0"
+                            problemas.add(problema)
+                            Log.d("MainActivity", "⚠️ Problema encontrado: ${registro.tipo} - ${registro.fecha}")
                         }
-                        "Stock Final" -> {
-                            // Para Stock Final solo alertar si todos están en 0 (no hay flag aquí)
-                            if (todosEnCero) {
-                                val fechaFormateada = formatearFecha(registro.fecha)
-                                val problema = "📊 $fechaFormateada - Stock Final\n   ⚠️ Todos los productos en 0"
-                                problemas.add(problema)
-                                Log.d("MainActivity", "⚠️ Problema encontrado: ${registro.tipo} - ${registro.fecha}")
-                            }
+                    }
+                    "Stock Final" -> {
+                        // Para Stock Final solo alertar si todos están en 0 (no hay flag aquí)
+                        if (todosEnCero) {
+                            val fechaFormateada = formatearFecha(registro.fecha)
+                            val problema = "📊 $fechaFormateada - Stock Final\n   ⚠️ Todos los productos en 0"
+                            problemas.add(problema)
+                            Log.d("MainActivity", "⚠️ Problema encontrado: ${registro.tipo} - ${registro.fecha}")
                         }
                     }
                 }
@@ -2303,28 +2834,54 @@ class MainActivity : AppCompatActivity() {
         Log.d("MainActivity", "🔍 Verificando días faltantes en los últimos 7 días para local: $localId")
         
         try {
-            // Usar la instancia correcta de Firestore según la región configurada
-            val firestore = FirebaseRegionManager.getFirestore()
+            // ✅ OPTIMIZACIÓN: Usar cache para evitar consultas costosas
+            val registros: List<RegistroInventario>
             
-            // Primero verificar si el local tiene algún registro histórico
-            val snapshotTotal = firestore
-                .collection("locales")
-                .document(localId)
-                .collection("registros")
-                .get()
-                .await()
+            if (isAlertasCacheValid(cacheRegistrosAlertasTimestamp, localId) && cacheRegistrosAlertas != null) {
+                Log.d("MainActivity", "🔍 Días faltantes - Usando cache (ahorra lecturas de Firebase) para local: $localId")
+                registros = cacheRegistrosAlertas!!
+            } else {
+                Log.d("MainActivity", "🔍 Días faltantes - Cache expirado, consultando Firebase...")
+                val firestore = FirebaseRegionManager.getFirestore()
+                
+                // ✅ OPTIMIZACIÓN: Limitar a últimos 7 días en lugar de todos los registros
+                val calendar = Calendar.getInstance()
+                calendar.add(Calendar.DAY_OF_YEAR, -7)
+                val fechaLimite = DateHelper.getDateFormat("yyyy-MM-dd").format(calendar.time)
+                
+                val snapshot = firestore
+                    .collection("locales")
+                    .document(localId)
+                    .collection("registros")
+                    .whereGreaterThanOrEqualTo("fecha", fechaLimite)
+                    .get()
+                    .await()
+                
+                registros = snapshot.documents.mapNotNull { document ->
+                    @Suppress("DEPRECATION")
+                    document.toObject(RegistroInventario::class.java)
+                }
+                
+                // Guardar en cache si no estaba guardado o si es de otro local
+                if (cacheRegistrosAlertas == null || cacheRegistrosAlertasLocalId != localId) {
+                    cacheRegistrosAlertas = registros
+                    cacheRegistrosAlertasTimestamp = System.currentTimeMillis()
+                    cacheRegistrosAlertasLocalId = localId
+                    Log.d("MainActivity", "🔍 Cache de días faltantes actualizado para local: $localId")
+                }
+            }
             
             // Si el local no tiene registros históricos (local nuevo), no generar alertas
-            if (snapshotTotal.isEmpty) {
+            if (registros.isEmpty()) {
                 Log.d("MainActivity", "🏪 Local nuevo sin registros históricos, no generando alertas de días faltantes")
                 return
             }
             
-            Log.d("MainActivity", "📊 Total de registros históricos encontrados: ${snapshotTotal.size()}")
-            Log.d("MainActivity", "📋 IDs de documentos encontrados:")
-            snapshotTotal.documents.take(10).forEach { doc ->
-                Log.d("MainActivity", "  - ${doc.id}")
-            }
+            Log.d("MainActivity", "📊 Total de registros para verificar días faltantes: ${registros.size}")
+            
+            // Crear un mapa de fecha -> tipos para búsqueda rápida
+            val registrosPorFecha = registros.groupBy { it.fecha }
+                .mapValues { (_, registrosFecha) -> registrosFecha.map { it.tipo }.toSet() }
             
             val formatoFecha = DateHelper.getDateFormat("yyyy-MM-dd")
             val fechaHoyDate = formatoFecha.parse(fechaHoy) ?: Date()
@@ -2338,30 +2895,15 @@ class MainActivity : AppCompatActivity() {
                 
                 Log.d("MainActivity", "🔍 Verificando fecha: $fechaVerificar")
                 
-                // Verificar si existe registro de "Ingreso de Mercadería" para esta fecha
-                val snapshotIngreso = firestore
-                    .collection("locales")
-                    .document(localId)
-                    .collection("registros")
-                    .document("${fechaVerificar}_Ingreso_de_Mercadería")
-                    .get()
-                    .await()
-                
-                // Verificar si existe registro de "Stock Final" para esta fecha
-                val snapshotStock = firestore
-                    .collection("locales")
-                    .document(localId)
-                    .collection("registros")
-                    .document("${fechaVerificar}_Stock_Final")
-                    .get()
-                    .await()
+                // ✅ OPTIMIZACIÓN: Usar el mapa en memoria en lugar de consultas individuales
+                val tiposExistentes = registrosPorFecha[fechaVerificar] ?: emptySet()
                 
                 val faltantes = mutableListOf<String>()
-                if (!snapshotIngreso.exists()) {
+                if (!tiposExistentes.contains("Ingreso de Mercadería")) {
                     faltantes.add("Ingreso de Mercadería")
                     Log.d("MainActivity", "⚠️ Falta Ingreso de Mercadería para $fechaVerificar")
                 }
-                if (!snapshotStock.exists()) {
+                if (!tiposExistentes.contains("Stock Final")) {
                     faltantes.add("Stock Final")
                     Log.d("MainActivity", "⚠️ Falta Stock Final para $fechaVerificar")
                 }
@@ -2689,7 +3231,7 @@ class MainActivity : AppCompatActivity() {
             
             Para comenzar a usar el Product Mix V2, necesitas cargar los datos iniciales:
             
-            📦 PASO 1: STOCK INICIAL + INGRESO DE HOY
+            📦 PASO 1: STOCK INICIAL + INGRESO DE HOY(si ya ingreso)
             • Ve a "Ingreso de Mercadería" 
             • Carga las cantidades actuales de todos los productos
             • Mercaderia Inicial + Ingreso de Fabrica <-- Solo por esta vez
