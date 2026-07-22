@@ -1,8 +1,8 @@
 {
-  "versionCode": 115,
-  "versionName": "2.1.89",
-  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.89.apk",
-  "fileName": "inventario_app_v2.1.89.apk",
-  "description": "v2.1.89 - Fix: Corrección de fórmula Stock Actual (Stock Final Ayer + Ingreso Hoy / Pedido Ayer). Optimización de precálculo en lote y corrección de zona horaria para modo edición.",
+  "versionCode": 116,
+  "versionName": "2.1.90",
+  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.90.apk",
+  "fileName": "inventario_app_v2.1.90.apk",
+  "description": "v2.1.90 - Mejoras: Integración de ilustraciones SVG vectoriales animadas en la tarjeta de clima (estilo IconScout/Lottie), 100% idénticas a la versión Web.",
   "forceUpdate": false
 }

@@ -13,8 +13,8 @@ android {
         applicationId "com.tuapp.inventario"
         minSdk 24
         targetSdk 34
-        versionCode 91
-        versionName "2.1.65"
+        versionCode 116
+        versionName "2.1.90"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -63,6 +63,7 @@ android {
     }
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
     
     packagingOptions {
@@ -95,6 +96,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-storage-ktx'
+    implementation 'com.google.firebase:firebase-functions-ktx'
     
     // Para descarga de archivos
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'

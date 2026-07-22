@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<LinearLayout
+    android:id="@+id/rootLinearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="6dp"
+    android:background="?android:attr/colorBackground">
+
+    <!-- Header con botón volver y título -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="4dp">
+
+        <!-- Botón volver -->
+        <Button
+            android:id="@+id/btnVolver"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:text="←"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:background="@drawable/button_primary_background"
+            android:textColor="?android:attr/textColorPrimary"
+            android:layout_marginEnd="16dp"
+            android:gravity="center"
+            android:padding="0dp"/>
+
+        <!-- Título -->
+        <TextView
+            android:id="@+id/txtTitulo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="🏭 Pedido Fábrica"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="?android:attr/textColorPrimary"
+            android:gravity="center"/>
+
+        <!-- Botón configuración -->
+        <Button
+            android:id="@+id/btnConfiguracion"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:text="⚙️"
+            android:textSize="16sp"
+            android:background="@drawable/button_primary_background"
+            android:textColor="?android:attr/textColorPrimary"
+            android:gravity="center"
+            android:padding="0dp"/>
+
+    </LinearLayout>
+
+    <!-- Contenido principal -->
+    <ScrollView
+        android:id="@+id/scrollViewContenido"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Navegación de fechas compacta -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="0dp"
+                android:background="@drawable/date_selector_background"
+                android:visibility="gone"
+                android:padding="0dp">
+
+                <!-- Botón fecha anterior -->
+                <Button
+                    android:id="@+id/btnAnterior"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:text="←"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_primary_background"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:layout_marginEnd="8dp"
+                    android:gravity="center"
+                    android:padding="0dp"/>
+
+                <!-- Fecha actual -->
+                <TextView
+                    android:id="@+id/txtFechaActual"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="2025-10-07"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:gravity="center"/>
+
+                <!-- Botón fecha siguiente -->
+                <Button
+                    android:id="@+id/btnSiguiente"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:text="→"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_primary_background"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:layout_marginStart="8dp"
+                    android:gravity="center"
+                    android:padding="0dp"/>
+
+            </LinearLayout>
+
+            <!-- Información del día y configuración compacta -->
+            <LinearLayout
+                android:id="@+id/layoutInfoDia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="0dp"
+                android:layout_marginTop="0dp"
+                android:background="@drawable/date_selector_background"
+                android:paddingStart="2dp"
+                android:paddingEnd="2dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp">
+
+                <!-- Primera fila: Día y % Extra -->
+                <LinearLayout
+                    android:id="@+id/layoutDiaPorcentaje"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/txtDiaActual"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="TEST"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="?android:attr/textColorPrimary"/>
+
+                    <TextView
+                        android:id="@+id/txtPorcentajeExtra"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="% Extra: 30%"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:gravity="end"/>
+
+                </LinearLayout>
+
+                <!-- Indicador de tendencia de ventas -->
+                <TextView
+                    android:id="@+id/txtTendenciaVentas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:padding="10dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="2dp"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:background="#F0F0F0"/>
+
+                <!-- Segunda fila: Información de días extra -->
+                <TextView
+                    android:id="@+id/txtDiasExtra"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="📅 Pedido para: Sábado + Domingo"
+                    android:textSize="10sp"
+                    android:textStyle="italic"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:gravity="center"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="0dp"
+                    android:visibility="gone"/>
+
+                <!-- Tercera fila: Hora de alerta configurada -->
+                <TextView
+                    android:id="@+id/txtHoraAlerta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="🔔 Alerta: 15:30"
+                    android:textSize="10sp"
+                    android:textStyle="italic"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:gravity="center"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginBottom="0dp"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
+
+            <!-- Clima y eventos para el día del pedido (mañana) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardDemandaManiana"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="4dp"
+                android:visibility="gone"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#FF9800">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="8dp"
+                        android:paddingEnd="64dp">
+
+                        <TextView
+                            android:id="@+id/txtDemandaManianaTitulo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="📣 Mañana y demanda"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:textColor="?android:attr/textColorPrimary" />
+
+                        <TextView
+                            android:id="@+id/txtDemandaManianaCuerpo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:textSize="13sp"
+                            android:lineSpacingExtra="3dp"
+                            android:textColor="?android:attr/textColorPrimary" />
+                    </LinearLayout>
+
+                    <!-- Weather Icon/Animation Container -->
+                    <FrameLayout
+                        android:layout_width="54dp"
+                        android:layout_height="54dp"
+                        android:layout_gravity="top|end"
+                        android:layout_margin="8dp">
+
+                        <TextView
+                            android:id="@+id/txtClimaIcono"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:textSize="32sp"
+                            android:visibility="gone" />
+
+                        <WebView
+                            android:id="@+id/webClimaIcono"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@android:color/transparent"
+                            android:visibility="gone" />
+                    </FrameLayout>
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Contenido principal -->
+            <LinearLayout
+                android:id="@+id/layoutContenido"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
+
+<!-- Skeleton Loading Overlay -->
+<LinearLayout
+    android:id="@+id/offlineOverlay"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="#80000000"
+    android:visibility="gone"
+    android:elevation="10dp">
+
+    <LinearLayout
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="24dp"
+        android:background="@drawable/rounded_card"
+        android:elevation="8dp">
+
+        <ProgressBar
+            android:id="@+id/progressSkeleton"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/brand_gold" />
+
+        <TextView
+            android:id="@+id/txtOfflineMsg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cargando datos..."
+            android:textSize="16sp"
+            android:textColor="?android:attr/textColorPrimary"
+            android:layout_marginTop="16dp"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+</LinearLayout>
+
+</FrameLayout>
+
