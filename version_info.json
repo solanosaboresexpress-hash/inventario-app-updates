@@ -1,8 +1,8 @@
 {
-  "versionCode": 114,
-  "versionName": "2.1.88",
-  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.88.apk",
-  "fileName": "inventario_app_v2.1.88.apk",
-  "description": "v2.1.88 - Mejoras: Banners de clima, tendencia y partidos ahora se desplazan junto al scroll. Colores y animaciones dinámicas en la tarjeta de clima según el estado del tiempo. Ajuste de tendencia opcional con explicación en Pedido Panificadora. Fix crash al cargar Pedido a Fábrica (rootLayout ClassCastException).",
+  "versionCode": 115,
+  "versionName": "2.1.89",
+  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.89.apk",
+  "fileName": "inventario_app_v2.1.89.apk",
+  "description": "v2.1.89 - Fix: Corrección de fórmula Stock Actual (Stock Final Ayer + Ingreso Hoy / Pedido Ayer). Optimización de precálculo en lote y corrección de zona horaria para modo edición.",
   "forceUpdate": false
 }
