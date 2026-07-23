@@ -3394,7 +3394,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
                     val todoVence = vencInfo.todoVenceHoy
                     
                     if (todoVence) {
-                        badgeVencimiento.text = "⏰ Merma Total ($cant u)"
+                        badgeVencimiento.text = "⏰ ${cant}u"
                         val bgDrawable = android.graphics.drawable.GradientDrawable().apply {
                             setColor(if (isDarkTheme) android.graphics.Color.parseColor("#4A1212") else android.graphics.Color.parseColor("#F8D7DA"))
                             cornerRadius = 4f * resources.displayMetrics.density
@@ -3403,7 +3403,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
                         badgeVencimiento.background = bgDrawable
                         badgeVencimiento.setTextColor(if (isDarkTheme) android.graphics.Color.parseColor("#FF6B6B") else android.graphics.Color.parseColor("#842029"))
                     } else {
-                        badgeVencimiento.text = "⏰ Vence ($cant u)"
+                        badgeVencimiento.text = "⏰ ${cant}u"
                         val bgDrawable = android.graphics.drawable.GradientDrawable().apply {
                             setColor(if (isDarkTheme) android.graphics.Color.parseColor("#3E2E1A") else android.graphics.Color.parseColor("#FFF3CD"))
                             cornerRadius = 4f * resources.displayMetrics.density

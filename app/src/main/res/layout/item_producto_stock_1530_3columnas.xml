@@ -64,7 +64,7 @@
                 android:id="@+id/badgeVencimiento"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="⏰ Merma"
+                android:text="⏰ 0u"
                 android:textSize="10sp"
                 android:textStyle="bold"
                 android:paddingHorizontal="4dp"
