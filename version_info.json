@@ -1,8 +1,8 @@
 {
-  "versionCode": 116,
-  "versionName": "2.1.90",
-  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.90.apk",
-  "fileName": "inventario_app_v2.1.90.apk",
-  "description": "v2.1.90 - Mejoras: Integración de ilustraciones SVG vectoriales animadas en la tarjeta de clima (estilo IconScout/Lottie), 100% idénticas a la versión Web.",
+  "versionCode": 117,
+  "versionName": "2.1.91",
+  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.91.apk",
+  "fileName": "inventario_app_v2.1.91.apk",
+  "description": "v2.1.91 - Mejoras: Diseño de badges independientes para Stock Bajo, Tendencia y Merma por Vencimiento en Pedido a Fábrica. Detección inteligente de mermas por vencimiento total/parcial con ajuste a 0 en el cálculo de sugerencia.",
   "forceUpdate": false
 }
