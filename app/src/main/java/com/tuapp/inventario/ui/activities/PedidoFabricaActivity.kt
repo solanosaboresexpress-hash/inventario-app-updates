@@ -2076,41 +2076,8 @@ class PedidoFabricaActivity : AppCompatActivity() {
     }
 
     private fun mostrarResumenProductos() {
-        // 🔧 ORDENAR productos por categorías usando el orden específico
-        val ordenProductos = listOf(
-            "JQ", "PB", "CS", "PO", "CP", "HU", "ES", "CQ", "RJ", "QC", "CB", "CH",  // EMPANADAS
-            "MUZZARE", "JAMON", "PEPPERO",  // PIZZAS
-            "BATATA", "MEMBRIL"  // PASTELITOS
-            // DULCES, CHIPA, CRIOLLITO movidos a PedidoPanificadoraActivity
-        )
-        
-        val productosOrdenados = ordenProductos.mapNotNull { codigoOrden ->
-            productos.find { it.codigo == codigoOrden }
-        }.plus(
-            productos.filter { !ordenProductos.contains(it.codigo) }
-        )
-        
-        // 🔧 AGRUPAR productos por categorías correctamente
-        Log.d("ADMIN_FLOW", "🔍 Productos disponibles para categorizar: ${productosOrdenados.map { "${it.codigo}-${it.nombre}" }}")
-        
-        val empanadas = productosOrdenados.filter { it.codigo in listOf("JQ", "PB", "CS", "PO", "CP", "HU", "ES", "CQ", "RJ", "QC", "CB", "CH") }
-        val pizzas = productosOrdenados.filter { it.codigo in listOf("MUZZARE", "JAMON", "PEPPERO") }
-        val pastelitos = productosOrdenados.filter { it.codigo in listOf("BATATA", "MEMBRIL") }
-        // DULCES, CHIPA, CRIOLLITO movidos a PedidoPanificadoraActivity - ya no se muestran aquí
-        val otros = productosOrdenados.filter { false } // Vacío - productos de panificadora movidos
-        
-        Log.d("ADMIN_FLOW", "🔍 EMPANADAS encontradas: ${empanadas.size} - ${empanadas.map { it.codigo }}")
-        Log.d("ADMIN_FLOW", "🔍 PIZZAS encontradas: ${pizzas.size} - ${pizzas.map { it.codigo }}")
-        Log.d("ADMIN_FLOW", "🔍 PASTELITOS encontrados: ${pastelitos.size} - ${pastelitos.map { it.codigo }}")
-        Log.d("ADMIN_FLOW", "🔍 OTROS encontrados: ${otros.size} - ${otros.map { it.codigo }} (movidos a Panificadora)")
-        
-        // 🔧 MOSTRAR por categorías en el orden correcto
-        if (empanadas.isNotEmpty()) mostrarCategoria("EMPANADAS", empanadas)
-        if (pizzas.isNotEmpty()) mostrarCategoria("PIZZAS", pizzas)
-        if (pastelitos.isNotEmpty()) mostrarCategoria("PASTELITOS", pastelitos)
-        // OTROS ya no se muestran - productos de panificadora movidos
-        
-        Log.d("ADMIN_FLOW", "🔧 Productos mostrados por categorías en orden correcto")
+        Log.d("ADMIN_FLOW", "🔧 Mostrando sección integrada de productos con badges (Photo 1)")
+        mostrarSeccionCargarStockIntegrada()
     }
 
     private fun mostrarCategoria(categoria: String, productos: List<ProductoFabrica>) {
@@ -2593,14 +2560,15 @@ class PedidoFabricaActivity : AppCompatActivity() {
                 alarmScheduler.scheduleStockReminder(nuevaConfig.horaAlerta)
                 Log.d("PedidoFabricaActivity", "🔔 Alarma reprogramada para las ${nuevaConfig.horaAlerta}")
                 
-                txtPorcentajeExtra.text = "% Extra: ${configuracion.porcentajeExtra}%"
+                val statusTendenciaStr = if (configuracion.usarAjusteTendencia) "📈 Tendencia ON" else "🚫 Tendencia OFF"
+                txtPorcentajeExtra.text = "% Extra: ${configuracion.porcentajeExtra}% | $statusTendenciaStr"
                 txtHoraAlerta.text = "🔔 Alerta: ${configuracion.horaAlerta}"
                 
                 // 🔥 ACTUALIZAR SUGERENCIAS AUTOMÁTICAMENTE AL GUARDAR CONFIGURACIÓN
                 recalcularTodasLasSugerencias()
                 actualizarSugerenciasEnTiempoReal(nuevoPorcentaje)
                 actualizarIndicadorTendencia()
-                mostrarContenidoPedidoInterno()
+                mostrarSeccionCargarStockIntegrada()
                 
                 // 🔥 ELIMINAR NOTIFICACIÓN MOLESTA - Las sugerencias se actualizan automáticamente
                 // Toast.makeText(this@PedidoFabricaActivity, "Configuración guardada. Modifica un campo de stock para ver las nuevas sugerencias.", Toast.LENGTH_LONG).show()
@@ -3075,57 +3043,46 @@ class PedidoFabricaActivity : AppCompatActivity() {
         
         val editTexts = mutableMapOf<String, EditText>()
         
-        // 📈 Calcular tendencia general de ventas (promedio de productos principales)
-        lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                val productosParaTendencia = listOf("JQ", "PB", "CS") // Productos principales
-                val tendencias = productosParaTendencia.mapNotNull { codigo ->
-                    try {
-                        val t = detectarTendenciaVentas(codigo)
-                        Log.d("TENDENCIA_UI", "  Producto $codigo: ${String.format("%.1f", t)}%")
-                        if (t != 0.0) t else null // Solo contar si es significativa
-                    } catch (e: Exception) {
-                        null
+        // 📈 Actualizar porcentaje extra e indicador visual de tendencia en header
+        val labelTendenciaState = if (configuracion.usarAjusteTendencia) "📈 Tendencia ON" else "🚫 Tendencia OFF"
+        txtPorcentajeExtra.text = "% Extra: ${configuracion.porcentajeExtra}% | $labelTendenciaState"
+
+        if (!configuracion.usarAjusteTendencia) {
+            txtTendenciaVentas.visibility = View.GONE
+        } else {
+            // 📈 Calcular tendencia general de ventas (promedio de productos principales)
+            lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    val productosParaTendencia = listOf("JQ", "PB", "CS")
+                    val tendencias = productosParaTendencia.mapNotNull { codigo ->
+                        try {
+                            val t = detectarTendenciaVentas(codigo)
+                            if (t != 0.0) t else null
+                        } catch (e: Exception) { null }
                     }
-                }
-                
-                Log.d("TENDENCIA_UI", "  Tendencias válidas encontradas: ${tendencias.size}")
-                tendencias.forEachIndexed { i, t -> 
-                    Log.d("TENDENCIA_UI", "    [$i] = ${String.format("%.1f", t)}%")
-                }
-                
-                val tendenciaGeneral = if (tendencias.isNotEmpty()) {
-                    tendencias.average()
-                } else {
-                    0.0
-                }
-                
-                Log.d("TENDENCIA_UI", "📊 Tendencia general calculada: ${String.format("%.1f", tendenciaGeneral)}% (de ${tendencias.size} productos)")
-                
-                // Actualizar UI en el hilo principal
-                withContext(Dispatchers.Main) {
-                    if (kotlin.math.abs(tendenciaGeneral) >= 5.0) {
-                        val icono = if (tendenciaGeneral > 0) "📈" else "📉"
-                        val texto = if (tendenciaGeneral > 0) "AUMENTO" else "DISMINUCIÓN"
-                        val color = if (tendenciaGeneral > 0) {
-                            resources.getColor(android.R.color.holo_green_dark, null)
+                    
+                    val tendenciaGeneral = if (tendencias.isNotEmpty()) tendencias.average() else 0.0
+                    
+                    withContext(Dispatchers.Main) {
+                        if (configuracion.usarAjusteTendencia && kotlin.math.abs(tendenciaGeneral) >= 5.0) {
+                            val icono = if (tendenciaGeneral > 0) "📈" else "📉"
+                            val texto = if (tendenciaGeneral > 0) "AUMENTO" else "DISMINUCIÓN"
+                            val color = if (tendenciaGeneral > 0) {
+                                resources.getColor(android.R.color.holo_green_dark, null)
+                            } else {
+                                resources.getColor(android.R.color.holo_orange_dark, null)
+                            }
+                            txtTendenciaVentas.text = "$icono $texto DE VENTAS: ${String.format("%.0f", kotlin.math.abs(tendenciaGeneral))}%"
+                            txtTendenciaVentas.setBackgroundColor(color)
+                            txtTendenciaVentas.setTextColor(resources.getColor(android.R.color.white, null))
+                            txtTendenciaVentas.visibility = View.VISIBLE
                         } else {
-                            resources.getColor(android.R.color.holo_orange_dark, null)
+                            txtTendenciaVentas.visibility = View.GONE
                         }
-                        
-                        txtTendenciaVentas.text = "$icono $texto DE VENTAS: ${String.format("%.0f", kotlin.math.abs(tendenciaGeneral))}%"
-                        txtTendenciaVentas.setBackgroundColor(color)
-                        txtTendenciaVentas.setTextColor(resources.getColor(android.R.color.white, null))
-                        txtTendenciaVentas.visibility = View.VISIBLE
-                        
-                        Log.d("TENDENCIA_UI", "✅ Indicador de tendencia mostrado: $tendenciaGeneral%")
-                    } else {
-                        txtTendenciaVentas.visibility = View.GONE
-                        Log.d("TENDENCIA_UI", "ℹ️ Tendencia no significativa, indicador oculto")
                     }
+                } catch (e: Exception) {
+                    Log.e("TENDENCIA_UI", "Error calculando tendencia general: ${e.message}")
                 }
-            } catch (e: Exception) {
-                Log.e("TENDENCIA_UI", "Error calculando tendencia general: ${e.message}")
             }
         }
         
@@ -3421,7 +3378,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
                 }
             }
             
-            // 📈 Agregar tendencia del cache si está disponible (instantáneo)
+            // 📈 Agregar tendencia del cache si está disponible (instantáneo y respetando switch del usuario)
             val fechaHoy = DateHelper.getFechaActual()
             if (configuracion.usarAjusteTendencia &&
                 MainActivity.cacheTendencias != null && 
@@ -3431,6 +3388,9 @@ class PedidoFabricaActivity : AppCompatActivity() {
                 tendenciaValor = MainActivity.cacheTendencias!![codigo] ?: 0.0
                 tieneTendencia = kotlin.math.abs(tendenciaValor) >= 5.0
                 Log.d("TENDENCIA_CACHE", "⚡ Tendencia desde cache: $codigo → ${String.format("%.0f", kotlin.math.abs(tendenciaValor))}% (tieneTendencia=$tieneTendencia)")
+            } else {
+                tendenciaValor = 0.0
+                tieneTendencia = false
             }
             
             // Verificar si hay stock bajo en los últimos 7 días (después de cargar tendencia)

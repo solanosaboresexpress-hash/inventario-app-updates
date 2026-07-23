@@ -1,8 +1,8 @@
 {
-  "versionCode": 118,
-  "versionName": "2.1.92",
-  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.92.apk",
-  "fileName": "inventario_app_v2.1.92.apk",
-  "description": "v2.1.92 - Ajuste visual ultra compacto en badge de vencimiento: muestra únicamente el reloj y la cantidad (ej. ⏰ 200u). Al presionar se abre el reporte explicativo.",
+  "versionCode": 119,
+  "versionName": "2.1.93",
+  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.93.apk",
+  "fileName": "inventario_app_v2.1.93.apk",
+  "description": "v2.1.93 - Corrección: Fuerza la vista moderna de tarjetas con badges en Pedido a Fábrica eliminando vistas heredadas y sincroniza el switch de tendencia visual y de cálculo.",
   "forceUpdate": false
 }
