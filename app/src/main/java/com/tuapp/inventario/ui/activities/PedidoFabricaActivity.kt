@@ -1140,14 +1140,14 @@ class PedidoFabricaActivity : AppCompatActivity() {
      * 🚀 OPTIMIZACIÓN: Carga los promedios generales SOLO desde Firebase
      */
     private suspend fun cargarPromediosGeneralesGuardados(localId: String): Map<String, Map<String, Double>> {
-        // Cargar SOLO desde Firebase (no SharedPreferences ni datos hardcodeados)
         val promediosFirebase = cargarPromediosGeneralesDesdeFirebase(localId)
-        if (promediosFirebase.isNotEmpty()) {
-            Log.d("PROMEDIO_GENERAL", "✅ Promedios cargados desde Firebase: ${promediosFirebase.size} días")
+        val tieneValoresValidos = promediosFirebase.values.any { diaMap -> diaMap.values.any { valVal -> valVal > 0.0 } }
+        if (promediosFirebase.isNotEmpty() && tieneValoresValidos) {
+            Log.d("PROMEDIO_GENERAL", "✅ Promedios cargados desde Firebase con valores válidos: ${promediosFirebase.size} días")
             return promediosFirebase
         }
         
-        Log.d("PROMEDIO_GENERAL", "⚠️ No hay promedios guardados en Firebase para local $localId")
+        Log.d("PROMEDIO_GENERAL", "⚠️ No hay promedios válidos en Firebase (está vacío o todo en 0.0) para local $localId")
         return emptyMap()
     }
     
@@ -4271,17 +4271,17 @@ class PedidoFabricaActivity : AppCompatActivity() {
     
     private fun calcularSugerenciaPedido(codigo: String, stockActual: Int): Int {
         try {
-            val promedioHoy = obtenerPromedioDiarioHoy(codigo)
-            
-            if (promedioHoy <= 0) {
-                return 0
-            }
+            val promedioHoy = maxOf(0.0, obtenerPromedioDiarioHoy(codigo))
 
             // Obtener el día actual y el de mañana
             val diaActual = obtenerDiaActual()
             val diaSiguiente = obtenerDiaSiguiente(diaActual)
             val diaSiguienteCalendar = obtenerDiaCalendar(diaSiguiente)
             val promedioVentaMañana = obtenerPromedioPorDiaSemana(codigo, diaSiguienteCalendar)
+
+            if (promedioVentaMañana <= 0 && promedioHoy <= 0) {
+                return 0
+            }
 
             // Porcentaje extra configurado
             val porcentajeExtra = obtenerPorcentajeExtraConfigurado()
@@ -5048,11 +5048,28 @@ class PedidoFabricaActivity : AppCompatActivity() {
             }
             
             if (promedioHoy > 0) {
-            Log.d("SUG", "✅ SUG: Promedio encontrado: $promedioHoy")
-            return promedioHoy
+                Log.d("SUG", "✅ SUG: Promedio encontrado: $promedioHoy")
+                return promedioHoy
             }
             
-            // Si no hay datos reales, devolver 0 (no usar datos simulados)
+            // 💡 FALLBACK: Si no hay promedio para hoy, buscar en los otros días disponibles
+            val claveBusqueda = "$codigo - $nombreProducto"
+            for ((_, mapDia) in MainActivity.promediosReales) {
+                var valDia = mapDia[claveBusqueda] ?: mapDia[nombreProducto] ?: mapDia[codigo] ?: 0.0
+                if (valDia == 0.0) {
+                    for ((key, value) in mapDia) {
+                        if (key.startsWith("$codigo - ") || key == codigo || key.contains(codigo)) {
+                            valDia = value
+                            break
+                        }
+                    }
+                }
+                if (valDia > 0.0) {
+                    Log.d("SUG", "💡 SUG: Usando promedio fallback de otro día para hoy ($codigo): $valDia")
+                    return valDia
+                }
+            }
+            
             Log.w("SUG", "❌ SUG: No hay datos reales para local '$localId', producto '$codigo' ($nombreProducto) en $diaActual - devolviendo 0")
             return 0.0
             

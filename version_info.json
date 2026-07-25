@@ -1,8 +1,8 @@
 {
-  "versionCode": 120,
-  "versionName": "2.1.94",
-  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.94.apk",
-  "fileName": "inventario_app_v2.1.94.apk",
-  "description": "v2.1.94 - Fix: Recálculo dinámico de sugerencia de pedido para evitar valores en 0 al cargar productos y precarga previa de promedios reales.",
+  "versionCode": 121,
+  "versionName": "2.1.95",
+  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.95.apk",
+  "fileName": "inventario_app_v2.1.95.apk",
+  "description": "v2.1.95 - Fix: Validacion de promedios de Firebase en 0.0, fallback automatico a otros dias de la semana y desacople del promedio de hoy en la sugerencia.",
   "forceUpdate": false
 }

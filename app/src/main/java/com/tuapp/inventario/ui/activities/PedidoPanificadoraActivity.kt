@@ -3930,9 +3930,9 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
     
     private fun calcularSugerenciaPedido(codigo: String, stockActual: Int): Int {
         try {
-            val promedioHoy = obtenerPromedioDiarioHoy(codigo)
-            
-            if (promedioHoy <= 0) {
+            val promedioHoy = maxOf(0.0, obtenerPromedioDiarioHoy(codigo))
+            var sumaPromediosTest = obtenerPromediosHastaProximaEntrega(codigo)
+            if (promedioHoy <= 0 && sumaPromediosTest <= 0) {
                 return 0
             }
 
