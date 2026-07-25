@@ -464,6 +464,9 @@ class PedidoFabricaActivity : AppCompatActivity() {
         try {
             Log.d("ADMIN_FLOW", "📅 Cargando datos para fecha: $fecha")
             
+            // 🚀 Asegurar que los promedios reales estén cargados antes de cualquier cálculo o renderizado
+            cargarPromediosRealesDelLocal()
+            
             // Intentar cargar desde pedidos_fabrica/{fecha}
             Log.d("ADMIN_FLOW", "🔍 BUSCANDO pedido en Firebase para fecha: $fecha")
             Log.d("ADMIN_FLOW", "📍 Ruta buscada: locales/$localId/pedidos_fabrica/$fecha")
@@ -3420,8 +3423,23 @@ class PedidoFabricaActivity : AppCompatActivity() {
             
             // Configurar valores iniciales
             val producto = this.productos.find { it.codigo == codigo }
-            edtCantidad.setText((producto?.stockActual ?: 0).toString())
-            txtSugerencia.text = (producto?.pedidoSugerido ?: 0).toString()
+            val stockActual = producto?.stockActual ?: 0
+            
+            // 💡 Recalcular la sugerencia dinámicamente si figura en 0 o si se acaba de cargar
+            val sugerenciaCalculada = calcularSugerenciaPedido(codigo, stockActual)
+            val sugerenciaFinal = if (sugerenciaCalculada > 0) {
+                sugerenciaCalculada
+            } else {
+                (producto?.pedidoSugerido ?: 0)
+            }
+            
+            // Sincronizar en la lista de productos si la sugerencia calculada es válida
+            if (producto != null && sugerenciaCalculada > 0 && producto.pedidoSugerido != sugerenciaCalculada) {
+                this.productos = this.productos.map { p -> if (p.codigo == codigo) p.copy(pedidoSugerido = sugerenciaCalculada) else p }
+            }
+            
+            edtCantidad.setText(stockActual.toString())
+            txtSugerencia.text = sugerenciaFinal.toString()
             edtPedido.setText((producto?.pedidoFinal ?: 0).toString())
             
             // Configurar tags para identificación
@@ -3878,8 +3896,18 @@ class PedidoFabricaActivity : AppCompatActivity() {
             
             // Configurar valores iniciales
             val producto = this.productos.find { it.codigo == codigo }
-            edtStock.setText((producto?.stockActual ?: 0).toString())
-            txtSugerencia.text = (producto?.pedidoSugerido ?: 0).toString()
+            val stockActual = producto?.stockActual ?: 0
+            
+            // 💡 Recalcular la sugerencia dinámicamente si figura en 0
+            val sugerenciaCalculada = calcularSugerenciaPedido(codigo, stockActual)
+            val sugerenciaFinal = if (sugerenciaCalculada > 0) sugerenciaCalculada else (producto?.pedidoSugerido ?: 0)
+            
+            if (producto != null && sugerenciaCalculada > 0 && producto.pedidoSugerido != sugerenciaCalculada) {
+                this.productos = this.productos.map { p -> if (p.codigo == codigo) p.copy(pedidoSugerido = sugerenciaCalculada) else p }
+            }
+            
+            edtStock.setText(stockActual.toString())
+            txtSugerencia.text = sugerenciaFinal.toString()
             edtPedido.setText((producto?.pedidoFinal ?: 0).toString())
             
             // Configurar modo solo lectura si es necesario
