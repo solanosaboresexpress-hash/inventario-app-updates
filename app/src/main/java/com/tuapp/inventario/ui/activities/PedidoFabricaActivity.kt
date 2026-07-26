@@ -7919,6 +7919,14 @@ class PedidoFabricaActivity : AppCompatActivity() {
                             1
                         }
                         alerta.copy(sugerenciaPedido = sugerenciaCalculada)
+                    }.filter { alerta ->
+                        // Si el pedido final ya cubre la sugerencia, no mostrar alerta
+                        val pedidoFinal = productos.find { it.codigo == alerta.productoCodigo }?.pedidoFinal ?: 0
+                        val mostrar = pedidoFinal < alerta.sugerenciaPedido
+                        if (!mostrar) {
+                            Log.d("AlertasReemplazo", "✅ ${alerta.productoCodigo}: pedido final $pedidoFinal cubre sugerencia ${alerta.sugerenciaPedido}, no alertar")
+                        }
+                        mostrar
                     }
                     
                     Log.d("AlertasReemplazo", "💡 Alertas con sugerencia: ${alertasConSugerencia.map { "${it.productoCodigo}=${it.sugerenciaPedido}" }}")

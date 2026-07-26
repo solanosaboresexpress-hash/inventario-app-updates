@@ -1,8 +1,8 @@
 {
-  "versionCode": 123,
-  "versionName": "2.1.97",
-  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.97.apk",
-  "fileName": "inventario_app_v2.1.97.apk",
-  "description": "v2.1.97 - Sistema de alertas de reemplazo de stock vencido en Pedido a Fábrica con sugerencias basadas en promedio de venta de mañana y mínimos por categoría.",
+  "versionCode": 124,
+  "versionName": "2.1.98",
+  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.98.apk",
+  "fileName": "inventario_app_v2.1.98.apk",
+  "description": "v2.1.98 - Alertas de reemplazo de stock vencido: desaparecen al agregar sugerencia al pedido y reaparecen si no se guardó el pedido.",
   "forceUpdate": false
 }
