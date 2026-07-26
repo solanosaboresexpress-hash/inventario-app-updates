@@ -14,9 +14,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.tuapp.inventario.model.ProductoFabrica
 import com.tuapp.inventario.model.ConfiguracionPedidoFabrica
+import com.tuapp.inventario.model.AlertaReemplazoStock
 import com.tuapp.inventario.repository.PedidoFabricaRepository
 import com.tuapp.inventario.repository.LocalInventarioRepository
 import com.tuapp.inventario.repository.FirebaseInventarioRepository
+import com.tuapp.inventario.repository.VencimientoRepository
 import com.tuapp.inventario.RegistroInventario
 import com.tuapp.inventario.utils.FirebaseRegionManager
 import com.google.firebase.firestore.FirebaseFirestore
@@ -90,6 +92,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
     
     private lateinit var repository: PedidoFabricaRepository
     private lateinit var localRepository: LocalInventarioRepository
+    private lateinit var vencimientoRepository: VencimientoRepository
     private var productos: List<ProductoFabrica> = emptyList()
     private var configuracion = ConfiguracionPedidoFabrica()
     private var configuracionModificada = false
@@ -97,6 +100,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
     private var primeraVezPedidoFabrica = true
     private var inicializandoProductos = false
     private val txtSugerencias = mutableMapOf<String, TextView>()
+    private var alertasReemplazoStock: List<AlertaReemplazoStock> = emptyList()
     
     // Variables para la integración de fecha
     private lateinit var fechaSeleccionada: String
@@ -286,6 +290,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
         localRepository = (application as InventarioApplication).localRepository
         val localId = obtenerLocalId()
         repository = PedidoFabricaRepository(localRepository, localId)
+        vencimientoRepository = VencimientoRepository()
         configuracion = repository.getConfiguracion()
         
         // Cargar configuración desde Firebase al inicio
@@ -1497,6 +1502,9 @@ class PedidoFabricaActivity : AppCompatActivity() {
         // 🔥 FIX: Mostrar alertas de stock SIEMPRE que haya productos con stock bajo
         // No solo a las 15:30, sino siempre que haya alertas disponibles
         mostrarAlertasStock()
+        
+        // 🔥 NUEVO: Detectar y mostrar alertas de reemplazo de stock vencido
+        mostrarAlertasReemplazoStock()
         
         // Mostrar resumen de productos por categoría o mensaje de ayuda
         Log.d("PedidoFabricaActivity", "🔍 Estado de productos: ${productos.size} productos, modoSoloLectura: $modoSoloLectura")
@@ -3382,10 +3390,8 @@ class PedidoFabricaActivity : AppCompatActivity() {
             }
             
             // 📈 Agregar tendencia del cache si está disponible (instantáneo y respetando switch del usuario)
-            val fechaHoy = DateHelper.getFechaActual()
             if (configuracion.usarAjusteTendencia &&
                 MainActivity.cacheTendencias != null && 
-                MainActivity.cacheTendenciasFecha == fechaHoy && 
                 MainActivity.cacheTendenciasLocalId == localId) {
                 
                 tendenciaValor = MainActivity.cacheTendencias!![codigo] ?: 0.0
@@ -4339,6 +4345,51 @@ class PedidoFabricaActivity : AppCompatActivity() {
             Log.e("SUG", "❌ SUG: Error calculando sugerencia para $codigo: ${e.message}")
             e.printStackTrace()
             return 0
+        }
+    }
+    
+    /**
+     * Calcula la sugerencia para alerta de reemplazo de stock vencido
+     * Lógica: si el promedio de venta de mañana es mayor al stock que vence, sugerir el faltante.
+     * Si no, sugerir el pedido mínimo según categoría.
+     */
+    private fun calcularSugerenciaAlertaReemplazo(producto: ProductoFabrica, stockVenceManana: Int): Int {
+        try {
+            val diaActual = obtenerDiaActual()
+            val diaSiguiente = obtenerDiaSiguiente(diaActual)
+            val diaSiguienteCalendar = obtenerDiaCalendar(diaSiguiente)
+            val promedioVentaMañana = obtenerPromedioPorDiaSemana(producto.codigo, diaSiguienteCalendar)
+            
+            Log.d("AlertasReemplazo", "💡 ${producto.codigo}: promedioMañana=$promedioVentaMañana, stockVence=$stockVenceManana")
+            
+            // Calcular faltante para llegar al promedio de venta de mañana
+            val faltante = maxOf(0, (promedioVentaMañana - stockVenceManana).toInt())
+            
+            // Pedido mínimo según categoría
+            val minimoCategoria = obtenerMinimoCategoria(producto.categoria)
+            
+            // La sugerencia es el mayor entre faltante y mínimo de categoría
+            val sugerencia = maxOf(faltante, minimoCategoria)
+            
+            Log.d("AlertasReemplazo", "💡 ${producto.codigo}: faltante=$faltante, minimoCategoria=$minimoCategoria, sugerencia=$sugerencia")
+            
+            return sugerencia
+        } catch (e: Exception) {
+            Log.e("AlertasReemplazo", "❌ Error calculando sugerencia de alerta para ${producto.codigo}: ${e.message}", e)
+            return obtenerMinimoCategoria(producto.categoria)
+        }
+    }
+    
+    /**
+     * Devuelve el pedido mínimo según la categoría del producto
+     */
+    private fun obtenerMinimoCategoria(categoria: String): Int {
+        return when (categoria.uppercase()) {
+            "EMPANADAS" -> 50
+            "PIZZAS" -> 5
+            "PASTELITOS" -> 35
+            "MEDIALUNAS" -> 20
+            else -> 1
         }
     }
     
@@ -7821,6 +7872,171 @@ class PedidoFabricaActivity : AppCompatActivity() {
             // Limpiar el estado después de restaurar
             estadoEditTexts.clear()
         }
+    }
+    
+    /**
+     * Muestra alertas de reemplazo de stock vencido
+     * Detecta productos cuyo stock total vence mañana y no tienen pedido pendiente
+     */
+    private fun mostrarAlertasReemplazoStock() {
+        Log.d("AlertasReemplazo", "🔍 Iniciando detección de alertas de reemplazo")
+        Log.d("AlertasReemplazo", "📊 Productos disponibles: ${productos.size}")
+        
+        lifecycleScope.launch {
+            try {
+                // Obtener stock actual por producto
+                val stockActualPorProducto = productos.associate { it.codigo to it.stockActual }
+                Log.d("AlertasReemplazo", "📦 Stock por producto: $stockActualPorProducto")
+                
+                // Obtener pedido pendiente por producto
+                val pedidoPendientePorProducto = productos.associate { it.codigo to it.pedidoFinal }
+                Log.d("AlertasReemplazo", "📋 Pedido pendiente por producto: $pedidoPendientePorProducto")
+                
+                // Obtener sugerencia base por producto (para no sugerir reemplazar todo si no se vende)
+                val sugerenciaBasePorProducto = productos.associate { it.codigo to it.pedidoSugerido }
+                Log.d("AlertasReemplazo", "💡 Sugerencia base por producto: $sugerenciaBasePorProducto")
+                
+                // Detectar productos que vencen totalmente mañana
+                Log.d("AlertasReemplazo", "🔍 Llamando a detectarProductosVencenTotalManana")
+                val alertas = vencimientoRepository.detectarProductosVencenTotalManana(
+                    localId = localId,
+                    stockActualPorProducto = stockActualPorProducto,
+                    pedidoPendientePorProducto = pedidoPendientePorProducto,
+                    sugerenciaBasePorProducto = sugerenciaBasePorProducto
+                )
+                
+                Log.d("AlertasReemplazo", "🔍 Alertas detectadas: ${alertas.size}")
+                
+                if (alertas.isNotEmpty()) {
+                    Log.d("AlertasReemplazo", "🚨 ${alertas.size} alertas de reemplazo detectadas")
+                    
+                    // Recalcular sugerencias usando promedio de venta de mañana y mínimos por categoría
+                    val alertasConSugerencia = alertas.map { alerta ->
+                        val producto = productos.find { it.codigo == alerta.productoCodigo }
+                        val sugerenciaCalculada = if (producto != null) {
+                            calcularSugerenciaAlertaReemplazo(producto, alerta.stockVenceManana)
+                        } else {
+                            1
+                        }
+                        alerta.copy(sugerenciaPedido = sugerenciaCalculada)
+                    }
+                    
+                    Log.d("AlertasReemplazo", "💡 Alertas con sugerencia: ${alertasConSugerencia.map { "${it.productoCodigo}=${it.sugerenciaPedido}" }}")
+                    mostrarAlertasReemplazoStockUI(alertasConSugerencia)
+                } else {
+                    Log.d("AlertasReemplazo", "✅ No hay alertas de reemplazo")
+                }
+            } catch (e: Exception) {
+                Log.e("AlertasReemplazo", "Error detectando alertas de reemplazo: ${e.message}", e)
+                e.printStackTrace()
+            }
+        }
+    }
+    
+    /**
+     * Muestra las alertas de reemplazo de stock en la UI
+     */
+    private fun mostrarAlertasReemplazoStockUI(alertas: List<AlertaReemplazoStock>) {
+        if (alertas.isEmpty()) return
+        
+        // Crear tarjeta de alertas
+        val alertasCard = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(16, 16, 16, 16)
+            setBackgroundColor(resources.getColor(android.R.color.holo_orange_light, null))
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                setMargins(16, 16, 16, 16)
+            }
+        }
+        
+        // Título de alertas
+        val tituloAlertas = TextView(this).apply {
+            text = "⚠️ ALERTAS DE REEMPLAZO - Stock vence mañana"
+            textSize = 16f
+            setTypeface(null, android.graphics.Typeface.BOLD)
+            setTextColor(resources.getColor(android.R.color.black, null))
+            setPadding(0, 0, 0, 12)
+        }
+        alertasCard.addView(tituloAlertas)
+        
+        // Descripción
+        val descripcionAlertas = TextView(this).apply {
+            text = "Los siguientes productos tienen TODO el stock por vencer mañana y NO sugerencia:"
+            textSize = 14f
+            setTextColor(resources.getColor(android.R.color.black, null))
+            setPadding(0, 0, 0, 8)
+        }
+        alertasCard.addView(descripcionAlertas)
+        
+        // Lista de productos con alerta
+        alertas.forEach { alerta ->
+            val productoAlerta = TextView(this).apply {
+                text = "🔴 ${alerta.productoNombre}\n" +
+                       "   Stock total: ${alerta.stockTotal}\n" +
+                       "   Vence mañana: ${alerta.stockVenceManana}\n" +
+                       "   Sugerencia: ${alerta.sugerenciaPedido}"
+                textSize = 13f
+                setTextColor(resources.getColor(android.R.color.black, null))
+                setPadding(8, 8, 8, 8)
+                setBackgroundColor(resources.getColor(android.R.color.white, null))
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    setMargins(0, 4, 0, 4)
+                }
+            }
+            alertasCard.addView(productoAlerta)
+        }
+        
+        // Botón para agregar sugerencias al pedido
+        val btnAgregarSugerencias = Button(this).apply {
+            text = "➕ Agregar sugerencias al pedido"
+            textSize = 14f
+            setBackgroundColor(resources.getColor(android.R.color.holo_orange_dark, null))
+            setTextColor(resources.getColor(android.R.color.white, null))
+            setPadding(16, 12, 16, 12)
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                setMargins(0, 8, 0, 0)
+            }
+            
+            setOnClickListener {
+                agregarSugerenciasReemplazoAlPedido(alertas)
+            }
+        }
+        alertasCard.addView(btnAgregarSugerencias)
+        
+        layoutContenido.addView(alertasCard)
+    }
+    
+    /**
+     * Agrega las sugerencias de reemplazo al pedido actual
+     */
+    private fun agregarSugerenciasReemplazoAlPedido(alertas: List<AlertaReemplazoStock>) {
+        // Convertir productos a lista mutable
+        val productosMutable = productos.toMutableList()
+        
+        alertas.forEach { alerta ->
+            val productoIndex = productosMutable.indexOfFirst { it.codigo == alerta.productoCodigo }
+            if (productoIndex != -1) {
+                productosMutable[productoIndex] = productosMutable[productoIndex].copy(pedidoFinal = alerta.sugerenciaPedido)
+                Log.d("AlertasReemplazo", "✅ Agregado ${alerta.productoNombre}: ${alerta.sugerenciaPedido}")
+            }
+        }
+        
+        // Actualizar la lista de productos
+        productos = productosMutable
+        
+        Toast.makeText(this, "Sugerencias agregadas al pedido", Toast.LENGTH_SHORT).show()
+        
+        // Recargar la UI
+        mostrarContenidoPedidoInterno()
     }
 }
 

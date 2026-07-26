@@ -1,8 +1,8 @@
 {
-  "versionCode": 121,
-  "versionName": "2.1.95",
-  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.95.apk",
-  "fileName": "inventario_app_v2.1.95.apk",
-  "description": "v2.1.95 - Fix: Validacion de promedios de Firebase en 0.0, fallback automatico a otros dias de la semana y desacople del promedio de hoy en la sugerencia.",
+  "versionCode": 123,
+  "versionName": "2.1.97",
+  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.97.apk",
+  "fileName": "inventario_app_v2.1.97.apk",
+  "description": "v2.1.97 - Sistema de alertas de reemplazo de stock vencido en Pedido a Fábrica con sugerencias basadas en promedio de venta de mañana y mínimos por categoría.",
   "forceUpdate": false
 }

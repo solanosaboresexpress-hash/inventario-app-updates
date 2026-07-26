@@ -13,8 +13,8 @@ android {
         applicationId "com.tuapp.inventario"
         minSdk 24
         targetSdk 34
-        versionCode 121
-        versionName "2.1.95"
+        versionCode 123
+        versionName "2.1.97"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
