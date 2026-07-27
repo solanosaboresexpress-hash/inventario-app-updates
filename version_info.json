@@ -1,8 +1,8 @@
 {
-  "versionCode": 124,
-  "versionName": "2.1.98",
-  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.98.apk",
-  "fileName": "inventario_app_v2.1.98.apk",
-  "description": "v2.1.98 - Alertas de reemplazo de stock vencido: desaparecen al agregar sugerencia al pedido y reaparecen si no se guardó el pedido.",
+  "versionCode": 125,
+  "versionName": "2.1.99",
+  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.99.apk",
+  "fileName": "inventario_app_v2.1.99.apk",
+  "description": "v2.1.99 - Validación de imágenes muy grandes al guardar personal/documentos con mensaje claro en vez de error de Firestore.",
   "forceUpdate": false
 }
