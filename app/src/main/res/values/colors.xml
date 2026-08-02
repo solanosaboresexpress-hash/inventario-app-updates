@@ -1,0 +1,84 @@
+<resources>
+    <!-- SABORES EXPRESS BRAND PALETTE (Unificada con Web UI) -->
+    <!-- Primary Gold -->
+    <color name="brand_gold">#C9A24A</color>
+    <color name="brand_gold_light">#E6C874</color>
+    <color name="brand_gold_dark">#B08838</color>
+    <color name="brand_gold_border">#40C9A24A</color>
+    
+    <!-- Dark Slate Neutrals -->
+    <color name="brand_black">#1C1C1C</color>
+    <color name="brand_slate_surface">#2A2A2A</color>
+    <color name="brand_slate_card">#3D3D3D</color>
+    <color name="brand_white">#F2F2F2</color>
+    <color name="brand_grey_light">#F0EBE0</color>
+    <color name="brand_grey_medium">#999999</color>
+    <color name="brand_grey_dark">#6A6A6A</color>
+
+    <!-- Semantic Colors -->
+    <color name="background_color">#F5F0E8</color>
+    <color name="surface_color">#FFFFFF</color>
+    <color name="on_background">#1C1C1C</color>
+    <color name="on_surface">#1C1C1C</color>
+    <color name="primary_color">#C9A24A</color>
+    <color name="on_primary">#1C1C1C</color>
+    <color name="secondary_color">#1C1C1C</color>
+    <color name="on_secondary">#FFFFFF</color>
+    <color name="error_color">#DC2626</color>
+    
+    <!-- Web-matched colors -->
+    <color name="web_gold_text">#8E6C2C</color>
+    <color name="web_gold_text_light">#E6D3A3</color>
+    <color name="web_border">#E0D5B8</color>
+    <color name="web_input_border">#D4C4A0</color>
+    <color name="web_dark_border">#5A4632</color>
+    <color name="web_dark_surface">#2A2A2A</color>
+    <color name="web_dark_bg">#1C1C1C</color>
+    <color name="web_text_secondary">#999999</color>
+    <color name="web_text_primary">#1C1C1C</color>
+    <color name="web_text_light">#F2F2F2</color>
+    <color name="web_placeholder">#999999</color>
+    <color name="web_dark_placeholder">#6A6A6A</color>
+    <color name="web_dark_text_secondary">#8A8A8A</color>
+    <color name="web_hover_bg">#F0EBE0</color>
+    <color name="web_dark_hover_bg">#3D3D3D</color>
+    
+    <!-- System Base Colors -->
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="transparent">#00000000</color>
+    
+    <!-- Status Web Colors -->
+    <color name="status_success">#16A34A</color>
+    <color name="status_warning">#C9A24A</color>
+    <color name="status_info">#3B82F6</color>
+    <color name="status_error">#DC2626</color>
+    
+    <!-- Badge Colors (web) -->
+    <color name="badge_success_bg">#DCFCE7</color>
+    <color name="badge_success_text">#15803D</color>
+    <color name="badge_warning_bg">#FEF3C7</color>
+    <color name="badge_warning_text">#B45309</color>
+    <color name="badge_danger_bg">#FEE2E2</color>
+    <color name="badge_danger_text">#B91C1C</color>
+    <color name="badge_info_bg">#F5F0E8</color>
+    <color name="badge_info_text">#8E6C2C</color>
+    <color name="badge_neutral_bg">#F0F0F0</color>
+    <color name="badge_neutral_text">#666666</color>
+    
+    <!-- Footer Colors -->
+    <color name="footer_text">#757575</color>
+    <color name="footer_divider">#E0E0E0</color>
+    
+    <!-- Administración Local Colors -->
+    <color name="background_primary">#F5F0E8</color>
+    <color name="card_background">#FFFFFF</color>
+    <color name="text_primary">#1C1C1C</color>
+    <color name="text_secondary">#757575</color>
+    <color name="alt_row_color">#F5F5F5</color>
+    <color name="alt_row_color2">#fafafa</color>
+    <color name="notif_critica_bg">#FFEBEE</color>
+    <color name="notif_alta_bg">#FFF3E0</color>
+    <color name="notif_media_bg">#FFF8E1</color>
+    <color name="notif_baja_bg">#E8F5E8</color>
+</resources>

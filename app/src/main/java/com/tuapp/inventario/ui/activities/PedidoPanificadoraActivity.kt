@@ -482,7 +482,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
         val fechaFormateada = try {
             val sdf = DateHelper.getDateFormat("yyyy-MM-dd")
             val fechaParseada = sdf.parse(fecha)
-            val sdfMostrar = DateHelper.getDateFormat("dd/MM/yyyy")
+            val sdfMostrar = DateHelper.getDateFormat("dd/MM/yy")
             sdfMostrar.format(fechaParseada ?: Date())
         } catch (e: Exception) {
             fecha
@@ -514,7 +514,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
             orientation = LinearLayout.VERTICAL
             setPadding(32, 32, 32, 32)
             gravity = android.view.Gravity.CENTER
-            setBackgroundColor(if (isDarkMode()) resources.getColor(android.R.color.black, null) else resources.getColor(android.R.color.white, null))
+            setBackgroundColor(if (isDarkMode()) resources.getColor(R.color.web_text_primary, null) else resources.getColor(R.color.web_text_light, null))
         }
         
         // Icono
@@ -577,7 +577,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
                 textSize = 16f
                 setTypeface(null, android.graphics.Typeface.BOLD)
                 setBackgroundColor(resources.getColor(android.R.color.holo_blue_dark, null))
-                setTextColor(resources.getColor(android.R.color.white, null))
+                setTextColor(resources.getColor(R.color.web_text_light, null))
                 setPadding(32, 16, 32, 16)
                 
                 setOnClickListener {
@@ -607,7 +607,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
             orientation = LinearLayout.VERTICAL
             setPadding(32, 32, 32, 32)
             gravity = android.view.Gravity.CENTER
-            setBackgroundColor(if (isDarkMode()) resources.getColor(android.R.color.black, null) else resources.getColor(android.R.color.white, null))
+            setBackgroundColor(if (isDarkMode()) resources.getColor(R.color.web_text_primary, null) else resources.getColor(R.color.web_text_light, null))
         }
         
         // Icono
@@ -651,7 +651,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
             textSize = 16f
             setTypeface(null, android.graphics.Typeface.BOLD)
             setBackgroundColor(resources.getColor(android.R.color.holo_blue_dark, null))
-            setTextColor(resources.getColor(android.R.color.white, null))
+            setTextColor(resources.getColor(R.color.web_text_light, null))
             setPadding(32, 16, 32, 16)
             
             setOnClickListener {
@@ -756,7 +756,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
                     
                     // Actualizar el tó­tulo con informació³n de fecha de creació³n si existe
                     if (fechaCreacion != null) {
-                        val sdf = DateHelper.getDateFormat("dd/MM/yyyy HH:mm")
+                        val sdf = DateHelper.getDateFormat("dd/MM/yy HH:mm")
                         val fechaCreacionStr = sdf.format(fechaCreacion.toDate())
                         Log.d("PedidoPanificadoraActivity", "ðŸ“… Pedido creado el: $fechaCreacionStr")
                     }
@@ -1199,7 +1199,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
             val bannerAdmin = TextView(this).apply {
                 text = "ðŸ”§ MODO ADMINISTRADOR - EDICIó“N HABILITADA"
                 textSize = 14f
-                setTextColor(resources.getColor(android.R.color.white, null))
+                setTextColor(resources.getColor(R.color.web_text_light, null))
                 setBackgroundColor(resources.getColor(android.R.color.holo_orange_dark, null))
                 gravity = android.view.Gravity.CENTER
                 setPadding(0, 12, 0, 12)
@@ -1330,7 +1330,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
             text = "ðŸ“ˆ Ir a Promedio de Ventas"
             textSize = 14f
             setBackgroundColor(resources.getColor(android.R.color.holo_blue_dark, null))
-            setTextColor(resources.getColor(android.R.color.white, null))
+            setTextColor(resources.getColor(R.color.web_text_light, null))
             setPadding(16, 12, 16, 12)
             setOnClickListener {
                 // Ir a la actividad de Promedio de Ventas
@@ -1343,7 +1343,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
             text = "ðŸ”„ Recargar Datos del Local"
             textSize = 12f
             setBackgroundColor(resources.getColor(android.R.color.holo_orange_dark, null))
-            setTextColor(resources.getColor(android.R.color.white, null))
+            setTextColor(resources.getColor(R.color.web_text_light, null))
             setPadding(16, 8, 16, 8)
             setOnClickListener {
                 // Recargar los datos especó­ficos del local actual
@@ -1358,7 +1358,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
             text = "ðŸ“¦ Cargar Stock Actual (Sin Sugerencias)"
             textSize = 12f
             setBackgroundColor(resources.getColor(android.R.color.darker_gray, null))
-            setTextColor(resources.getColor(android.R.color.white, null))
+            setTextColor(resources.getColor(R.color.web_text_light, null))
             setPadding(16, 8, 16, 8)
             setOnClickListener {
                 // Mostrar la secció³n de carga sin sugerencias
@@ -1470,7 +1470,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
                 textSize = 12f
                 setTypeface(null, android.graphics.Typeface.BOLD)
                 setPadding(8, 8, 8, 8)
-                setBackgroundColor(if (isDarkMode()) resources.getColor(android.R.color.black, null) else resources.getColor(android.R.color.holo_blue_light, null))
+                setBackgroundColor(if (isDarkMode()) resources.getColor(R.color.web_text_primary, null) else resources.getColor(android.R.color.holo_blue_light, null))
                 setTextColor(textColor)
                 gravity = android.view.Gravity.CENTER
             }
@@ -1507,7 +1507,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
                     setPadding(8, 8, 8, 8)
                     inputType = InputType.TYPE_CLASS_NUMBER
                     setTextColor(textColor)
-                    setBackgroundColor(if (isDarkMode()) resources.getColor(android.R.color.black, null) else resources.getColor(android.R.color.white, null))
+                    setBackgroundColor(if (isDarkMode()) resources.getColor(R.color.web_text_primary, null) else resources.getColor(R.color.web_text_light, null))
                     gravity = android.view.Gravity.CENTER
                     Log.d("ADMIN_FLOW", "ðŸ”§ EditText Stock para ${producto.codigo}: valor asignado = '${producto.stockActual}'")
                 }
@@ -1537,7 +1537,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
                     setPadding(8, 8, 8, 8)
                     setTextColor(if (isDarkMode()) resources.getColor(android.R.color.holo_green_light, null) else resources.getColor(android.R.color.holo_green_dark, null))
                     inputType = InputType.TYPE_CLASS_NUMBER
-                    setBackgroundColor(if (isDarkMode()) resources.getColor(android.R.color.black, null) else resources.getColor(android.R.color.white, null))
+                    setBackgroundColor(if (isDarkMode()) resources.getColor(R.color.web_text_primary, null) else resources.getColor(R.color.web_text_light, null))
                     gravity = android.view.Gravity.CENTER
                     Log.d("ADMIN_FLOW", "ðŸ”§ EditText Sugerencia para ${producto.codigo}: valor asignado = '${producto.pedidoSugerido}'")
                 }
@@ -1569,7 +1569,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
                 setPadding(8, 8, 8, 8)
                 setTextColor(textColor)
                 gravity = android.view.Gravity.CENTER
-                    setBackgroundColor(if (isDarkMode()) resources.getColor(android.R.color.black, null) else resources.getColor(android.R.color.darker_gray, null))
+                    setBackgroundColor(if (isDarkMode()) resources.getColor(R.color.web_text_primary, null) else resources.getColor(android.R.color.darker_gray, null))
                     tag = "${producto.codigo}_pedido" // Tag para identificar el campo
                     Log.d("PEDIDO_FINAL", "ðŸ”§ TextView Pedido Final (solo lectura) para ${producto.codigo}: valor = '${producto.pedidoFinal}'")
                 }
@@ -1583,7 +1583,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
                     setTextColor(textColor)
                     gravity = android.view.Gravity.CENTER
                     inputType = InputType.TYPE_CLASS_NUMBER
-                    setBackgroundColor(if (isDarkMode()) resources.getColor(android.R.color.black, null) else resources.getColor(android.R.color.white, null))
+                    setBackgroundColor(if (isDarkMode()) resources.getColor(R.color.web_text_primary, null) else resources.getColor(R.color.web_text_light, null))
                     tag = "${producto.codigo}_pedido" // Tag para identificar el campo
                     Log.d("PEDIDO_FINAL", "ðŸ”§ EditText Pedido Final (editable) para ${producto.codigo}: valor = '${producto.pedidoFinal}'")
                 }.also { editText ->
@@ -1602,14 +1602,14 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
 
     private fun mostrarConfiguracionDiasEntrega() {
         val backgroundColor = if (isDarkMode()) {
-            resources.getColor(android.R.color.black, null)
+            resources.getColor(R.color.web_text_primary, null)
         } else {
-            resources.getColor(android.R.color.white, null)
+            resources.getColor(R.color.web_text_light, null)
         }
         val textColor = if (isDarkMode()) {
-            resources.getColor(android.R.color.white, null)
+            resources.getColor(R.color.web_text_light, null)
         } else {
-            resources.getColor(android.R.color.black, null)
+            resources.getColor(R.color.web_text_primary, null)
         }
         val textColorSecondary = if (isDarkMode()) {
             resources.getColor(android.R.color.darker_gray, null)
@@ -1977,14 +1977,14 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
         
         val scrollView = ScrollView(this)
         val backgroundColor = if (isDarkMode()) {
-            resources.getColor(android.R.color.black, null)
+            resources.getColor(R.color.web_text_primary, null)
         } else {
-            resources.getColor(android.R.color.white, null)
+            resources.getColor(R.color.web_text_light, null)
         }
         val textColor = if (isDarkMode()) {
-            resources.getColor(android.R.color.white, null)
+            resources.getColor(R.color.web_text_light, null)
         } else {
-            resources.getColor(android.R.color.black, null)
+            resources.getColor(R.color.web_text_primary, null)
         }
         val layout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
@@ -2017,7 +2017,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
                 val filaBgColor = if (isDarkMode()) {
                     android.graphics.Color.parseColor("#2D2D2D")
                 } else {
-                    android.graphics.Color.parseColor("#F5F5F5")
+                    resources.getColor(R.color.alt_row_color, null)
                 }
                 val filaBorderColor = if (isDarkMode()) {
                     android.graphics.Color.parseColor("#404040")
@@ -2184,14 +2184,14 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
         
         val scrollView = ScrollView(this)
         val backgroundColor = if (isDarkMode()) {
-            resources.getColor(android.R.color.black, null)
+            resources.getColor(R.color.web_text_primary, null)
         } else {
-            resources.getColor(android.R.color.white, null)
+            resources.getColor(R.color.web_text_light, null)
         }
         val textColor = if (isDarkMode()) {
-            resources.getColor(android.R.color.white, null)
+            resources.getColor(R.color.web_text_light, null)
         } else {
-            resources.getColor(android.R.color.black, null)
+            resources.getColor(R.color.web_text_primary, null)
         }
         val layout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
@@ -2305,7 +2305,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
         val layout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(16, 0, 16, 16)  // Top padding = 0
-            setBackgroundColor(if (isDarkMode()) resources.getColor(android.R.color.black, null) else resources.getColor(android.R.color.white, null))
+            setBackgroundColor(if (isDarkMode()) resources.getColor(R.color.web_text_primary, null) else resources.getColor(R.color.web_text_light, null))
         }
         
         // Leyenda de ó­conos ULTRA compacta
@@ -2367,7 +2367,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
                         
                         txtTendenciaVentas.text = "$icono $texto DE VENTAS: ${String.format("%.0f", kotlin.math.abs(tendenciaGeneral))}%"
                         txtTendenciaVentas.setBackgroundColor(color)
-                        txtTendenciaVentas.setTextColor(resources.getColor(android.R.color.white, null))
+                        txtTendenciaVentas.setTextColor(resources.getColor(R.color.web_text_light, null))
                         txtTendenciaVentas.visibility = View.VISIBLE
                         
                         Log.d("TENDENCIA_UI", "âœ… Indicador de tendencia mostrado: $tendenciaGeneral%")
@@ -2398,7 +2398,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
             }
             setPadding(16, 16, 16, 16)
             setBackgroundColor(resources.getColor(android.R.color.holo_green_dark, null))
-            setTextColor(resources.getColor(android.R.color.white, null))
+            setTextColor(resources.getColor(R.color.web_text_light, null))
             textSize = 16f
             setTypeface(null, android.graphics.Typeface.BOLD)
             setOnClickListener {
@@ -2448,13 +2448,13 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
         val txtCategoria = TextView(this)
         txtCategoria.text = categoria.uppercase()
         txtCategoria.textSize = 18f
-        txtCategoria.setTextColor(resources.getColor(android.R.color.white, null))
+        txtCategoria.setTextColor(resources.getColor(R.color.web_text_light, null))
         txtCategoria.layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
         
         val txtCantidad = TextView(this)
         txtCantidad.text = "${productos.size} productos"
         txtCantidad.textSize = 12f
-        txtCantidad.setTextColor(resources.getColor(android.R.color.white, null))
+        txtCantidad.setTextColor(resources.getColor(R.color.web_text_light, null))
         txtCantidad.setBackgroundResource(R.drawable.category_count_background)
         txtCantidad.setPadding(8, 4, 8, 4)
         
@@ -2631,7 +2631,6 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
             val fechaHoy = DateHelper.getFechaActual()
             if (configuracion.usarAjusteTendencia &&
                 MainActivity.cacheTendencias != null && 
-                MainActivity.cacheTendenciasFecha == fechaHoy && 
                 MainActivity.cacheTendenciasLocalId == localId) {
                 
                 tendenciaValor = MainActivity.cacheTendencias!![codigo] ?: 0.0
@@ -2733,7 +2732,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
      * Obtiene la fecha actual en formato string
      */
     private fun obtenerFechaActual(): String {
-        val sdf = DateHelper.getDateFormat("dd/MM/yyyy")
+        val sdf = DateHelper.getDateFormat("dd/MM/yy")
         return sdf.format(java.util.Date())
     }
     
@@ -2802,13 +2801,13 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
         val txtCategoria = TextView(this)
         txtCategoria.text = categoria.uppercase()
         txtCategoria.textSize = 18f
-        txtCategoria.setTextColor(resources.getColor(android.R.color.white, null))
+        txtCategoria.setTextColor(resources.getColor(R.color.web_text_light, null))
         txtCategoria.layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
         
         val txtCantidad = TextView(this)
         txtCantidad.text = "${productos.size} productos"
         txtCantidad.textSize = 12f
-        txtCantidad.setTextColor(resources.getColor(android.R.color.white, null))
+        txtCantidad.setTextColor(resources.getColor(R.color.web_text_light, null))
         txtCantidad.setBackgroundResource(R.drawable.category_count_background)
         txtCantidad.setPadding(8, 4, 8, 4)
         
@@ -6049,7 +6048,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
                 val fechaFormateada = try {
                     val sdf = DateHelper.getDateFormat("yyyy-MM-dd")
                     val date = sdf.parse(fecha)
-                    DateHelper.getDateFormat("dd/MM/yyyy").format(date ?: Date())
+                    DateHelper.getDateFormat("dd/MM/yy").format(date ?: Date())
                 } catch (e: Exception) {
                     Log.e("REPORTE_STOCK", "Error formateando fecha $fecha: ${e.message}")
                     fecha
@@ -6069,7 +6068,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
                     val bgColor = if (isDarkMode()) {
                         android.graphics.Color.parseColor("#2D2D2D")
                     } else {
-                        android.graphics.Color.parseColor("#F5F5F5")
+                        resources.getColor(R.color.alt_row_color, null)
                     }
                     setTextColor(textColor)
                     setBackgroundColor(bgColor)
@@ -6452,7 +6451,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
             textSize = 16f
             setTypeface(null, android.graphics.Typeface.BOLD)
             setBackgroundColor(resources.getColor(android.R.color.holo_blue_dark, null))
-            setTextColor(android.graphics.Color.WHITE)
+            setTextColor(resources.getColor(R.color.web_text_light, null))
             setPadding(32, 16, 32, 16)
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,

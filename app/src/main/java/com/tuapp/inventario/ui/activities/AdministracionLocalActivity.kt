@@ -553,7 +553,7 @@ class AdministracionLocalActivity : AppCompatActivity() {
         cardView.findViewById<TextView>(R.id.txtTelefono).text = documento.telefono.ifEmpty { "No especificado" }
         
         // Fecha de vencimiento
-        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val sdf = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
         cardView.findViewById<TextView>(R.id.txtFechaVencimiento).text = 
             documento.fechaVencimiento?.let { sdf.format(it) } ?: "No especificada"
         
@@ -621,7 +621,7 @@ class AdministracionLocalActivity : AppCompatActivity() {
             }
             radius = 16f
             cardElevation = 8f
-            setCardBackgroundColor(android.graphics.Color.parseColor("#FFFFFF"))
+            setCardBackgroundColor(resources.getColor(R.color.surface_color, null))
         }
         
         val layout = LinearLayout(this).apply {
@@ -634,13 +634,13 @@ class AdministracionLocalActivity : AppCompatActivity() {
             text = personal.nombreCompleto
             textSize = 18f
             setTypeface(null, android.graphics.Typeface.BOLD)
-            setTextColor(android.graphics.Color.parseColor("#212121"))
+            setTextColor(resources.getColor(R.color.text_primary, null))
         }
         
         val cargoView = TextView(this).apply {
             text = personal.cargo
             textSize = 14f
-            setTextColor(android.graphics.Color.parseColor("#757575"))
+            setTextColor(resources.getColor(R.color.text_secondary, null))
             setPadding(0, 4, 0, 8)
         }
         
@@ -712,7 +712,7 @@ class AdministracionLocalActivity : AppCompatActivity() {
             text = titulo
             textSize = 14f
             setTypeface(null, android.graphics.Typeface.BOLD)
-            setTextColor(android.graphics.Color.parseColor("#212121"))
+            setTextColor(resources.getColor(R.color.text_primary, null))
         }
         
         val estadoView = TextView(this).apply {
@@ -738,7 +738,7 @@ class AdministracionLocalActivity : AppCompatActivity() {
                 else -> "No disponible"
             }
             textSize = 12f
-            setTextColor(android.graphics.Color.parseColor("#757575"))
+            setTextColor(resources.getColor(R.color.text_secondary, null))
         }
         
         infoLayout.addView(tituloView)
@@ -784,14 +784,14 @@ class AdministracionLocalActivity : AppCompatActivity() {
             }
             radius = 12f
             cardElevation = 6f
-            setCardBackgroundColor(android.graphics.Color.parseColor(
+            setCardBackgroundColor(resources.getColor(
                 when (notificacion.prioridad) {
-                    PrioridadNotificacion.CRITICA -> "#FFEBEE"
-                    PrioridadNotificacion.ALTA -> "#FFF3E0"
-                    PrioridadNotificacion.MEDIA -> "#FFF8E1"
-                    PrioridadNotificacion.BAJA -> "#E8F5E8"
+                    PrioridadNotificacion.CRITICA -> R.color.notif_critica_bg
+                    PrioridadNotificacion.ALTA -> R.color.notif_alta_bg
+                    PrioridadNotificacion.MEDIA -> R.color.notif_media_bg
+                    PrioridadNotificacion.BAJA -> R.color.notif_baja_bg
                 }
-            ))
+            , null))
         }
         
         val layout = LinearLayout(this).apply {
@@ -837,7 +837,7 @@ class AdministracionLocalActivity : AppCompatActivity() {
         val mensajeView = TextView(this).apply {
             text = notificacion.mensaje
             textSize = 14f
-            setTextColor(android.graphics.Color.parseColor("#212121"))
+            setTextColor(resources.getColor(R.color.text_primary, null))
             setPadding(0, 8, 0, 0)
         }
         
@@ -1027,7 +1027,7 @@ class AdministracionLocalActivity : AppCompatActivity() {
         spinnerTipo.setText(documento.tipoDocumento.displayName, false)
         editEmpresa.setText(documento.empresaResponsable)
         editTelefono.setText(documento.telefono)
-        editVencimiento.setText(documento.fechaVencimiento?.let { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(it) } ?: "")
+        editVencimiento.setText(documento.fechaVencimiento?.let { SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(it) } ?: "")
         editObservaciones.setText(documento.observaciones)
         
         editVencimiento.setOnClickListener { showDatePicker(editVencimiento) }
@@ -1128,19 +1128,19 @@ class AdministracionLocalActivity : AppCompatActivity() {
         editCargo.setText(personal.cargo)
         editTelefono.setText(personal.telefono)
         editEmail.setText(personal.email)
-        editFechaIngreso.setText(personal.fechaIngreso?.let { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(it) } ?: "")
+        editFechaIngreso.setText(personal.fechaIngreso?.let { SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(it) } ?: "")
         
         personal.libretaSanitaria?.let { libreta ->
             chkPoseeLibreta.isChecked = true
             layoutLibretaSanitaria.visibility = View.VISIBLE
             btnSeleccionarLibreta.visibility = View.VISIBLE
-            editLibretaVencimiento.setText(libreta.fechaVencimiento?.let { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(it) } ?: "")
+            editLibretaVencimiento.setText(libreta.fechaVencimiento?.let { SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(it) } ?: "")
         }
         personal.cursoManipulacion?.let { curso ->
             chkPoseeCurso.isChecked = true
             layoutCursoManipulacion.visibility = View.VISIBLE
             btnSeleccionarCurso.visibility = View.VISIBLE
-            editCursoVencimiento.setText(curso.fechaVencimiento?.let { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(it) } ?: "")
+            editCursoVencimiento.setText(curso.fechaVencimiento?.let { SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(it) } ?: "")
         }
         
         // Mostrar imágenes existentes
@@ -1255,7 +1255,7 @@ class AdministracionLocalActivity : AppCompatActivity() {
     }
     
     private fun mostrarDialogoDetalleDocumento(documento: DocumentoLocal) {
-        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val sdf = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
         val mensaje = """
             Documento: ${documento.nombreDocumento}
             Tipo: ${documento.tipoDocumento.displayName}
@@ -1275,7 +1275,7 @@ class AdministracionLocalActivity : AppCompatActivity() {
     }
 
     private fun mostrarDialogoDetallePersonal(personal: PersonalLocal) {
-        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val sdf = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
         val mensaje = """
             Nombre: ${personal.nombreCompleto}
             DNI: ${personal.dni}
@@ -1503,32 +1503,22 @@ class AdministracionLocalActivity : AppCompatActivity() {
         // Validar que las imágenes adjuntas no excedan el límite de Firestore (~1 MB)
         val totalBase64Len = (personal.libretaSanitariaBase64?.length ?: 0) + (personal.cursoManipulacionBase64?.length ?: 0)
         if (totalBase64Len > 900000) {
-            Log.w("AdministracionLocal", "Imágenes adjuntas muy grandes: $totalBase64Len caracteres base64")
-            // Preguntar al usuario si quiere reducir la calidad para poder subir
-            MaterialAlertDialogBuilder(this)
-                .setTitle("⚠️ Imagen muy grande")
-                .setMessage("La imagen o imágenes adjuntas son muy grandes para guardarlas. ¿Querés que reduzcamos la calidad automáticamente para poder subirlas?")
-                .setPositiveButton("Sí, reducir calidad") { _, _ ->
-                    val libretaComprimida = personal.libretaSanitariaBase64?.let { comprimirBase64SiNecesario(it) }
-                    val cursoComprimido = personal.cursoManipulacionBase64?.let { comprimirBase64SiNecesario(it) }
-                    val nuevoTotal = (libretaComprimida?.length ?: 0) + (cursoComprimido?.length ?: 0)
-                    Log.d("AdministracionLocal", "Compresión: $totalBase64Len -> $nuevoTotal caracteres base64")
-                    if (nuevoTotal > 900000) {
-                        onComplete(false, "No se pudo reducir la imagen lo suficiente. Probá con otra foto de menor tamaño.")
-                    } else {
-                        guardarPersonalEnFirebase(
-                            personal.copy(
-                                libretaSanitariaBase64 = libretaComprimida,
-                                cursoManipulacionBase64 = cursoComprimido
-                            ),
-                            onComplete
-                        )
-                    }
-                }
-                .setNegativeButton("Cancelar") { _, _ ->
-                    onComplete(false, "La imagen es muy grande y no se guardó. Reducí la calidad o el tamaño de la foto e intentá de nuevo.")
-                }
-                .show()
+            Log.w("AdministracionLocal", "Imágenes adjuntas muy grandes: $totalBase64Len caracteres base64 — comprimiendo automáticamente")
+            val libretaComprimida = personal.libretaSanitariaBase64?.let { comprimirBase64SiNecesario(it) }
+            val cursoComprimido = personal.cursoManipulacionBase64?.let { comprimirBase64SiNecesario(it) }
+            val nuevoTotal = (libretaComprimida?.length ?: 0) + (cursoComprimido?.length ?: 0)
+            Log.d("AdministracionLocal", "Compresión automática: $totalBase64Len → $nuevoTotal caracteres base64")
+            if (nuevoTotal > 900000) {
+                onComplete(false, "La imagen o imágenes adjuntas son muy grandes incluso después de comprimir. Probá con una foto de menor tamaño.")
+            } else {
+                guardarPersonalEnFirebase(
+                    personal.copy(
+                        libretaSanitariaBase64 = libretaComprimida,
+                        cursoManipulacionBase64 = cursoComprimido
+                    ),
+                    onComplete
+                )
+            }
             return
         }
 
@@ -1559,7 +1549,7 @@ class AdministracionLocalActivity : AppCompatActivity() {
         val calendar = Calendar.getInstance()
         DatePickerDialog(this, { _, y, m, d ->
             calendar.set(y, m, d)
-            editText.setText(SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(calendar.time))
+            editText.setText(SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(calendar.time))
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
     }
 
@@ -1689,7 +1679,7 @@ class AdministracionLocalActivity : AppCompatActivity() {
     private fun parseDate(dateString: String): Date? {
         if (dateString.isBlank()) return null
         return try {
-            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val sdf = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
             sdf.timeZone = TimeZone.getTimeZone("America/Argentina/Buenos_Aires")
             sdf.parse(dateString)
         } catch (e: Exception) { null }

@@ -1,8 +1,8 @@
 {
-  "versionCode": 125,
-  "versionName": "2.1.99",
-  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.99.apk",
-  "fileName": "inventario_app_v2.1.99.apk",
-  "description": "v2.1.99 - Validación de imágenes muy grandes al guardar personal/documentos con mensaje claro en vez de error de Firestore.",
+  "versionCode": 142,
+  "versionName": "2.1.116",
+  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.116.apk",
+  "fileName": "inventario_app_v2.1.116.apk",
+  "description": "v2.1.116 - Formato de fecha unificado dd/mm/aa, badges de personal sin fecha, colores theme-aware para dark mode, campana con contador rojo, textos de notificaciones optimizados, card de supervisor clickeable, alerta limitada a ultimos 7 dias.",
   "forceUpdate": false
 }

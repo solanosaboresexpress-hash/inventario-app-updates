@@ -1,0 +1,82 @@
+[
+  {
+    "id": "region_1",
+    "nombre": "Región 1",
+    "proyectoFirebaseId": "inventario-app-multi-local",
+    "googleServicesJson": "google-services",
+    "maestroNombre": "",
+    "activo": true,
+    "firebaseConfig": {
+      "apiKey": "AIzaSyD6dF6jCibROTO-oXBfKUdAjk9q6g6-Mu0",
+      "authDomain": "inventario-app-multi-local.firebaseapp.com",
+      "projectId": "inventario-app-multi-local",
+      "storageBucket": "inventario-app-multi-local.firebasestorage.app",
+      "messagingSenderId": "623222993471",
+      "appId": "1:623222993471:web:48bffda68352403f27be8a"
+    }
+  },
+  {
+    "id": "region_2",
+    "nombre": "Región 2",
+    "proyectoFirebaseId": "region2-99f04",
+    "googleServicesJson": "google_services_region2",
+    "maestroNombre": "",
+    "activo": true,
+    "firebaseConfig": {
+      "apiKey": "AIzaSyC1x8t1Z1k7_1x8t1Z1k7_1x8t1Z1k7",
+      "authDomain": "region2-99f04.firebaseapp.com",
+      "projectId": "region2-99f04",
+      "storageBucket": "region2-99f04.firebasestorage.app",
+      "messagingSenderId": "123456789012",
+      "appId": "1:123456789012:web:abcdef123456"
+    }
+  },
+  {
+    "id": "region_3",
+    "nombre": "Región 3",
+    "proyectoFirebaseId": "region3-e704a",
+    "googleServicesJson": "google_services_region3",
+    "maestroNombre": "",
+    "activo": true,
+    "firebaseConfig": {
+      "apiKey": "AIzaSyD1x8t1Z1k7_2x8t1Z1k7_2x8t1Z1k8",
+      "authDomain": "region3-e704a.firebaseapp.com",
+      "projectId": "region3-e704a",
+      "storageBucket": "region3-e704a.firebasestorage.app",
+      "messagingSenderId": "123456789013",
+      "appId": "1:123456789013:web:abcdef123457"
+    }
+  },
+  {
+    "id": "region_4",
+    "nombre": "Región 4",
+    "proyectoFirebaseId": "region4-30c0d",
+    "googleServicesJson": "google_services_region4",
+    "maestroNombre": "",
+    "activo": true,
+    "firebaseConfig": {
+      "apiKey": "AIzaSyE1x8t1Z1k7_3x8t1Z1k7_3x8t1Z1k9",
+      "authDomain": "region4-30c0d.firebaseapp.com",
+      "projectId": "region4-30c0d",
+      "storageBucket": "region4-30c0d.firebasestorage.app",
+      "messagingSenderId": "123456789014",
+      "appId": "1:123456789014:web:abcdef123458"
+    }
+  },
+  {
+    "id": "region_5",
+    "nombre": "Región 5",
+    "proyectoFirebaseId": "region5-41627",
+    "googleServicesJson": "google_services_region5",
+    "maestroNombre": "",
+    "activo": true,
+    "firebaseConfig": {
+      "apiKey": "AIzaSyF1x8t1Z1k7_4x8t1Z1k7_4x8t1Z1k0",
+      "authDomain": "region5-41627.firebaseapp.com",
+      "projectId": "region5-41627",
+      "storageBucket": "region5-41627.firebasestorage.app",
+      "messagingSenderId": "123456789015",
+      "appId": "1:123456789015:web:abcdef123459"
+    }
+  }
+]

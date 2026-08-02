@@ -276,6 +276,11 @@ class PedidoFabricaActivity : AppCompatActivity() {
             mostrarConfiguracion()
         }
         
+        findViewById<Button>(R.id.btnGuiaAyuda)?.setOnClickListener {
+            com.tuapp.inventario.ui.dialogs.InteractiveGuideHelper.show(this, sectionName = "pedido-fabrica")
+        }
+
+        
         // 🔧 AGREGAR listeners para navegación de fechas
         btnAnterior.setOnClickListener {
             navegarFechaAnterior()
@@ -622,7 +627,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
         val fechaFormateada = try {
             val sdf = DateHelper.getDateFormat("yyyy-MM-dd")
             val fechaParseada = sdf.parse(fecha)
-            val sdfMostrar = DateHelper.getDateFormat("dd/MM/yyyy")
+            val sdfMostrar = DateHelper.getDateFormat("dd/MM/yy")
             sdfMostrar.format(fechaParseada ?: Date())
         } catch (e: Exception) {
             fecha
@@ -717,7 +722,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
                 textSize = 16f
                 setTypeface(null, android.graphics.Typeface.BOLD)
                 setBackgroundColor(resources.getColor(android.R.color.holo_blue_dark, null))
-                setTextColor(resources.getColor(android.R.color.white, null))
+                setTextColor(resources.getColor(R.color.web_text_light, null))
                 setPadding(32, 16, 32, 16)
                 
                 setOnClickListener {
@@ -799,7 +804,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
             textSize = 16f
             setTypeface(null, android.graphics.Typeface.BOLD)
             setBackgroundColor(resources.getColor(android.R.color.holo_blue_dark, null))
-            setTextColor(resources.getColor(android.R.color.white, null))
+            setTextColor(resources.getColor(R.color.web_text_light, null))
             setPadding(32, 16, 32, 16)
             
             setOnClickListener {
@@ -916,7 +921,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
                     
                     // Actualizar el título con información de fecha de creación si existe
                     if (fechaCreacion != null) {
-                        val sdf = DateHelper.getDateFormat("dd/MM/yyyy HH:mm")
+                        val sdf = DateHelper.getDateFormat("dd/MM/yy HH:mm")
                         val fechaCreacionStr = sdf.format(fechaCreacion.toDate())
                         Log.d("PedidoFabricaActivity", "📅 Pedido creado el: $fechaCreacionStr")
                     }
@@ -1484,7 +1489,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
             val bannerAdmin = TextView(this).apply {
                 text = "🔧 MODO ADMINISTRADOR - EDICIÓN HABILITADA"
                 textSize = 14f
-                setTextColor(resources.getColor(android.R.color.white, null))
+                setTextColor(resources.getColor(R.color.web_text_light, null))
                 setBackgroundColor(resources.getColor(android.R.color.holo_orange_dark, null))
                 gravity = android.view.Gravity.CENTER
                 setPadding(0, 12, 0, 12)
@@ -1533,10 +1538,292 @@ class PedidoFabricaActivity : AppCompatActivity() {
      * Clima y partidos de mañana (día objetivo del pedido) para anticipar demanda.
      * Solo con fecha seleccionada = hoy (Argentina) y en modo editable.
      */
-        private fun obtenerFechaHoyArgentina(): String {
+    private fun obtenerFechaHoyArgentina(): String {
         val tz = java.util.TimeZone.getTimeZone("America/Argentina/Buenos_Aires")
         val sdf = DateHelper.getDateFormat("yyyy-MM-dd").apply { timeZone = tz }
         return sdf.format(Date())
+    }
+
+    private fun cargarLandscapeWeatherBannerHTML(weatherCode: Int, fechaMostrar: String, lineaClima: String, lineasFutbol: List<String>) {
+        try {
+            val type = when (weatherCode) {
+                0 -> "sunny"
+                1, 2 -> "partlyCloudy"
+                3 -> "cloudy"
+                45, 48 -> "fog"
+                in listOf(51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82) -> "rainy"
+                in listOf(71, 73, 75, 77, 85, 86) -> "snowy"
+                in listOf(95, 96, 99) -> "storm"
+                else -> "cloudy"
+            }
+
+            val (skyTop, skyBottom, ground, groundDark) = when (type) {
+                "sunny" -> listOf("#4FC3F7", "#81D4FA", "#66BB6A", "#43A047")
+                "partlyCloudy" -> listOf("#64B5F6", "#90CAF9", "#66BB6A", "#43A047")
+                "cloudy" -> listOf("#78909C", "#B0BEC5", "#7CB342", "#558B2F")
+                "fog" -> listOf("#90A4AE", "#CFD8DC", "#8D6E63", "#6D4C41")
+                "rainy" -> listOf("#455A64", "#607D8B", "#5D4037", "#3E2723")
+                "snowy" -> listOf("#B0BEC5", "#ECEFF1", "#E0E0E0", "#BDBDBD")
+                "storm" -> listOf("#263238", "#37474F", "#37474F", "#263238")
+                else -> listOf("#78909C", "#B0BEC5", "#7CB342", "#558B2F")
+            }
+
+            val futbolBlock = if (lineasFutbol.isEmpty()) "⚽ Sin partidos para esa fecha." else lineasFutbol.joinToString("<br>")
+
+            val treeColor = if (type == "snowy") "#E0E0E0" else if (type == "storm" || type == "rainy") "#2E7D32" else "#388E3C"
+            val trunkColor = if (type == "snowy") "#5D4037" else "#6D4C41"
+            val treeSway = if (type in listOf("cloudy", "rainy", "fog")) "animation:lwWindSway 2.5s ease-in-out infinite;transform-origin:bottom center;" else ""
+
+            val cloudsHtml = StringBuilder()
+            val cloudCount = if (type in listOf("cloudy", "rainy", "storm", "snowy")) 4 else if (type == "partlyCloudy") 2 else 0
+            val cloudColor = if (type in listOf("storm", "rainy")) "#546E7A" else if (type == "snowy") "#ECEFF1" else "#FFFFFF"
+            for (c in 0 until cloudCount) {
+                val ct = 8 + c * 18
+                val cdur = 15 + c * 5
+                val cdelay = c * 3
+                val csize = 0.8 + (c % 2) * 0.3
+                cloudsHtml.append("""
+                    <div style="position:absolute;top:${ct}px;left:0;width:${(60 * csize)}px;height:${(30 * csize)}px;animation:lwCloudDrift ${cdur}s linear infinite ${cdelay}s;z-index:3;">
+                        <svg width="${(60 * csize)}" height="${(30 * csize)}" viewBox="0 0 60 30">
+                            <ellipse cx="20" cy="18" rx="14" ry="10" fill="$cloudColor" opacity="0.9"/>
+                            <ellipse cx="35" cy="15" rx="16" ry="12" fill="$cloudColor" opacity="0.9"/>
+                            <ellipse cx="48" cy="18" rx="10" ry="8" fill="$cloudColor" opacity="0.9"/>
+                        </svg>
+                    </div>
+                """.trimIndent())
+            }
+
+            val rainHtml = StringBuilder()
+            if (type == "rainy" || type == "storm") {
+                val rainCount = if (type == "storm") 35 else 22
+                for (r in 0 until rainCount) {
+                    val rx = (r * 13) % 100
+                    val rdel = (r * 0.15) % 2
+                    val rdur = 0.6 + (r % 3) * 0.2
+                    rainHtml.append("""
+                        <div style="position:absolute;top:40px;left:$rx%;width:2px;height:14px;background:linear-gradient(to bottom,transparent,#4FC3F7);border-radius:2px;animation:lwRainFall ${rdur}s linear infinite ${rdel}s;z-index:4;"></div>
+                    """.trimIndent())
+                }
+            }
+
+            val snowHtml = StringBuilder()
+            if (type == "snowy") {
+                for (s in 0 until 25) {
+                    val sx = (s * 17) % 100
+                    val sdel = (s * 0.2) % 3
+                    val sdur = 2.0 + (s % 3) * 0.5
+                    val ssize = 4 + (s % 3) * 2
+                    snowHtml.append("""
+                        <div style="position:absolute;top:30px;left:$sx%;width:${ssize}px;height:${ssize}px;background:white;border-radius:50%;opacity:0.8;animation:lwSnowFall ${sdur}s linear infinite ${sdel}s;z-index:4;"></div>
+                    """.trimIndent())
+                }
+            }
+
+            val birdsHtml = StringBuilder()
+            if (type == "sunny" || type == "partlyCloudy") {
+                for (b in 0 until 3) {
+                    val top = 12 + b * 12
+                    val delay = b * 3.0
+                    val dur = 8 + b * 2
+                    birdsHtml.append("""
+                        <div style="position:absolute;top:${top}px;left:0;width:20px;height:12px;animation:lwBirdFly ${dur}s linear infinite ${delay}s;z-index:2;">
+                            <svg width="20" height="12" viewBox="0 0 20 12"><path d="M2 8 Q5 2 10 6 Q15 2 18 8" stroke="#37474F" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+                        </div>
+                    """.trimIndent())
+                }
+            }
+
+            val fogHtml = StringBuilder()
+            if (type == "fog") {
+                for (f in 0 until 3) {
+                    val top = 25 + f * 22
+                    val delay = f * 1.5
+                    val dur = 6 + f
+                    fogHtml.append("""
+                        <div style="position:absolute;top:${top}px;left:0;right:0;height:20px;background:rgba(255,255,255,0.18);border-radius:50%;animation:lwFogMove ${dur}s ease-in-out infinite ${delay}s;z-index:3;"></div>
+                    """.trimIndent())
+                }
+            }
+
+            val grassHtml = StringBuilder()
+            for (g in 0 until 18) {
+                val gx = g * 5.5 + 2
+                val gh = 8 + (g % 3) * 4
+                grassHtml.append("""
+                    <div style="position:absolute;bottom:0;left:$gx%;width:3px;height:${gh}px;background:$groundDark;border-radius:50% 50% 0 0;transform-origin:bottom center;animation:lwGrassSway ${(2 + g % 3)}s ease-in-out infinite ${(g * 0.1)}s;"></div>
+                """.trimIndent())
+            }
+
+            val leavesHtml = StringBuilder()
+            if (type == "cloudy" || type == "partlyCloudy") {
+                for (l in 0 until 4) {
+                    val lx = 15 + l * 18
+                    val ldel = l * 1.2
+                    val ldur = 3 + l
+                    leavesHtml.append("""
+                        <div style="position:absolute;bottom:50px;left:$lx%;width:6px;height:6px;background:#FF6F00;border-radius:50% 0;animation:lwLeafFall ${ldur}s linear infinite ${ldel}s;z-index:8;"></div>
+                    """.trimIndent())
+                }
+            }
+
+            val sunHtml = if (type == "sunny" || type == "partlyCloudy") """
+                <div style="position:absolute;top:10px;right:15px;width:45px;height:45px;animation:lwSunGlow 3s ease-in-out infinite;z-index:2;">
+                    <svg width="45" height="45" viewBox="0 0 64 64">
+                        <g transform="translate(32,32)">
+                            <g style="animation:lwSunRays 12s linear infinite;transform-origin:0 0;">
+                                <line x1="0" y1="-26" x2="0" y2="-20" stroke="#F59E0B" stroke-width="3.5" stroke-linecap="round"/>
+                                <line x1="18.4" y1="-18.4" x2="14.1" y2="-14.1" stroke="#F59E0B" stroke-width="3.5" stroke-linecap="round"/>
+                                <line x1="26" y1="0" x2="20" y2="0" stroke="#F59E0B" stroke-width="3.5" stroke-linecap="round"/>
+                                <line x1="18.4" y1="18.4" x2="14.1" y2="14.1" stroke="#F59E0B" stroke-width="3.5" stroke-linecap="round"/>
+                                <line x1="0" y1="26" x2="0" y2="20" stroke="#F59E0B" stroke-width="3.5" stroke-linecap="round"/>
+                                <line x1="-18.4" y1="18.4" x2="-14.1" y2="14.1" stroke="#F59E0B" stroke-width="3.5" stroke-linecap="round"/>
+                                <line x1="-26" y1="0" x2="-20" y2="0" stroke="#F59E0B" stroke-width="3.5" stroke-linecap="round"/>
+                                <line x1="-18.4" y1="-18.4" x2="-14.1" y2="-14.1" stroke="#F59E0B" stroke-width="3.5" stroke-linecap="round"/>
+                            </g>
+                            <circle r="13" fill="#FDE047"/>
+                            <circle r="9" fill="#F59E0B"/>
+                        </g>
+                    </svg>
+                </div>
+            """.trimIndent() else ""
+
+            val lightningHtml = if (type == "storm") """
+                <div style="position:absolute;inset:0;background:white;opacity:0;animation:lwLightning 4s infinite;z-index:1;"></div>
+            """.trimIndent() else ""
+
+            val snowCapsHtml = if (type == "snowy") """
+                <circle cx="30" cy="15" r="10" fill="white" opacity="0.7"/>
+                <circle cx="15" cy="30" r="6" fill="white" opacity="0.6"/>
+                <circle cx="45" cy="30" r="6" fill="white" opacity="0.6"/>
+            """.trimIndent() else ""
+
+            val html = """
+            <!DOCTYPE html>
+            <html>
+            <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+            <style>
+                * { box-sizing: border-box; margin:0; padding:0; user-select:none; }
+                body, html { width:100%; height:100%; overflow:hidden; background:transparent; font-family: system-ui, -apple-system, sans-serif; }
+                
+                @keyframes lwCloudDrift { 0% { transform: translateX(-40px); } 100% { transform: translateX(calc(100vw + 40px)); } }
+                @keyframes lwRainFall { 0% { transform: translateY(-10px); opacity: 0; } 10% { opacity: 0.8; } 100% { transform: translateY(140px); opacity: 0; } }
+                @keyframes lwSnowFall { 0% { transform: translateY(-10px) translateX(0); opacity: 0; } 10% { opacity: 0.9; } 50% { transform: translateY(70px) translateX(8px); } 100% { transform: translateY(140px) translateX(-5px); opacity: 0; } }
+                @keyframes lwSunGlow { 0%, 100% { filter: drop-shadow(0 0 10px rgba(251,191,36,0.6)); } 50% { filter: drop-shadow(0 0 20px rgba(251,191,36,0.9)); } }
+                @keyframes lwSunRays { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+                @keyframes lwLightning { 0%, 90%, 100% { opacity: 0; } 92%, 94% { opacity: 1; } 93% { opacity: 0.3; } }
+                @keyframes lwWindSway { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(3deg); } }
+                @keyframes lwLeafFall { 0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(70px) translateX(20px) rotate(180deg); opacity: 0; } }
+                @keyframes lwGrassSway { 0%, 100% { transform: skewX(0deg); } 50% { transform: skewX(3deg); } }
+                @keyframes lwFogMove { 0% { transform: translateX(-15px); opacity: 0.3; } 50% { opacity: 0.5; } 100% { transform: translateX(15px); opacity: 0.3; } }
+                @keyframes lwBirdFly { 0% { transform: translateX(-30px) translateY(0); } 50% { transform: translateX(50vw) translateY(-8px); } 100% { transform: translateX(calc(100vw + 30px)) translateY(0); } }
+
+                .banner-container {
+                    position: absolute;
+                    inset: 0;
+                    width: 100%;
+                    height: 100%;
+                    overflow: hidden;
+                }
+                .sky-bg {
+                    position: absolute;
+                    inset: 0;
+                    background: linear-gradient(to bottom, $skyTop 0%, $skyBottom 65%, $groundDark 66%, $ground 100%);
+                }
+                .info-badge {
+                    position: absolute;
+                    top: 8px;
+                    left: 70px;
+                    right: 8px;
+                    z-index: 10;
+                    background: rgba(15, 23, 42, 0.65);
+                    backdrop-filter: blur(8px);
+                    -webkit-backdrop-filter: blur(8px);
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                    border-radius: 12px;
+                    padding: 8px 10px;
+                    color: #ffffff;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                }
+                .info-title {
+                    font-size: 12.5px;
+                    font-weight: 700;
+                    color: #FDE047;
+                    margin-bottom: 2px;
+                }
+                .info-clima {
+                    font-size: 11px;
+                    font-weight: 600;
+                    color: #FFFFFF;
+                    margin-bottom: 3px;
+                }
+                .info-futbol {
+                    font-size: 10.5px;
+                    color: #E2E8F0;
+                    line-height: 1.35;
+                }
+            </style>
+            </head>
+            <body>
+                <div class="banner-container">
+                    <div class="sky-bg"></div>
+                    $lightningHtml
+                    $sunHtml
+                    $birdsHtml
+                    $cloudsHtml
+                    $fogHtml
+                    $rainHtml
+                    $snowHtml
+                    
+                    <!-- Ground Hills SVG -->
+                    <div style="position:absolute;bottom:0;left:0;right:0;height:32%;z-index:5;">
+                        <svg width="100%" height="100%" viewBox="0 0 400 60" preserveAspectRatio="none">
+                            <path d="M0 60 L0 25 Q100 5 200 20 Q300 35 400 15 L400 60 Z" fill="$ground"/>
+                            <path d="M0 60 L0 35 Q80 20 180 30 Q280 40 400 25 L400 60 Z" fill="$groundDark" opacity="0.5"/>
+                        </svg>
+                    </div>
+
+                    <!-- Grass blades -->
+                    <div style="position:absolute;bottom:0;left:0;right:0;height:15px;z-index:6;overflow:hidden;">
+                        $grassHtml
+                    </div>
+
+                    <!-- Tree SVG -->
+                    <div style="position:absolute;bottom:10px;left:8px;width:55px;height:75px;z-index:7;$treeSway">
+                        <svg width="55" height="75" viewBox="0 0 60 80">
+                            <rect x="26" y="50" width="8" height="30" fill="$trunkColor" rx="2"/>
+                            <circle cx="30" cy="25" r="18" fill="$treeColor"/>
+                            <circle cx="18" cy="35" r="12" fill="$treeColor"/>
+                            <circle cx="42" cy="35" r="12" fill="$treeColor"/>
+                            <circle cx="30" cy="40" r="14" fill="$treeColor" opacity="0.8"/>
+                            $snowCapsHtml
+                        </svg>
+                    </div>
+
+                    $leavesHtml
+
+                    <!-- Info text overlay card -->
+                    <div class="info-badge">
+                        <div class="info-title">📣 Mañana ($fechaMostrar)</div>
+                        <div class="info-clima">$lineaClima</div>
+                        <div class="info-futbol">$futbolBlock</div>
+                    </div>
+                </div>
+            </body>
+            </html>
+            """.trimIndent()
+
+            webClimaIcono.loadDataWithBaseURL(null, html, "text/html", "UTF-8", null)
+            webClimaIcono.visibility = View.VISIBLE
+        } catch (e: Exception) {
+            Log.e("PedidoFabricaActivity", "Error cargando landscape weather banner: ${e.message}")
+        }
+    }
+
+    private fun aplicarDemandaManianaUi(ctx: DemandaManianaContexto) {
+        val code = ctx.weatherCode
+        cargarLandscapeWeatherBannerHTML(code, ctx.fechaMostrar, ctx.lineaClima, ctx.lineasFutbol)
+        cardDemandaManiana.visibility = View.VISIBLE
     }
 
     
@@ -1552,129 +1839,6 @@ class PedidoFabricaActivity : AppCompatActivity() {
             }
         } catch (e: Exception) {
             Log.e("PedidoFabricaActivity", "Error configurando webClimaIcono", e)
-        }
-    }
-
-    private fun cargarSVGClimaAnimado(weatherCode: Int) {
-        try {
-            val svgContent = when {
-                weatherCode == 0 || weatherCode == 1 -> """
-                <svg width="48" height="48" viewBox="0 0 64 64" style="filter:drop-shadow(0 0 8px rgba(251,191,36,0.6));">
-                  <g transform="translate(32,32)">
-                    <g style="animation: weatherSunRotate 8s linear infinite;">
-                      <line x1="0" y1="-26" x2="0" y2="-20" stroke="#F59E0B" stroke-width="3.5" stroke-linecap="round"/>
-                      <line x1="18.4" y1="-18.4" x2="14.1" y2="-14.1" stroke="#F59E0B" stroke-width="3.5" stroke-linecap="round"/>
-                      <line x1="26" y1="0" x2="20" y2="0" stroke="#F59E0B" stroke-width="3.5" stroke-linecap="round"/>
-                      <line x1="18.4" y1="18.4" x2="14.1" y2="14.1" stroke="#F59E0B" stroke-width="3.5" stroke-linecap="round"/>
-                      <line x1="0" y1="26" x2="0" y2="20" stroke="#F59E0B" stroke-width="3.5" stroke-linecap="round"/>
-                      <line x1="-18.4" y1="18.4" x2="-14.1" y2="14.1" stroke="#F59E0B" stroke-width="3.5" stroke-linecap="round"/>
-                      <line x1="-26" y1="0" x2="-20" y2="0" stroke="#F59E0B" stroke-width="3.5" stroke-linecap="round"/>
-                      <line x1="-18.4" y1="-18.4" x2="-14.1" y2="-14.1" stroke="#F59E0B" stroke-width="3.5" stroke-linecap="round"/>
-                    </g>
-                    <circle r="13" fill="url(#sunGrad)" style="animation: weatherSunPulse 2.5s ease-in-out infinite;"/>
-                  </g>
-                  <defs>
-                    <radialGradient id="sunGrad" cx="35%" cy="35%" r="65%">
-                      <stop offset="0%" stop-color="#FDE047"/>
-                      <stop offset="100%" stop-color="#F59E0B"/>
-                    </radialGradient>
-                  </defs>
-                </svg>
-                """
-                weatherCode in listOf(95, 96, 99) -> """
-                <svg width="48" height="48" viewBox="0 0 64 64" style="filter:drop-shadow(0 4px 10px rgba(124,58,237,0.4));">
-                  <g style="animation: weatherCloudFloat 3s ease-in-out infinite;">
-                    <path d="M46 36c3.3 0 6-2.7 6-6 0-3-2.2-5.5-5.1-5.9C45.9 19 41.6 15 36.5 15c-4.1 0-7.7 2.6-9.1 6.3C26.5 21.1 25.8 21 25 21c-3.9 0-7 3.1-7 7 0 .7.1 1.4.3 2C15.6 30.6 14 33.1 14 36c0 3.9 3.1 7 7 7h25c3.3 0 6-2.7 6-6z" fill="url(#stormCloudGrad)"/>
-                  </g>
-                  <polygon points="30,36 24,46 31,46 27,56 38,42 31,42" fill="#FDE047" style="animation: weatherFlash 1.2s infinite;"/>
-                  <defs>
-                    <linearGradient id="stormCloudGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#475569"/>
-                      <stop offset="100%" stop-color="#1E293B"/>
-                    </linearGradient>
-                  </defs>
-                </svg>
-                """
-                weatherCode in listOf(51,53,55,56,57,61,63,65,66,67,80,81,82) -> """
-                <svg width="48" height="48" viewBox="0 0 64 64" style="filter:drop-shadow(0 4px 8px rgba(59,130,246,0.4));">
-                  <g style="animation: weatherCloudFloat 3s ease-in-out infinite;">
-                    <path d="M46 34c3.3 0 6-2.7 6-6 0-3-2.2-5.5-5.1-5.9C45.9 17 41.6 13 36.5 13c-4.1 0-7.7 2.6-9.1 6.3C26.5 19.1 25.8 19 25 19c-3.9 0-7 3.1-7 7 0 .7.1 1.4.3 2C15.6 28.6 14 31.1 14 34c0 3.9 3.1 7 7 7h25z" fill="url(#rainCloudGrad)"/>
-                  </g>
-                  <g stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round">
-                    <line x1="22" y1="44" x2="19" y2="52" style="animation: weatherRainDrop 0.8s linear infinite;"/>
-                    <line x1="32" y1="44" x2="29" y2="54" style="animation: weatherRainDrop 0.8s linear infinite 0.3s;"/>
-                    <line x1="42" y1="44" x2="39" y2="52" style="animation: weatherRainDrop 0.8s linear infinite 0.6s;"/>
-                  </g>
-                  <defs>
-                    <linearGradient id="rainCloudGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#94A3B8"/>
-                      <stop offset="100%" stop-color="#475569"/>
-                    </linearGradient>
-                  </defs>
-                </svg>
-                """
-                weatherCode in listOf(71,73,75,77,85,86) -> """
-                <svg width="48" height="48" viewBox="0 0 64 64" style="filter:drop-shadow(0 4px 8px rgba(186,230,253,0.5));">
-                  <g style="animation: weatherCloudFloat 3s ease-in-out infinite;">
-                    <path d="M46 34c3.3 0 6-2.7 6-6 0-3-2.2-5.5-5.1-5.9C45.9 17 41.6 13 36.5 13c-4.1 0-7.7 2.6-9.1 6.3C26.5 19.1 25.8 19 25 19c-3.9 0-7 3.1-7 7 0 .7.1 1.4.3 2C15.6 28.6 14 31.1 14 34c0 3.9 3.1 7 7 7h25z" fill="url(#snowCloudGrad)"/>
-                  </g>
-                  <g fill="#BAE6FD">
-                    <circle cx="22" cy="46" r="2.5" style="animation: weatherSnowDrop 1.5s ease-in-out infinite;"/>
-                    <circle cx="32" cy="48" r="2" style="animation: weatherSnowDrop 1.5s ease-in-out infinite 0.5s;"/>
-                    <circle cx="42" cy="45" r="2.5" style="animation: weatherSnowDrop 1.5s ease-in-out infinite 1s;"/>
-                  </g>
-                  <defs>
-                    <linearGradient id="snowCloudGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#CBD5E1"/>
-                      <stop offset="100%" stop-color="#64748B"/>
-                    </linearGradient>
-                  </defs>
-                </svg>
-                """
-                else -> """
-                <svg width="48" height="48" viewBox="0 0 64 64" style="filter:drop-shadow(0 4px 8px rgba(148,163,184,0.4));">
-                  <circle cx="24" cy="24" r="9" fill="#F59E0B" style="animation: weatherSunPulse 3s ease-in-out infinite;"/>
-                  <g style="animation: weatherCloudFloat 3.5s ease-in-out infinite;">
-                    <path d="M46 36c3.3 0 6-2.7 6-6 0-3-2.2-5.5-5.1-5.9C45.9 19 41.6 15 36.5 15c-4.1 0-7.7 2.6-9.1 6.3C26.5 21.1 25.8 21 25 21c-3.9 0-7 3.1-7 7 0 .7.1 1.4.3 2C15.6 30.6 14 33.1 14 36c0 3.9 3.1 7 7 7h25z" fill="url(#partlyCloudGrad)"/>
-                  </g>
-                  <defs>
-                    <linearGradient id="partlyCloudGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#E2E8F0"/>
-                      <stop offset="100%" stop-color="#94A3B8"/>
-                    </linearGradient>
-                  </defs>
-                </svg>
-                """
-            }
-
-            val html = """
-            <!DOCTYPE html>
-            <html>
-            <head>
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <style>
-                body { margin:0; padding:0; background:transparent; display:flex; align-items:center; justify-content:center; width:100%; height:100%; overflow:hidden; }
-                @keyframes weatherSunRotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-                @keyframes weatherSunPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
-                @keyframes weatherCloudFloat { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-4px); } }
-                @keyframes weatherRainDrop { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(10px); opacity: 0; } }
-                @keyframes weatherSnowDrop { 0% { transform: translateY(0) scale(1); opacity: 1; } 50% { transform: translateY(6px) scale(1.2); opacity: 0.8; } 100% { transform: translateY(12px) scale(0.8); opacity: 0.2; } }
-                @keyframes weatherFlash { 0%, 100% { opacity: 0; } 30%, 35% { opacity: 1; } 40% { opacity: 0; } 80%, 82% { opacity: 1; } }
-            </style>
-            </head>
-            <body>
-                $svgContent
-            </body>
-            </html>
-            """.trimIndent()
-
-            webClimaIcono.loadDataWithBaseURL(null, html, "text/html", "UTF-8", null)
-            webClimaIcono.visibility = View.VISIBLE
-            txtClimaIcono.visibility = View.GONE
-        } catch (e: Exception) {
-            Log.e("PedidoFabricaActivity", "Error cargando SVG clima animado: ${e.message}")
-            txtClimaIcono.visibility = View.VISIBLE
-            webClimaIcono.visibility = View.GONE
         }
     }
 
@@ -1762,147 +1926,6 @@ class PedidoFabricaActivity : AppCompatActivity() {
         cardDemandaManiana.setStrokeColor(stroke)
         climaAnimator?.cancel()
         txtClimaIcono.visibility = View.GONE
-        cardDemandaManiana.visibility = View.VISIBLE
-    }
-
-    private fun aplicarDemandaManianaUi(ctx: DemandaManianaContexto) {
-        txtDemandaManianaTitulo.text = "📣 Mañana (${ctx.fechaMostrar})"
-        val futbolBlock = if (ctx.lineasFutbol.isEmpty()) {
-            "⚽ Primera División: no hay partidos para esa fecha."
-        } else {
-            ctx.lineasFutbol.joinToString("\n")
-        }
-        txtDemandaManianaCuerpo.text = buildString {
-            append(ctx.lineaClima)
-            append("\n\n")
-            append(futbolBlock)
-        }
-
-        // Cancelar animación previa
-        climaAnimator?.cancel()
-        txtClimaIcono.rotation = 0f
-        txtClimaIcono.translationX = 0f
-        txtClimaIcono.translationY = 0f
-        txtClimaIcono.scaleX = 1f
-        txtClimaIcono.scaleY = 1f
-
-        val isDark = isDarkMode()
-        val code = ctx.weatherCode
-        
-        if (code != -1) {
-            val emoji = when (code) {
-                0 -> "☀️" // Soleado
-                1, 2, 3 -> "⛅" // Nublado
-                45, 48 -> "🌫️" // Niebla
-                51, 53, 55, 56, 57 -> "🌧️" // Llovizna
-                61, 63, 65, 66, 67, 80, 81, 82 -> "🌧️" // Lluvia
-                71, 73, 75, 77, 85, 86 -> "❄️" // Nieve / Granizo
-                95, 96, 99 -> "⛈️" // Tormenta
-                else -> "✨"
-            }
-            
-            val bgColorStr = if (isDark) {
-                when (code) {
-                    0 -> "#2D1D00" // Oro oscuro
-                    1, 2, 3 -> "#1B2228" // Gris azulado oscuro
-                    45, 48 -> "#212121" // Gris neutro oscuro
-                    51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82 -> "#0E1A30" // Azul tormenta oscuro
-                    71, 73, 75, 77, 85, 86 -> "#0A282D" // Verde azulado gélido oscuro
-                    95, 96, 99 -> "#210A30" // Púrpura tormentoso oscuro
-                    else -> "#212121"
-                }
-            } else {
-                when (code) {
-                    0 -> "#FFFDE7" // Amarillo sol claro
-                    1, 2, 3 -> "#ECEFF1" // Gris azulado claro
-                    45, 48 -> "#F5F5F5" // Gris claro
-                    51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82 -> "#E1F5FE" // Azul lluvia claro
-                    71, 73, 75, 77, 85, 86 -> "#E0F7FA" // Celeste nieve claro
-                    95, 96, 99 -> "#F3E5F5" // Púrpura claro
-                    else -> "#FFF8E1"
-                }
-            }
-            
-            val strokeColorStr = when (code) {
-                0 -> "#FFB300" // Amarillo/Dorado
-                1, 2, 3 -> "#78909C" // Gris azulado
-                45, 48 -> "#9E9E9E" // Gris
-                51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82 -> "#0288D1" // Azul lluvia
-                71, 73, 75, 77, 85, 86 -> "#00ACC1" // Celeste
-                95, 96, 99 -> "#8E24AA" // Púrpura
-                else -> "#FF9800"
-            }
-            
-            val bgColor = android.graphics.Color.parseColor(bgColorStr)
-            val strokeColor = android.graphics.Color.parseColor(strokeColorStr)
-            
-            cardDemandaManiana.setCardBackgroundColor(bgColor)
-            cardDemandaManiana.setStrokeColor(strokeColor)
-            
-            txtClimaIcono.text = emoji
-            cargarSVGClimaAnimado(code)
-            
-            // Iniciar animación correspondiente
-            when (code) {
-                0 -> {
-                    // Rotación lenta del sol
-                    val anim = android.animation.ObjectAnimator.ofFloat(txtClimaIcono, "rotation", 0f, 360f).apply {
-                        duration = 8000
-                        repeatCount = android.animation.ObjectAnimator.INFINITE
-                        interpolator = android.view.animation.LinearInterpolator()
-                    }
-                    anim.start()
-                    climaAnimator = anim
-                }
-                1, 2, 3, 45, 48 -> {
-                    // Desplazamiento horizontal de nubes/niebla
-                    val anim = android.animation.ObjectAnimator.ofFloat(txtClimaIcono, "translationX", -8f, 8f).apply {
-                        duration = 3000
-                        repeatCount = android.animation.ObjectAnimator.INFINITE
-                        repeatMode = android.animation.ObjectAnimator.REVERSE
-                        interpolator = android.view.animation.AccelerateDecelerateInterpolator()
-                    }
-                    anim.start()
-                    climaAnimator = anim
-                }
-                51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82, 95, 96, 99 -> {
-                    // Rebote vertical para lluvia/tormenta
-                    val anim = android.animation.ObjectAnimator.ofFloat(txtClimaIcono, "translationY", -6f, 6f).apply {
-                        duration = 1500
-                        repeatCount = android.animation.ObjectAnimator.INFINITE
-                        repeatMode = android.animation.ObjectAnimator.REVERSE
-                        interpolator = android.view.animation.AccelerateDecelerateInterpolator()
-                    }
-                    anim.start()
-                    climaAnimator = anim
-                }
-                71, 73, 75, 77, 85, 86 -> {
-                    // Escalado oscilante para nieve
-                    val animX = android.animation.ObjectAnimator.ofFloat(txtClimaIcono, "scaleX", 0.9f, 1.1f)
-                    val animY = android.animation.ObjectAnimator.ofFloat(txtClimaIcono, "scaleY", 0.9f, 1.1f)
-                    
-                    val set = android.animation.AnimatorSet().apply {
-                        playTogether(animX, animY)
-                        duration = 2000
-                    }
-                    
-                    animX.repeatCount = android.animation.ValueAnimator.INFINITE
-                    animX.repeatMode = android.animation.ValueAnimator.REVERSE
-                    animY.repeatCount = android.animation.ValueAnimator.INFINITE
-                    animY.repeatMode = android.animation.ValueAnimator.REVERSE
-                    
-                    set.start()
-                    climaAnimator = set
-                }
-            }
-        } else {
-            // Sin datos de clima válidos
-            val bg = if (isDark) android.graphics.Color.parseColor("#1E293B") else android.graphics.Color.parseColor("#FFF8E1")
-            val stroke = if (isDark) android.graphics.Color.parseColor("#40C59B34") else android.graphics.Color.parseColor("#FF9800")
-            cardDemandaManiana.setCardBackgroundColor(bg)
-            cardDemandaManiana.setStrokeColor(stroke)
-            txtClimaIcono.visibility = View.GONE
-        }
     }
 
     private fun notificarDemandaManianaSiCorresponde(ctx: DemandaManianaContexto, manianaIso: String) {
@@ -2040,7 +2063,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
             text = "📈 Ir a Promedio de Ventas"
             textSize = 14f
             setBackgroundColor(resources.getColor(android.R.color.holo_blue_dark, null))
-            setTextColor(resources.getColor(android.R.color.white, null))
+            setTextColor(resources.getColor(R.color.web_text_light, null))
             setPadding(16, 12, 16, 12)
             setOnClickListener {
                 // Ir a la actividad de Promedio de Ventas
@@ -2053,7 +2076,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
             text = "🔄 Recargar Datos del Local"
             textSize = 12f
             setBackgroundColor(resources.getColor(android.R.color.holo_orange_dark, null))
-            setTextColor(resources.getColor(android.R.color.white, null))
+            setTextColor(resources.getColor(R.color.web_text_light, null))
             setPadding(16, 8, 16, 8)
             setOnClickListener {
                 // Recargar los datos específicos del local actual
@@ -2068,7 +2091,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
             text = "📦 Cargar Stock Actual (Sin Sugerencias)"
             textSize = 12f
             setBackgroundColor(resources.getColor(android.R.color.darker_gray, null))
-            setTextColor(resources.getColor(android.R.color.white, null))
+            setTextColor(resources.getColor(R.color.web_text_light, null))
             setPadding(16, 8, 16, 8)
             setOnClickListener {
                 // Mostrar la sección de carga sin sugerencias
@@ -2195,7 +2218,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
                     setPadding(8, 8, 8, 8)
                     inputType = InputType.TYPE_CLASS_NUMBER
                     setTextColor(textColor)
-                    setBackgroundColor(if (isDarkMode()) resources.getColor(android.R.color.black, null) else resources.getColor(android.R.color.white, null))
+                    setBackgroundColor(if (isDarkMode()) resources.getColor(R.color.web_text_primary, null) else resources.getColor(R.color.web_text_light, null))
                     gravity = android.view.Gravity.CENTER
                     tag = "${producto.codigo}_stock" // Tag para identificar el campo
                     Log.d("ADMIN_FLOW", "🔧 EditText Stock para ${producto.codigo}: valor asignado = '$valorInicial' (guardado: ${valorGuardado != null})")
@@ -2262,7 +2285,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
                 setPadding(8, 8, 8, 8)
                 setTextColor(textColor)
                 gravity = android.view.Gravity.CENTER
-                    setBackgroundColor(if (isDarkMode()) resources.getColor(android.R.color.black, null) else resources.getColor(android.R.color.darker_gray, null))
+                    setBackgroundColor(if (isDarkMode()) resources.getColor(R.color.web_text_primary, null) else resources.getColor(android.R.color.darker_gray, null))
                     tag = "${producto.codigo}_pedido" // Tag para identificar el campo
                     Log.d("PEDIDO_FINAL", "🔧 TextView Pedido Final (solo lectura) para ${producto.codigo}: valor = '${producto.pedidoFinal}'")
                 }
@@ -2298,14 +2321,14 @@ class PedidoFabricaActivity : AppCompatActivity() {
 
     private fun mostrarConfiguracionDiasEntrega() {
         val backgroundColor = if (isDarkMode()) {
-            resources.getColor(android.R.color.black, null)
+            resources.getColor(R.color.web_text_primary, null)
         } else {
-            resources.getColor(android.R.color.white, null)
+            resources.getColor(R.color.web_text_light, null)
         }
         val textColor = if (isDarkMode()) {
-            resources.getColor(android.R.color.white, null)
+            resources.getColor(R.color.web_text_light, null)
         } else {
-            resources.getColor(android.R.color.black, null)
+            resources.getColor(R.color.web_text_primary, null)
         }
         val textColorSecondary = if (isDarkMode()) {
             resources.getColor(android.R.color.darker_gray, null)
@@ -2696,14 +2719,14 @@ class PedidoFabricaActivity : AppCompatActivity() {
         
         val scrollView = ScrollView(this)
         val backgroundColor = if (isDarkMode()) {
-            resources.getColor(android.R.color.black, null)
+            resources.getColor(R.color.web_text_primary, null)
         } else {
-            resources.getColor(android.R.color.white, null)
+            resources.getColor(R.color.web_text_light, null)
         }
         val textColor = if (isDarkMode()) {
-            resources.getColor(android.R.color.white, null)
+            resources.getColor(R.color.web_text_light, null)
         } else {
-            resources.getColor(android.R.color.black, null)
+            resources.getColor(R.color.web_text_primary, null)
         }
         val layout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
@@ -2736,7 +2759,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
                 val filaBgColor = if (isDarkMode()) {
                     android.graphics.Color.parseColor("#2D2D2D")
                 } else {
-                    android.graphics.Color.parseColor("#F5F5F5")
+                    resources.getColor(R.color.alt_row_color, null)
                 }
                 val filaBorderColor = if (isDarkMode()) {
                     android.graphics.Color.parseColor("#404040")
@@ -2905,14 +2928,14 @@ class PedidoFabricaActivity : AppCompatActivity() {
         
         val scrollView = ScrollView(this)
         val backgroundColor = if (isDarkMode()) {
-            resources.getColor(android.R.color.black, null)
+            resources.getColor(R.color.web_text_primary, null)
         } else {
-            resources.getColor(android.R.color.white, null)
+            resources.getColor(R.color.web_text_light, null)
         }
         val textColor = if (isDarkMode()) {
-            resources.getColor(android.R.color.white, null)
+            resources.getColor(R.color.web_text_light, null)
         } else {
-            resources.getColor(android.R.color.black, null)
+            resources.getColor(R.color.web_text_primary, null)
         }
         val layout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
@@ -3085,7 +3108,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
                             }
                             txtTendenciaVentas.text = "$icono $texto DE VENTAS: ${String.format("%.0f", kotlin.math.abs(tendenciaGeneral))}%"
                             txtTendenciaVentas.setBackgroundColor(color)
-                            txtTendenciaVentas.setTextColor(resources.getColor(android.R.color.white, null))
+                            txtTendenciaVentas.setTextColor(resources.getColor(R.color.web_text_light, null))
                             txtTendenciaVentas.visibility = View.VISIBLE
                         } else {
                             txtTendenciaVentas.visibility = View.GONE
@@ -3114,7 +3137,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
             }
             setPadding(16, 16, 16, 16)
             setBackgroundColor(resources.getColor(android.R.color.holo_green_dark, null))
-            setTextColor(resources.getColor(android.R.color.white, null))
+            setTextColor(resources.getColor(R.color.web_text_light, null))
             textSize = 16f
             setTypeface(null, android.graphics.Typeface.BOLD)
             setOnClickListener {
@@ -3167,13 +3190,13 @@ class PedidoFabricaActivity : AppCompatActivity() {
         val txtCategoria = TextView(this)
         txtCategoria.text = categoria.uppercase()
         txtCategoria.textSize = 18f
-        txtCategoria.setTextColor(resources.getColor(android.R.color.white, null))
+        txtCategoria.setTextColor(resources.getColor(R.color.web_text_light, null))
         txtCategoria.layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
         
         val txtCantidad = TextView(this)
         txtCantidad.text = "${productos.size} productos"
         txtCantidad.textSize = 12f
-        txtCantidad.setTextColor(resources.getColor(android.R.color.white, null))
+        txtCantidad.setTextColor(resources.getColor(R.color.web_text_light, null))
         txtCantidad.setBackgroundResource(R.drawable.category_count_background)
         txtCantidad.setPadding(8, 4, 8, 4)
         
@@ -3664,7 +3687,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
      * Obtiene la fecha actual en formato string
      */
     private fun obtenerFechaActual(): String {
-        val sdf = DateHelper.getDateFormat("dd/MM/yyyy")
+        val sdf = DateHelper.getDateFormat("dd/MM/yy")
         return sdf.format(java.util.Date())
     }
     
@@ -3733,13 +3756,13 @@ class PedidoFabricaActivity : AppCompatActivity() {
         val txtCategoria = TextView(this)
         txtCategoria.text = categoria.uppercase()
         txtCategoria.textSize = 18f
-        txtCategoria.setTextColor(resources.getColor(android.R.color.white, null))
+        txtCategoria.setTextColor(resources.getColor(R.color.web_text_light, null))
         txtCategoria.layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
         
         val txtCantidad = TextView(this)
         txtCantidad.text = "${productos.size} productos"
         txtCantidad.textSize = 12f
-        txtCantidad.setTextColor(resources.getColor(android.R.color.white, null))
+        txtCantidad.setTextColor(resources.getColor(R.color.web_text_light, null))
         txtCantidad.setBackgroundResource(R.drawable.category_count_background)
         txtCantidad.setPadding(8, 4, 8, 4)
         
@@ -7395,7 +7418,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
                 val fechaFormateada = try {
                     val sdf = DateHelper.getDateFormat("yyyy-MM-dd")
                     val date = sdf.parse(fecha)
-                    DateHelper.getDateFormat("dd/MM/yyyy").format(date ?: Date())
+                    DateHelper.getDateFormat("dd/MM/yy").format(date ?: Date())
                 } catch (e: Exception) {
                     Log.e("REPORTE_STOCK", "Error formateando fecha $fecha: ${e.message}")
                     fecha
@@ -7415,7 +7438,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
                     val bgColor = if (isDarkMode()) {
                         android.graphics.Color.parseColor("#2D2D2D")
                     } else {
-                        android.graphics.Color.parseColor("#F5F5F5")
+                        resources.getColor(R.color.alt_row_color, null)
                     }
                     setTextColor(textColor)
                     setBackgroundColor(bgColor)
@@ -7799,7 +7822,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
             textSize = 16f
             setTypeface(null, android.graphics.Typeface.BOLD)
             setBackgroundColor(resources.getColor(android.R.color.holo_blue_dark, null))
-            setTextColor(android.graphics.Color.WHITE)
+            setTextColor(resources.getColor(R.color.web_text_light, null))
             setPadding(32, 16, 32, 16)
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -7965,7 +7988,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
             text = "⚠️ ALERTAS DE REEMPLAZO - Stock vence mañana"
             textSize = 16f
             setTypeface(null, android.graphics.Typeface.BOLD)
-            setTextColor(resources.getColor(android.R.color.black, null))
+            setTextColor(resources.getColor(R.color.web_text_primary, null))
             setPadding(0, 0, 0, 12)
         }
         alertasCard.addView(tituloAlertas)
@@ -7974,7 +7997,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
         val descripcionAlertas = TextView(this).apply {
             text = "Los siguientes productos tienen TODO el stock por vencer mañana y NO sugerencia:"
             textSize = 14f
-            setTextColor(resources.getColor(android.R.color.black, null))
+            setTextColor(resources.getColor(R.color.web_text_primary, null))
             setPadding(0, 0, 0, 8)
         }
         alertasCard.addView(descripcionAlertas)
@@ -7987,9 +8010,9 @@ class PedidoFabricaActivity : AppCompatActivity() {
                        "   Vence mañana: ${alerta.stockVenceManana}\n" +
                        "   Sugerencia: ${alerta.sugerenciaPedido}"
                 textSize = 13f
-                setTextColor(resources.getColor(android.R.color.black, null))
+                setTextColor(resources.getColor(R.color.web_text_primary, null))
                 setPadding(8, 8, 8, 8)
-                setBackgroundColor(resources.getColor(android.R.color.white, null))
+                setBackgroundColor(resources.getColor(R.color.surface_color, null))
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -8005,7 +8028,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
             text = "➕ Agregar sugerencias al pedido"
             textSize = 14f
             setBackgroundColor(resources.getColor(android.R.color.holo_orange_dark, null))
-            setTextColor(resources.getColor(android.R.color.white, null))
+            setTextColor(resources.getColor(R.color.web_text_light, null))
             setPadding(16, 12, 16, 12)
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,

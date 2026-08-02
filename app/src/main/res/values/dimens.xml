@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tamaños de fuente para login - valores para pantallas pequeñas/estrechas (ancho < 360dp) -->
+    <dimen name="login_email_text_size">12sp</dimen>
+    <dimen name="login_checkbox_text_size">11sp</dimen>
+    <dimen name="login_forgot_password_text_size">11sp</dimen>
+</resources>
+

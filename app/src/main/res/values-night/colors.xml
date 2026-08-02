@@ -1,0 +1,62 @@
+<resources>
+    <!-- Semantic Colors for Dark Mode (matched to web) -->
+    <color name="background_color">#1C1C1C</color>
+    <color name="surface_color">#2A2A2A</color>
+    <color name="on_background">#F2F2F2</color>
+    <color name="on_surface">#F2F2F2</color>
+    
+    <!-- Brand Colors adaptados para Dark Mode -->
+    <color name="brand_black">#F2F2F2</color>
+    <color name="brand_grey_light">#3D3D3D</color>
+    
+    <!-- En modo oscuro, el dorado se mantiene -->
+    <color name="primary_color">#C9A24A</color>
+    <color name="on_primary">#1C1C1C</color>
+    
+    <color name="secondary_color">#C9A24A</color>
+    <color name="on_secondary">#1C1C1C</color>
+    
+    <!-- Web-matched dark colors -->
+    <color name="web_border">#5A4632</color>
+    <color name="web_input_border">#5A4632</color>
+    <color name="web_dark_border">#5A4632</color>
+    <color name="web_dark_surface">#2A2A2A</color>
+    <color name="web_dark_bg">#1C1C1C</color>
+    <color name="web_text_secondary">#8A8A8A</color>
+    <color name="web_text_primary">#F2F2F2</color>
+    <color name="web_text_light">#F2F2F2</color>
+    <color name="web_placeholder">#6A6A6A</color>
+    <color name="web_dark_placeholder">#6A6A6A</color>
+    <color name="web_dark_text_secondary">#8A8A8A</color>
+    <color name="web_hover_bg">#3D3D3D</color>
+    <color name="web_dark_hover_bg">#3D3D3D</color>
+    <color name="web_gold_text">#E6D3A3</color>
+    <color name="web_gold_text_light">#E6D3A3</color>
+    
+    <!-- Badge Colors - Dark Mode (web) -->
+    <color name="badge_success_bg">#052E16</color>
+    <color name="badge_success_text">#4ADE80</color>
+    <color name="badge_warning_bg">#3D3020</color>
+    <color name="badge_warning_text">#E6D3A3</color>
+    <color name="badge_danger_bg">#450A0A</color>
+    <color name="badge_danger_text">#F87171</color>
+    <color name="badge_info_bg">#1A1512</color>
+    <color name="badge_info_text">#E6D3A3</color>
+    <color name="badge_neutral_bg">#2A2A2A</color>
+    <color name="badge_neutral_text">#8A8A8A</color>
+    
+    <color name="footer_text">#B0B0B0</color>
+    <color name="footer_divider">#333333</color>
+    
+    <!-- Administración Local Colors - Dark Mode -->
+    <color name="background_primary">#1C1C1C</color>
+    <color name="card_background">#2A2A2A</color>
+    <color name="text_primary">#F2F2F2</color>
+    <color name="text_secondary">#8A8A8A</color>
+    <color name="alt_row_color">#3D3D3D</color>
+    <color name="alt_row_color2">#333333</color>
+    <color name="notif_critica_bg">#3D2020</color>
+    <color name="notif_alta_bg">#3D2E1A</color>
+    <color name="notif_media_bg">#3D3520</color>
+    <color name="notif_baja_bg">#1A3D1A</color>
+</resources>

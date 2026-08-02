@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color">
+
+    <!-- Imagen de fondo que se ajusta exactamente al tamaño de la pantalla (ancho y alto) -->
+    <ImageView
+        android:id="@+id/imgWatermark"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/bg_watermark_image"
+        android:scaleType="fitXY"
+        android:alpha="0.08"
+        android:contentDescription="@string/app_name" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    <!-- Título y Ayuda -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="12dp"
+        android:layout_marginBottom="4dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="GESTIÓN DE LOCALES"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="?android:attr/textColorPrimary"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/btnGuiaAyuda"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:gravity="center"
+            android:text="❓"
+            android:textSize="20sp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Guía Interactiva de Usuario"/>
+    </LinearLayout>
+
+
+    <!-- Pestañas -->
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.Inventario.Card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
+        app:cardBackgroundColor="@color/brand_gold"
+        app:contentPadding="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnTabLocales"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="🏪 LOCALES"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="?android:attr/textColorPrimary"
+                android:background="@drawable/bg_card_surface"
+                android:backgroundTint="@color/white"
+                android:layout_marginEnd="2dp" />
+
+            <Button
+                android:id="@+id/btnTabSupervisores"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="👥 SUPERVISORES"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="?android:attr/textColorPrimary"
+                android:background="@null"
+                android:layout_marginStart="2dp" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Contenido de Locales -->
+    <LinearLayout
+        android:id="@+id/layoutContenidoLocales"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Botón Agregar Local -->
+        <Button
+            android:id="@+id/btnAgregarLocal"
+            style="@style/Widget.Inventario.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="➕ AGREGAR NUEVO LOCAL"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Buscador de Locales -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Inventario.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="🔍 Buscar locales...">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextBuscar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:maxLines="1" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Lista de Locales -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:id="@+id/layoutLocales"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="16dp"/>
+
+        </ScrollView>
+
+    </LinearLayout>
+
+    <!-- Contenido de Supervisores -->
+    <LinearLayout
+        android:id="@+id/layoutContenidoSupervisores"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="gone">
+
+        <!-- Botón Agregar Supervisor -->
+        <Button
+            android:id="@+id/btnAgregarSupervisor"
+            style="@style/Widget.Inventario.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="➕ AGREGAR NUEVO SUPERVISOR"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Buscador de Supervisores -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Inventario.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="🔍 Buscar supervisores...">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextBuscarSupervisores"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:maxLines="1" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Lista de Supervisores -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:id="@+id/layoutSupervisores"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="16dp"/>
+
+        </ScrollView>
+
+    </LinearLayout>
+
+    <!-- Texto de estado -->
+    <TextView
+        android:id="@+id/txtEstado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="12sp"
+        android:textColor="@color/status_error"
+        android:gravity="center"
+        android:padding="16dp" />
+
+    </LinearLayout>
+
+</FrameLayout>
