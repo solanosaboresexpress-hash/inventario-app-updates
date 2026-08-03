@@ -17,9 +17,9 @@
         android:gravity="center"
         android:layout_marginBottom="24dp" />
 
-    <!-- Opción 1: Stock Papelería (Lunes) -->
+    <!-- Opción 1: Pedido Papelería (incluye stock) -->
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnStockPapeleria"
+        android:id="@+id/btnPedidoPapeleria"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_marginBottom="12dp"
@@ -30,11 +30,11 @@
         android:gravity="center"
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
-        android:text="📦 Stock Papelería (Lunes)" />
+        android:text="📋 Pedido Papelería" />
 
-    <!-- Opción 2: Pedido Papelería (Viernes) -->
+    <!-- Opción 2: Confirmar Ingreso -->
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnPedidoPapeleria"
+        android:id="@+id/btnConfirmarIngresoPapeleria"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:background="@drawable/button_primary_background"
@@ -44,6 +44,6 @@
         android:gravity="center"
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
-        android:text="🧾 Pedido Papelería (Viernes)" />
+        android:text="📥 Confirmar Ingreso (Lunes)" />
 
 </LinearLayout>

@@ -73,6 +73,9 @@
             android:name=".PedidoPapeleriaActivity"
             android:exported="false"/>
         <activity 
+            android:name=".ConfirmarIngresoPapeleriaActivity"
+            android:exported="false"/>
+        <activity 
             android:name=".StockBebidasActivity"
             android:exported="false"/>
         <activity 

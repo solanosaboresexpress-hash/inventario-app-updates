@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity() {
     
     // Cache global de promedios reales para toda la app
     companion object {
-        private const val REQUEST_CODE_CARGA = 1001
+        private const val REQUEST_CODE_CARGA = 1002
         var promediosReales: Map<String, Map<String, Double>> = emptyMap()
         var promediosCargados = false
         
@@ -2246,8 +2246,8 @@ class MainActivity : AppCompatActivity() {
     private fun mostrarMenuPapeleria() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_menu_papeleria, null)
         
-        val btnStockPapeleria = dialogView.findViewById<androidx.appcompat.widget.AppCompatButton>(R.id.btnStockPapeleria)
         val btnPedidoPapeleria = dialogView.findViewById<androidx.appcompat.widget.AppCompatButton>(R.id.btnPedidoPapeleria)
+        val btnConfirmarIngreso = dialogView.findViewById<androidx.appcompat.widget.AppCompatButton>(R.id.btnConfirmarIngresoPapeleria)
         
         val dialog = AlertDialog.Builder(this)
             .setView(dialogView)
@@ -2257,14 +2257,14 @@ class MainActivity : AppCompatActivity() {
         // Personalizar el diálogo para que se vea mejor
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         
-        btnStockPapeleria.setOnClickListener {
-            dialog.dismiss()
-            abrirStockPapeleria()
-        }
-        
         btnPedidoPapeleria.setOnClickListener {
             dialog.dismiss()
             abrirPedidoPapeleria()
+        }
+        
+        btnConfirmarIngreso.setOnClickListener {
+            dialog.dismiss()
+            abrirConfirmarIngresoPapeleria()
         }
         
         dialog.show()
@@ -2278,6 +2278,12 @@ class MainActivity : AppCompatActivity() {
     
     private fun abrirPedidoPapeleria() {
         val intent = Intent(this, PedidoPapeleriaActivity::class.java)
+        intent.putExtra("fechaSeleccionada", fechaSeleccionada)
+        startActivity(intent)
+    }
+    
+    private fun abrirConfirmarIngresoPapeleria() {
+        val intent = Intent(this, ConfirmarIngresoPapeleriaActivity::class.java)
         intent.putExtra("fechaSeleccionada", fechaSeleccionada)
         startActivity(intent)
     }
@@ -2856,7 +2862,7 @@ class MainActivity : AppCompatActivity() {
      * Verifica si hay datos en 0 (todos los productos) en Stock Final e Ingreso de Mercadería
      * Verifica TODOS los registros históricos desde el primer registro cargado
      */
-    private suspend fun verificarDatosEnCeroHoy(localId: String, fechaHoy: String, problemas: MutableList<String>) {
+    private suspend fun verificarDatosEnCeroHoy(localId: String, @Suppress("UNUSED_PARAMETER") fechaHoy: String, problemas: MutableList<String>) {
         Log.d("MainActivity", "🔍 Verificando datos en 0 en TODOS los registros históricos para local: $localId")
         
         try {
