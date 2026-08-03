@@ -1,8 +1,8 @@
 {
-  "versionCode": 142,
-  "versionName": "2.1.116",
-  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.116.apk",
-  "fileName": "inventario_app_v2.1.116.apk",
-  "description": "v2.1.116 - Formato de fecha unificado dd/mm/aa, badges de personal sin fecha, colores theme-aware para dark mode, campana con contador rojo, textos de notificaciones optimizados, card de supervisor clickeable, alerta limitada a ultimos 7 dias.",
+  "versionCode": 143,
+  "versionName": "2.1.117",
+  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.117.apk",
+  "fileName": "inventario_app_v2.1.117.apk",
+  "description": "v2.1.117 - Papeleria: fix deserializacion Firestore, TableLayout alineado, navegacion vertical con Enter, modo edicion siempre activo, confirmar ingreso papeleria.",
   "forceUpdate": false
 }
