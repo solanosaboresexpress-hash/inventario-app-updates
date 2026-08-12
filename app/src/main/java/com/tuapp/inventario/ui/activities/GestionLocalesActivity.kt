@@ -554,7 +554,7 @@ class GestionLocalesActivity : AppCompatActivity() {
             } else {
                 // Iterar supervisores para crear tarjetas plegables (filtrar propia cuenta si es asistente)
                 val supervisoresAMostrar = if (esUsuarioAsistente && uidUsuarioActual != null) {
-                    supervisores.filter { it.firebaseAuthUid != uidUsuarioActual }
+                    supervisores.filter { it.id != uidUsuarioActual && it.firebaseAuthUid != uidUsuarioActual }
                 } else {
                     supervisores
                 }
@@ -646,7 +646,12 @@ class GestionLocalesActivity : AppCompatActivity() {
             }
         } else {
             // VISTA PLANA PARA SUPERVISORES
-            val listaAMostrar = if (localesFiltrados.isNotEmpty()) localesFiltrados else locales
+            val listaBaseLocales = if (localesFiltrados.isNotEmpty()) localesFiltrados else locales
+            val listaAMostrar = if (esUsuarioAsistente && uidUsuarioActual != null) {
+                listaBaseLocales.filter { it.firebaseAuthUid != uidUsuarioActual }
+            } else {
+                listaBaseLocales
+            }
             
             if (listaAMostrar.isEmpty()) {
                 val mensajeVacio = TextView(this).apply {
@@ -831,7 +836,7 @@ class GestionLocalesActivity : AppCompatActivity() {
         // Si el usuario actual es asistente (no maestro real), filtrar su propia cuenta
         val listaAMostrar = if (esUsuarioAsistente && uidUsuarioActual != null) {
             listaBase.filter { supervisor ->
-                supervisor.firebaseAuthUid != uidUsuarioActual
+                supervisor.id != uidUsuarioActual && supervisor.firebaseAuthUid != uidUsuarioActual
             }
         } else {
             listaBase
@@ -2423,7 +2428,6 @@ class GestionLocalesActivity : AppCompatActivity() {
      */
     private fun toggleAsistenteSupervisor(supervisor: Supervisor) {
         val nuevoEstado = !supervisor.esAsistente
-        val accion = if (nuevoEstado) "designar como asistente" else "quitar como asistente"
         val mensaje = if (nuevoEstado) {
             "¿Deseas designar a ${supervisor.usuario} como asistente?\n\n" +
             "⚠️ Como asistente, tendrá acceso completo como el maestro:\n" +
@@ -2515,7 +2519,7 @@ class GestionLocalesActivity : AppCompatActivity() {
                         val functions = Firebase.functions
                         val deleteUser = functions.getHttpsCallable("deleteUser")
                         val data = hashMapOf("uid" to supervisor.firebaseAuthUid)
-                        val result = deleteUser.call(data).await()
+                        deleteUser.call(data).await()
                         
                         Log.d("GestionLocalesActivity", "✅ Usuario de Firebase Auth eliminado: ${supervisor.firebaseAuthUid}")
                         
@@ -2553,7 +2557,7 @@ class GestionLocalesActivity : AppCompatActivity() {
         val email = local.email.ifEmpty { usuarioAdmin?.email ?: "" }.ifEmpty { "—" }
         val password = usuarioAdmin?.contraseña ?: ""
         val passwordDisplay = if (password.isNotEmpty()) password else "—"
-        val fechaCreacion = local.fechaCreacion ?: "—"
+        val fechaCreacion = local.fechaCreacion.ifEmpty { "—" }
         val debeCambiar = if (local.debeCambiarContraseña) "Sí (pendiente)" else "No"
         val enActividad = if (local.activo) "Sí" else "No"
         val usuariosCount = local.usuarios.size
@@ -2577,6 +2581,7 @@ class GestionLocalesActivity : AppCompatActivity() {
         )
     }
 
+    @Suppress("UNNECESSARY_SAFE_CALL")
     private fun mostrarDialogoPersonalizado(
         icono: String,
         titulo: String,
@@ -2873,7 +2878,7 @@ class GestionLocalesActivity : AppCompatActivity() {
         })
         
         // Agregar filtro para prevenir que se escriba "@" o el dominio
-        editText.filters = arrayOf(android.text.InputFilter { source, start, end, dest, dstart, dend ->
+        editText.filters = arrayOf(android.text.InputFilter { source, _, _, _, _, _ ->
             // Si el texto contiene "@" o el dominio, no permitirlo
             val texto = source.toString()
             if (texto.contains("@") || texto.contains("saboresexpress.com.ar")) {
@@ -3188,7 +3193,7 @@ class GestionLocalesActivity : AppCompatActivity() {
                         val functions = Firebase.functions
                         val deleteUser = functions.getHttpsCallable("deleteUser")
                         val data = hashMapOf("uid" to local.firebaseAuthUid)
-                        val result = deleteUser.call(data).await()
+                        deleteUser.call(data).await()
                         
                         Log.d("GestionLocalesActivity", "✅ Usuario de Firebase Auth del local eliminado: ${local.firebaseAuthUid}")
                         
@@ -3540,7 +3545,7 @@ class GestionLocalesActivity : AppCompatActivity() {
      * Verifica si un local tiene datos en 0 sin el flag noRecibioMercaderia
      * y también verifica si faltan datos en días anteriores
      */
-    private fun verificarDatosEnCero(localId: String, nombreLocal: String, nombreTextView: TextView, btnNotifBell: TextView, badgeContador: TextView) {
+    private fun verificarDatosEnCero(localId: String, nombreLocal: String, @Suppress("UNUSED_PARAMETER") nombreTextView: TextView, btnNotifBell: TextView, badgeContador: TextView) {
         lifecycleScope.launch {
             try {
                 val formatoFecha = DateHelper.getDateFormat("yyyy-MM-dd")
@@ -3719,7 +3724,7 @@ class GestionLocalesActivity : AppCompatActivity() {
      * Verifica si hay datos en 0 sin el flag correspondiente en TODOS los registros históricos
      * Verifica desde el primer registro cargado
      */
-    private suspend fun verificarDatosEnCeroHoy(localId: String, _fechaHoy: String, problemas: MutableList<String>) {
+    private suspend fun verificarDatosEnCeroHoy(localId: String, @Suppress("UNUSED_PARAMETER") _fechaHoy: String, problemas: MutableList<String>) {
         Log.d("GestionLocalesActivity", "🔍 Verificando datos en 0 en TODOS los registros históricos para local: $localId")
         
         try {

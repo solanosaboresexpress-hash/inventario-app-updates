@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1C1C1C">
+
+    <!-- Camera Preview -->
+    <androidx.camera.view.PreviewView
+        android:id="@+id/previewView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Crop View (overlay for corner adjustment) -->
+    <com.tuapp.inventario.ui.views.CropOverlayView
+        android:id="@+id/cropOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <!-- Captured image preview (for crop adjustment) -->
+    <ImageView
+        android:id="@+id/capturedImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:visibility="gone" />
+
+    <!-- Top bar -->
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:background="#80000000">
+
+        <ImageButton
+            android:id="@+id/btnClose"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:contentDescription="Cerrar"
+            app:tint="@android:color/white" />
+
+        <TextView
+            android:id="@+id/txtTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Escanear Documento"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center" />
+
+        <Space
+            android:layout_width="48dp"
+            android:layout_height="48dp" />
+
+    </LinearLayout>
+
+    <!-- Bottom controls - Camera mode -->
+    <LinearLayout
+        android:id="@+id/cameraControls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="#80000000">
+
+        <TextView
+            android:id="@+id/txtHint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Centra el documento en la cámara"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginBottom="12dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <ImageButton
+                android:id="@+id/btnGallery"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_menu_gallery"
+                android:contentDescription="Galería"
+                app:tint="@android:color/white" />
+
+            <Button
+                android:id="@+id/btnCapture"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_marginHorizontal="32dp"
+                android:background="@drawable/scanner_capture_button"
+                android:contentDescription="Capturar" />
+
+            <Space
+                android:layout_width="56dp"
+                android:layout_height="56dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Bottom controls - Crop mode -->
+    <LinearLayout
+        android:id="@+id/cropControls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="#80000000"
+        android:visibility="gone">
+
+        <!-- Filter buttons -->
+        <LinearLayout
+            android:id="@+id/filterButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="12dp">
+
+            <Button
+                android:id="@+id/btnFilterColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Color"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_marginEnd="8dp"
+                android:minWidth="0dp"
+                android:padding="8dp"
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/btnFilterEnhance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mejorado"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_marginEnd="8dp"
+                android:minWidth="0dp"
+                android:padding="8dp"
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/btnFilterGray"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gris"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_marginEnd="8dp"
+                android:minWidth="0dp"
+                android:padding="8dp"
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/btnFilterBW"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="B&amp;N"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:minWidth="0dp"
+                android:padding="8dp"
+                android:textColor="@android:color/white" />
+
+        </LinearLayout>
+
+        <!-- Action buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btnRotate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rotar"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_marginEnd="8dp"
+                android:textColor="@android:color/white"
+                app:icon="@android:drawable/ic_menu_rotate"
+                app:iconTint="@android:color/white" />
+
+            <Button
+                android:id="@+id/btnRetake"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reintentar"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_marginEnd="8dp"
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/btnConfirm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Confirmar"
+                style="@style/Widget.MaterialComponents.Button"
+                app:backgroundTint="@color/brand_gold"
+                android:textColor="@color/brand_black" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Bottom controls - Review mode (multi-page) -->
+    <LinearLayout
+        android:id="@+id/reviewControls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="#80000000"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/txtPageCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Página 1 escaneada"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginBottom="12dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btnAddPage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Agregar página"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_marginEnd="8dp"
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/btnFinish"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Finalizar"
+                style="@style/Widget.MaterialComponents.Button"
+                app:backgroundTint="@color/brand_gold"
+                android:textColor="@color/brand_black" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

@@ -2619,7 +2619,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
             }
             dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(dialogBackgroundColor))
             val titleView = dialog.findViewById<TextView>(android.R.id.title)
-            val textColor = if (isDarkMode()) {
+            @Suppress("NAME_SHADOWING") val textColor = if (isDarkMode()) {
                 android.graphics.Color.WHITE
             } else {
                 android.graphics.Color.BLACK
@@ -2697,7 +2697,8 @@ class PedidoFabricaActivity : AppCompatActivity() {
         timePicker.show()
     }
 
-    private fun mostrarDialogoCargarStock() {
+    @Suppress("DEPRECATION")
+    private fun mostrarDialogoConfirmacionSalida() {
         println("🔍 DEBUG: mostrarDialogoCargarStock() llamado")
         println("🔍 DEBUG: productos.size = ${productos.size}")
         
@@ -4176,7 +4177,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
             else -> return 0.0
         }
         
-        val nombreDiaSiguiente = when (diaSiguiente) {
+        @Suppress("UNUSED_VARIABLE") val nombreDiaSiguiente = when (diaSiguiente) {
             Calendar.MONDAY -> "LUNES"
             Calendar.TUESDAY -> "MARTES"
             Calendar.WEDNESDAY -> "MIERCOLES"
@@ -4649,6 +4650,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
     /**
      * Obtiene el stock actual del sistema directamente desde Firebase
      */
+    @Suppress("UNUSED_PARAMETER")
     private fun obtenerStockActualDelSistema(codigo: String, localId: String): Int {
         val nombreProducto = obtenerNombreProducto(codigo)
         return calcularStockInicialProducto(codigo, nombreProducto)
@@ -4831,6 +4833,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
      * Obtiene la suma de promedios desde mañana hasta la próxima entrega
      * Siempre suma mañana, y si no hay entrega, sigue sumando hasta encontrar un día con entrega
      */
+    @Suppress("UNUSED_PARAMETER", "UNUSED_VARIABLE")
     private fun obtenerPromediosHastaProximaEntrega(codigo: String): Double {
         Log.d("DEBUG_JQ", "🔍 DEBUG_JQ: === OBTENIENDO PROMEDIOS DÍAS ===")
 
@@ -5495,6 +5498,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
     /**
      * 📊 Muestra el gráfico con un loading mientras carga los datos
      */
+    @Suppress("DEPRECATION")
     private fun mostrarGraficoConLoading(codigo: String, tendencia: Double) {
         // Crear diálogo de loading
         val loadingDialog = android.app.ProgressDialog(this).apply {
@@ -6201,6 +6205,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
     /**
      * Genera el texto del pedido en el formato requerido
      */
+    @Suppress("UNUSED_PARAMETER")
     private fun generarTextoPedido(_editTexts: MutableMap<String, EditText>): String {
         val pedido = StringBuilder()
         
@@ -6668,6 +6673,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
     /**
      * Guarda el pedido de fábrica en Firestore con la nueva estructura
      */
+    @Suppress("UNUSED_PARAMETER")
     private fun guardarPedidoEnFirestore(_editTexts: MutableMap<String, EditText>) {
         if (modoSoloLectura && !modoAdmin) {
             Log.w("PedidoFabricaActivity", "⚠️ Modo solo lectura - no se puede guardar")
@@ -7338,7 +7344,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
         // Colores explícitos para asegurar visibilidad
         val isDark = isDarkMode()
         val textColorPrimary = if (isDark) android.graphics.Color.WHITE else android.graphics.Color.BLACK
-        val textColorSecondary = if (isDark) android.graphics.Color.parseColor("#CCCCCC") else android.graphics.Color.parseColor("#666666")
+        @Suppress("UNUSED_VARIABLE") val textColorSecondary = if (isDark) android.graphics.Color.parseColor("#CCCCCC") else android.graphics.Color.parseColor("#666666")
         val bgColor = if (isDark) android.graphics.Color.BLACK else android.graphics.Color.WHITE
         
         // Layout principal
@@ -7435,7 +7441,7 @@ class PedidoFabricaActivity : AppCompatActivity() {
                     } else {
                         android.graphics.Color.BLACK
                     }
-                    val bgColor = if (isDarkMode()) {
+                    @Suppress("NAME_SHADOWING") val bgColor = if (isDarkMode()) {
                         android.graphics.Color.parseColor("#2D2D2D")
                     } else {
                         resources.getColor(R.color.alt_row_color, null)

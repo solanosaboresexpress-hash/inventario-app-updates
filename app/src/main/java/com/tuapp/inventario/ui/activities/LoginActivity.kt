@@ -229,7 +229,7 @@ class LoginActivity : AppCompatActivity() {
         })
         
         // Agregar filtro para prevenir que se escriba "@" o el dominio
-        edtEmail.filters = arrayOf(android.text.InputFilter { source, start, end, dest, dstart, dend ->
+        edtEmail.filters = arrayOf(android.text.InputFilter { source, _, _, _, _, _ ->
             // Si el texto contiene "@" o el dominio, no permitirlo
             val texto = source.toString()
             if (texto.contains("@") || texto.contains("saboresexpress.com.ar")) {
@@ -368,8 +368,7 @@ class LoginActivity : AppCompatActivity() {
                                     .get()
                                     .await()
                                 val nombre = configDoc.getString("maestro_nombre")
-                                    ?: region.maestroNombre  // Fallback a JSON primero
-                                    ?: "Maestro"             // Fallback final
+                                    ?: region.maestroNombre
                                 
                                 // Limpiar instancia temporal de Firebase
                                 if (region.googleServicesJson != "google-services") {
@@ -383,7 +382,7 @@ class LoginActivity : AppCompatActivity() {
                                 Log.d("LoginActivity", "📦 Región ${region.nombre} - Cargado desde Firebase: $nombre")
                                 nombre
                             } else {
-                                region.maestroNombre ?: "Maestro"
+                                region.maestroNombre
                             }
                         } catch (e: Exception) {
                             Log.w("LoginActivity", "⚠️ No se pudo cargar nombre del maestro para ${region.nombre}, usando fallback: ${e.message}")
@@ -581,8 +580,6 @@ class LoginActivity : AppCompatActivity() {
 
                 txtEstado.text = "Verificando credenciales..."
 
-                val firestoreInstance = firestore ?: throw IllegalStateException("Firebase no está inicializado")
-                
                 // Buscar el usuario en Firestore por email de forma manual
                 val local = buscarLocalPorEmail(email)
                 val supervisor = buscarSupervisorPorEmail(email)
@@ -813,7 +810,7 @@ class LoginActivity : AppCompatActivity() {
         }
         
         // Configurar filtro para prevenir "@" y dominio
-        input.filters = arrayOf(android.text.InputFilter { source, start, end, dest, dstart, dend ->
+        input.filters = arrayOf(android.text.InputFilter { source, _, _, _, _, _ ->
             val texto = source.toString()
             if (texto.contains("@") || texto.contains("saboresexpress.com.ar")) {
                 return@InputFilter ""

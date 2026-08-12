@@ -3,6 +3,7 @@
 import android.app.Application
 import android.content.SharedPreferences
 import android.util.Log
+import androidx.appcompat.app.AppCompatDelegate
 import com.tuapp.inventario.database.InventarioDatabase
 import com.tuapp.inventario.repository.InventarioRepository
 import com.tuapp.inventario.repository.FirebaseInventarioRepository
@@ -54,6 +55,8 @@ class InventarioApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         Log.d("InventarioApp", "Application started")
+        
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         
         // IMPORTANTE: Firebase NO se inicializa automáticamente aquí
         // Se inicializa dinámicamente en LoginActivity cuando el usuario selecciona una región

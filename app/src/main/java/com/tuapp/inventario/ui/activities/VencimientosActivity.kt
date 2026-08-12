@@ -2120,8 +2120,8 @@ class VencimientosActivity : AppCompatActivity() {
         vencimientosProximos.sortBy { it.third }
         
         // Calcular totales
-        val totalHoy = vencimientosHoy.sumOf { it.second }
-        val totalManana = vencimientosManana.sumOf { it.second }
+        @Suppress("UNUSED_VARIABLE") val totalHoy = vencimientosHoy.sumOf { it.second }
+        @Suppress("UNUSED_VARIABLE") val totalManana = vencimientosManana.sumOf { it.second }
         
         // Construir mensaje
         val mensaje = StringBuilder()

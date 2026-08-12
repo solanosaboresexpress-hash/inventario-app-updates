@@ -24,6 +24,8 @@ import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.Timestamp
 import com.tuapp.inventario.R
 import com.tuapp.inventario.utils.DateHelper
 import com.tuapp.inventario.utils.AnimationUtils
@@ -32,6 +34,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 import androidx.activity.result.contract.ActivityResultContracts
+import android.app.Activity
 import android.net.Uri
 import android.provider.MediaStore
 import android.content.ContentResolver
@@ -50,6 +53,27 @@ class AdministracionLocalActivity : AppCompatActivity() {
     private var libretaSanitariaBase64: String? = null
     private var cursoManipulacionBase64: String? = null
     private var isSeleccionandoLibreta = false
+    
+    // Launcher para DocumentScanner
+    private val scannerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val base64 = result.data?.getStringExtra(DocumentScannerActivity.EXTRA_RESULT)
+            if (base64 != null) {
+                if (isSeleccionandoLibreta) {
+                    libretaSanitariaBase64 = base64
+                    actualizarPreviewImage(R.id.imgPreviewLibreta, base64)
+                } else {
+                    cursoManipulacionBase64 = base64
+                    actualizarPreviewImage(R.id.imgPreviewCurso, base64)
+                }
+            }
+        }
+    }
+    
+    private fun launchScanner() {
+        val intent = Intent(this, DocumentScannerActivity::class.java)
+        scannerLauncher.launch(intent)
+    }
     
     // Contrato para seleccionar imagen
     private val pickMultipleImages = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris: List<Uri> ->
@@ -177,6 +201,127 @@ class AdministracionLocalActivity : AppCompatActivity() {
         mostrarDocumentos()
     }
     
+    private fun parseFirestoreDate(value: Any?): Date? {
+        return when (value) {
+            is Date -> value
+            is Timestamp -> value.toDate()
+            is String -> {
+                if (value.isBlank()) return null
+                try { DateHelper.getDateFormat("dd/MM/yy").parse(value) } catch (e: Exception) {
+                    try { DateHelper.getDateFormat("yyyy-MM-dd").parse(value) } catch (e2: Exception) {
+                        try { DateHelper.getDateFormat("dd/MM/yyyy").parse(value) } catch (e3: Exception) { null }
+                    }
+                }
+            }
+            else -> null
+        }
+    }
+
+    private fun parseTipoDocumento(value: Any?): TipoDocumento {
+        return when (value) {
+            is String -> {
+                TipoDocumento.values().find { it.name == value || it.displayName == value }
+                    ?: TipoDocumento.values().find { it.displayName.equals(value, ignoreCase = true) }
+                    ?: TipoDocumento.FUMIGACION
+            }
+            is Number -> TipoDocumento.values().getOrNull(value.toInt()) ?: TipoDocumento.FUMIGACION
+            else -> TipoDocumento.FUMIGACION
+        }
+    }
+
+    private fun parseEstadoDocumento(value: Any?): EstadoDocumento {
+        return when (value) {
+            is String -> EstadoDocumento.values().find { it.name == value } ?: EstadoDocumento.VIGENTE
+            else -> EstadoDocumento.VIGENTE
+        }
+    }
+
+    private fun parseEstadoPersonal(value: Any?): EstadoPersonal {
+        return when (value) {
+            is String -> EstadoPersonal.values().find { it.name == value } ?: EstadoPersonal.ACTIVO
+            else -> EstadoPersonal.ACTIVO
+        }
+    }
+
+    private fun parseEstadoCertificado(value: Any?): EstadoCertificado {
+        return when (value) {
+            is String -> EstadoCertificado.values().find { it.name == value } ?: EstadoCertificado.VIGENTE
+            else -> EstadoCertificado.VIGENTE
+        }
+    }
+
+    private fun parseDocumentoFromSnapshot(doc: DocumentSnapshot): DocumentoLocal {
+        val data = doc.data ?: return DocumentoLocal(id = doc.id)
+        val tipoDocumento = parseTipoDocumento(data["tipo"] ?: data["tipoDocumento"])
+        return DocumentoLocal(
+            id = doc.id,
+            localId = data["localId"] as? String ?: localId,
+            tipoDocumento = tipoDocumento,
+            nombreDocumento = data["nombreDocumento"] as? String ?: tipoDocumento.displayName,
+            fechaVencimiento = parseFirestoreDate(data["fechaVencimiento"]),
+            fechaEmision = parseFirestoreDate(data["fechaEmision"]),
+            numeroCertificado = data["numeroCertificado"] as? String ?: "",
+            empresaResponsable = data["empresaResponsable"] as? String ?: "",
+            telefono = data["telefono"] as? String ?: "",
+            observaciones = data["observaciones"] as? String ?: "",
+            archivoUrl = data["archivoUrl"] as? String ?: "",
+            estado = parseEstadoDocumento(data["estado"]),
+            diasParaVencer = 0,
+            creadoEn = parseFirestoreDate(data["creadoEn"]) ?: Date(),
+            actualizadoEn = parseFirestoreDate(data["actualizadoEn"]) ?: Date()
+        )
+    }
+
+    private fun parseLibretaSanitaria(data: Map<String, Any>?): LibretaSanitaria? {
+        if (data == null) return null
+        return LibretaSanitaria(
+            numeroLibreta = data["numeroLibreta"] as? String ?: "",
+            fechaEmision = parseFirestoreDate(data["fechaEmision"]),
+            fechaVencimiento = parseFirestoreDate(data["fechaVencimiento"]),
+            categoria = data["categoria"] as? String ?: "",
+            estado = parseEstadoCertificado(data["estado"]),
+            diasParaVencer = 0,
+            archivoUrl = data["archivoUrl"] as? String ?: ""
+        )
+    }
+
+    private fun parseCursoManipulacion(data: Map<String, Any>?): CursoManipulacion? {
+        if (data == null) return null
+        return CursoManipulacion(
+            institucion = data["institucion"] as? String ?: "",
+            tipoCurso = data["tipoCurso"] as? String ?: "",
+            fechaEmision = parseFirestoreDate(data["fechaEmision"]),
+            fechaVencimiento = parseFirestoreDate(data["fechaVencimiento"]),
+            numeroCertificado = data["numeroCertificado"] as? String ?: "",
+            estado = parseEstadoCertificado(data["estado"]),
+            diasParaVencer = 0,
+            archivoUrl = data["archivoUrl"] as? String ?: ""
+        )
+    }
+
+    private fun parsePersonalFromSnapshot(doc: DocumentSnapshot): PersonalLocal {
+        val data = doc.data ?: return PersonalLocal(id = doc.id)
+        return PersonalLocal(
+            id = doc.id,
+            localId = data["localId"] as? String ?: localId,
+            nombre = data["nombre"] as? String ?: "",
+            apellido = data["apellido"] as? String ?: "",
+            dni = data["dni"] as? String ?: "",
+            cargo = data["cargo"] as? String ?: "",
+            categoria = data["categoria"] as? String ?: "",
+            telefono = data["telefono"] as? String ?: "",
+            email = data["email"] as? String ?: "",
+            fechaIngreso = parseFirestoreDate(data["fechaIngreso"]),
+            estado = parseEstadoPersonal(data["estado"]),
+            libretaSanitaria = parseLibretaSanitaria(data["libretaSanitaria"] as? Map<String, Any>),
+            cursoManipulacion = parseCursoManipulacion(data["cursoManipulacion"] as? Map<String, Any>),
+            libretaSanitariaBase64 = data["libretaSanitariaBase64"] as? String,
+            cursoManipulacionBase64 = data["cursoManipulacionBase64"] as? String,
+            creadoEn = parseFirestoreDate(data["creadoEn"]) ?: Date(),
+            actualizadoEn = parseFirestoreDate(data["actualizadoEn"]) ?: Date()
+        )
+    }
+
     private fun cargarDatosDesdeFirebase() {
         val db = FirebaseFirestore.getInstance()
         
@@ -188,7 +333,7 @@ class AdministracionLocalActivity : AppCompatActivity() {
             .addOnSuccessListener { result ->
                 documentosLocales.clear()
                 for (document in result) {
-                    val documento = document.toObject(DocumentoLocal::class.java)
+                    val documento = parseDocumentoFromSnapshot(document)
                     
                     // Recalcular diasParaVencer con fecha actual
                     val documentoActualizado = documento.copy(
@@ -226,7 +371,7 @@ class AdministracionLocalActivity : AppCompatActivity() {
             .addOnSuccessListener { result ->
                 personalLocal.clear()
                 for (document in result) {
-                    val personal = document.toObject(PersonalLocal::class.java)
+                    val personal = parsePersonalFromSnapshot(document)
                     
                     // Log para depuración - verificar campos del documento
                     Log.d("CargarPersonal", "Documento ID: ${document.id}")
@@ -503,7 +648,12 @@ class AdministracionLocalActivity : AppCompatActivity() {
     private fun cargarPersonalUI() {
         personalContainer.removeAllViews()
         
-        personalLocal.forEach { personal ->
+        val sortedPersonal = personalLocal.sortedWith(
+            compareBy<PersonalLocal> { p -> CATEGORIAS_PERSONAL.indexOf(p.categoria).let { if (it < 0) 999 else it } }
+                .thenBy { it.fechaIngreso ?: Date(Long.MAX_VALUE) }
+        )
+        
+        sortedPersonal.forEach { personal ->
             val cardView = crearPersonalCard(personal)
             personalContainer.addView(cardView)
             AnimationUtils.animateViewIn(cardView)
@@ -641,8 +791,24 @@ class AdministracionLocalActivity : AppCompatActivity() {
             text = personal.cargo
             textSize = 14f
             setTextColor(resources.getColor(R.color.text_secondary, null))
-            setPadding(0, 4, 0, 8)
+            setPadding(0, 4, 0, 4)
         }
+        
+        // Categoría badge
+        val categoriaBadge = if (personal.categoria.isNotEmpty()) {
+            TextView(this).apply {
+                text = personal.categoria
+                textSize = 11f
+                setTypeface(null, android.graphics.Typeface.BOLD)
+                setTextColor(resources.getColor(R.color.badge_info_text, null))
+                setBackgroundColor(resources.getColor(R.color.badge_info_bg, null))
+                setPadding(24, 8, 24, 8)
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply { setMargins(0, 0, 0, 8) }
+            }
+        } else null
         
         // Libreta sanitaria
         val libretaLayout = crearCertificadoView(
@@ -668,6 +834,7 @@ class AdministracionLocalActivity : AppCompatActivity() {
         
         layout.addView(nombreView)
         layout.addView(cargoView)
+        categoriaBadge?.let { layout.addView(it) }
         layout.addView(libretaLayout)
         layout.addView(cursoLayout)
         
@@ -923,10 +1090,16 @@ class AdministracionLocalActivity : AppCompatActivity() {
         val editTelefono = dialogView.findViewById<TextInputEditText>(R.id.edtTelefono)
         val editEmail = dialogView.findViewById<TextInputEditText>(R.id.edtEmail)
         val editFechaIngreso = dialogView.findViewById<TextInputEditText>(R.id.edtFechaIngreso)
+        val spinnerCategoria = dialogView.findViewById<MaterialAutoCompleteTextView>(R.id.spinnerCategoria)
         val editLibretaVencimiento = dialogView.findViewById<TextInputEditText>(R.id.edtVencimientoLibreta)
         val editCursoVencimiento = dialogView.findViewById<TextInputEditText>(R.id.edtVencimientoCurso)
         val chkPoseeLibreta = dialogView.findViewById<CheckBox>(R.id.chkPoseeLibreta)
         val chkPoseeCurso = dialogView.findViewById<CheckBox>(R.id.chkPoseeCurso)
+        
+        val catOptions = arrayOf("") + CATEGORIAS_PERSONAL.toTypedArray()
+        val catAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, catOptions)
+        spinnerCategoria.setAdapter(catAdapter)
+        spinnerCategoria.setOnClickListener { spinnerCategoria.showDropDown() }
         val layoutLibretaSanitaria = dialogView.findViewById<View>(R.id.layoutLibretaSanitaria)
         val layoutCursoManipulacion = dialogView.findViewById<View>(R.id.layoutCursoManipulacion)
         val btnSeleccionarLibreta = dialogView.findViewById<Button>(R.id.btnSeleccionarLibreta)
@@ -958,12 +1131,12 @@ class AdministracionLocalActivity : AppCompatActivity() {
         
         btnSeleccionarLibreta.setOnClickListener {
             isSeleccionandoLibreta = true
-            pickMultipleImages.launch("image/*")
+            launchScanner()
         }
         
         btnSeleccionarCurso.setOnClickListener {
             isSeleccionandoLibreta = false
-            pickMultipleImages.launch("image/*")
+            launchScanner()
         }
         
         editFechaIngreso.setOnClickListener { showDatePicker(editFechaIngreso) }
@@ -999,6 +1172,7 @@ class AdministracionLocalActivity : AppCompatActivity() {
                 apellido = editApellido.text.toString(),
                 dni = dni,
                 cargo = cargo,
+                categoria = spinnerCategoria.text.toString(),
                 telefono = editTelefono.text.toString(),
                 email = editEmail.text.toString(),
                 fechaIngreso = parseDate(editFechaIngreso.text.toString()),
@@ -1079,6 +1253,7 @@ class AdministracionLocalActivity : AppCompatActivity() {
         val editTelefono = view.findViewById<TextInputEditText>(R.id.edtTelefono)
         val editEmail = view.findViewById<TextInputEditText>(R.id.edtEmail)
         val editFechaIngreso = view.findViewById<TextInputEditText>(R.id.edtFechaIngreso)
+        val spinnerCategoria = view.findViewById<MaterialAutoCompleteTextView>(R.id.spinnerCategoria)
         val editLibretaVencimiento = view.findViewById<TextInputEditText>(R.id.edtVencimientoLibreta)
         val editCursoVencimiento = view.findViewById<TextInputEditText>(R.id.edtVencimientoCurso)
         val chkPoseeLibreta = view.findViewById<CheckBox>(R.id.chkPoseeLibreta)
@@ -1114,13 +1289,19 @@ class AdministracionLocalActivity : AppCompatActivity() {
         
         btnSeleccionarLibreta.setOnClickListener {
             isSeleccionandoLibreta = true
-            pickMultipleImages.launch("image/*")
+            launchScanner()
         }
         
         btnSeleccionarCurso.setOnClickListener {
             isSeleccionandoLibreta = false
-            pickMultipleImages.launch("image/*")
+            launchScanner()
         }
+        
+        val catOptions = arrayOf("") + CATEGORIAS_PERSONAL.toTypedArray()
+        val catAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, catOptions)
+        spinnerCategoria.setAdapter(catAdapter)
+        spinnerCategoria.setOnClickListener { spinnerCategoria.showDropDown() }
+        spinnerCategoria.setText(personal.categoria, false)
         
         editNombre.setText(personal.nombre)
         editApellido.setText(personal.apellido)
@@ -1212,6 +1393,7 @@ class AdministracionLocalActivity : AppCompatActivity() {
                     apellido = editApellido.text.toString(),
                     dni = dni,
                     cargo = cargo,
+                    categoria = spinnerCategoria.text.toString(),
                     telefono = editTelefono.text.toString(),
                     email = editEmail.text.toString(),
                     fechaIngreso = parseDate(editFechaIngreso.text.toString()),
@@ -1280,6 +1462,7 @@ class AdministracionLocalActivity : AppCompatActivity() {
             Nombre: ${personal.nombreCompleto}
             DNI: ${personal.dni}
             Cargo: ${personal.cargo}
+            Categoría: ${personal.categoria.ifEmpty { "No especificada" }}
             Teléfono: ${personal.telefono}
             Ingreso: ${personal.fechaIngreso?.let { sdf.format(it) } ?: "No especificada"}
             Libreta: ${personal.libretaSanitaria?.fechaVencimiento?.let { sdf.format(it) } ?: "No posee"}
@@ -1375,6 +1558,7 @@ class AdministracionLocalActivity : AppCompatActivity() {
         apellido: String,
         dni: String,
         cargo: String,
+        categoria: String,
         telefono: String,
         email: String,
         fechaIngreso: Date?,
@@ -1394,6 +1578,7 @@ class AdministracionLocalActivity : AppCompatActivity() {
             apellido = apellido,
             dni = dni,
             cargo = cargo,
+            categoria = categoria,
             telefono = telefono,
             email = email,
             fechaIngreso = fechaIngreso,

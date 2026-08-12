@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "623222993471",
+    "project_id": "inventario-app-multi-local",
+    "storage_bucket": "inventario-app-multi-local.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:623222993471:android:48bffda68352403f27be8a",
+        "android_client_info": {
+          "package_name": "com.tuapp.inventario"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6dF6jCibROTO-oXBfKUdAjk9q6g6-Mu0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
