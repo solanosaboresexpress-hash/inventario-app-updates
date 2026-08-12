@@ -1,16 +1,8 @@
 {
-<<<<<<< HEAD
   "versionCode": 143,
   "versionName": "2.1.117",
   "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.117.apk",
   "fileName": "inventario_app_v2.1.117.apk",
   "description": "v2.1.117 - Papeleria: fix deserializacion Firestore, TableLayout alineado, navegacion vertical con Enter, modo edicion siempre activo, confirmar ingreso papeleria.",
-=======
-  "versionCode": 144,
-  "versionName": "2.1.118",
-  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.118.apk",
-  "fileName": "inventario_app_v2.1.118.apk",
-  "description": "v2.1.118 - Fix deserializacion Firestore (fechaVencimiento String->Date), campo tipo mapeado, escaner de documentos nativo con CameraX, categoria personal, dark mode automatico.",
->>>>>>> 4065414 ( v2.1.118 - Fix deserializacion Firestore escaner documentos nativo categoria personal dark mode)
   "forceUpdate": false
 }

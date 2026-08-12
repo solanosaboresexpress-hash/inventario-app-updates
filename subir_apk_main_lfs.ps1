@@ -2,9 +2,9 @@
 # Esto evita que el APK se corrompa
 
 param(
-    [string]$ApkPath = "app\build\outputs\apk\debug\inventario_app_v2.1.104.apk",
+    [string]$ApkPath = "app\build\outputs\apk\debug\inventario_app_v2.1.62.apk",
     [string]$RepoPath = "",
-    [string]$VersionName = "2.1.104"
+    [string]$VersionName = "2.1.62"
 )
 
 Write-Host "Subiendo APK a rama main con Git LFS..." -ForegroundColor Cyan
@@ -124,12 +124,9 @@ try {
     }
     Write-Host "APK copiado correctamente: $copiedSize bytes" -ForegroundColor Green
     
-    # Agregar con Git LFS el APK y la metadata
-    Write-Host "`nAgregando APK y version_info.json con Git..." -ForegroundColor Cyan
+    # Agregar con Git LFS
+    Write-Host "`nAgregando APK con Git LFS..." -ForegroundColor Cyan
     git add $apkName 2>&1 | Out-Null
-    if (Test-Path (Join-Path $RepoPath "version_info.json")) {
-        git add version_info.json 2>&1 | Out-Null
-    }
     
     # Verificar que se agrego con LFS
     $lfsFiles = git lfs ls-files 2>&1

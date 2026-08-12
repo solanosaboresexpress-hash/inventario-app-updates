@@ -1960,7 +1960,6 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
         timePicker.show()
     }
 
-    @Suppress("DEPRECATION")
     private fun mostrarDialogoCargarStock() {
         println("ðŸ” DEBUG: mostrarDialogoCargarStock() llamado")
         println("ðŸ” DEBUG: productos.size = ${productos.size}")
@@ -2629,7 +2628,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
             }
             
             // ðŸ“ˆ Agregar tendencia del cache si estó¡ disponible (instantó¡neo)
-            @Suppress("UNUSED_VARIABLE") val fechaHoy = DateHelper.getFechaActual()
+            val fechaHoy = DateHelper.getFechaActual()
             if (configuracion.usarAjusteTendencia &&
                 MainActivity.cacheTendencias != null && 
                 MainActivity.cacheTendenciasLocalId == localId) {
@@ -3248,7 +3247,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
             else -> return 0.0
         }
         
-        @Suppress("UNUSED_VARIABLE") val nombreDiaSiguiente = when (diaSiguiente) {
+        val nombreDiaSiguiente = when (diaSiguiente) {
             Calendar.MONDAY -> "LUNES"
             Calendar.TUESDAY -> "MARTES"
             Calendar.WEDNESDAY -> "MIERCOLES"
@@ -3286,7 +3285,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
                 else -> true
             }
             
-            @Suppress("UNUSED_VARIABLE") val nombreDia = when (dia) {
+            val nombreDia = when (dia) {
                 Calendar.MONDAY -> "LUNES"
                 Calendar.TUESDAY -> "MARTES"
                 Calendar.WEDNESDAY -> "MIERCOLES"
@@ -3577,7 +3576,6 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
     /**
      * ðŸ“Š Muestra el gró¡fico con un loading mientras carga los datos
      */
-    @Suppress("DEPRECATION")
     private fun mostrarGraficoConLoading(codigo: String, tendencia: Double) {
         // Crear dió¡logo de loading
         val loadingDialog = android.app.ProgressDialog(this).apply {
@@ -3929,7 +3927,6 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
         }
     }
     
-    @Suppress("UNUSED_VARIABLE")
     private fun calcularSugerenciaPedido(codigo: String, stockActual: Int): Int {
         try {
             val promedioHoy = maxOf(0.0, obtenerPromedioDiarioHoy(codigo))
@@ -3958,6 +3955,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
                 ventaRestanteHoy = promedioHoy * (1 - porcentajeAvance)
             } else {
                 // NO hay datos histó³ricos - usar stock actual como referencia
+                ventaParcial = maxOf(0.0, (promedioHoy - stockActual))
                 ventaRestanteHoy = maxOf(0.0, (promedioHoy - stockActual))
             }
 
@@ -4090,7 +4088,6 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
      * Obtiene la suma de promedios desde maó±ana hasta la pró³xima entrega
      * Siempre suma maó±ana, y si no hay entrega, sigue sumando hasta encontrar un dó­a con entrega
      */
-    @Suppress("UNUSED_PARAMETER", "UNUSED_VARIABLE")
     private fun obtenerPromediosHastaProximaEntrega(codigo: String): Double {
         Log.d("DEBUG_JQ", "ðŸ” DEBUG_JQ: === OBTENIENDO PROMEDIOS DóAS ===")
 
@@ -4872,7 +4869,6 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
     /**
      * Genera el texto del pedido en el formato requerido
      */
-    @Suppress("UNUSED_PARAMETER")
     private fun generarTextoPedido(_editTexts: MutableMap<String, EditText>): String {
         val pedido = StringBuilder()
         
@@ -5325,7 +5321,6 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
     /**
      * Guarda el pedido de fó¡brica en Firestore con la nueva estructura
      */
-    @Suppress("UNUSED_PARAMETER")
     private fun guardarPedidoEnFirestore(_editTexts: MutableMap<String, EditText>) {
         if (modoSoloLectura && !modoAdmin) {
             Log.w("PedidoPanificadoraActivity", "âš ï¸ Modo solo lectura - no se puede guardar")
@@ -5973,7 +5968,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
         // Colores expló­citos para asegurar visibilidad
         val isDark = isDarkMode()
         val textColorPrimary = if (isDark) android.graphics.Color.WHITE else android.graphics.Color.BLACK
-        @Suppress("UNUSED_VARIABLE") val textColorSecondary = if (isDark) android.graphics.Color.parseColor("#CCCCCC") else android.graphics.Color.parseColor("#666666")
+        val textColorSecondary = if (isDark) android.graphics.Color.parseColor("#CCCCCC") else android.graphics.Color.parseColor("#666666")
         val bgColor = if (isDark) android.graphics.Color.BLACK else android.graphics.Color.WHITE
         
         // Layout principal
@@ -6070,7 +6065,7 @@ class PedidoPanificadoraActivity : AppCompatActivity() {
                     } else {
                         android.graphics.Color.BLACK
                     }
-                    @Suppress("NAME_SHADOWING") val bgColor = if (isDarkMode()) {
+                    val bgColor = if (isDarkMode()) {
                         android.graphics.Color.parseColor("#2D2D2D")
                     } else {
                         resources.getColor(R.color.alt_row_color, null)

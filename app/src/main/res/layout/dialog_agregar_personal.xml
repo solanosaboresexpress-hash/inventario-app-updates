@@ -141,63 +141,6 @@
 
         </LinearLayout>
 
-        <!-- Categoría y Fecha de Ingreso -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="16dp">
-
-            <!-- Categoría -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:hint="Categoría"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                app:shapeAppearance="?attr/shapeAppearanceSmallComponent"
-                app:boxStrokeColor="?attr/colorPrimary"
-                app:hintTextColor="?attr/colorPrimary">
-
-                <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                    android:id="@+id/spinnerCategoria"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="none"
-                    android:focusable="false"
-                    android:clickable="true"
-                    android:maxLines="1" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Fecha de Ingreso -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp"
-                android:hint="Fecha de Ingreso"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:shapeAppearance="?attr/shapeAppearanceSmallComponent"
-                app:boxStrokeColor="?attr/colorPrimary"
-                app:hintTextColor="?attr/colorPrimary"
-                app:endIconMode="custom"
-                app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edtFechaIngreso"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="none"
-                    android:focusable="false"
-                    android:clickable="true"
-                    android:maxLines="1" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-        </LinearLayout>
-
         <!-- Teléfono y Email -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -249,6 +192,30 @@
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
+
+        <!-- Fecha de ingreso -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="Fecha de Ingreso"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:shapeAppearance="?attr/shapeAppearanceSmallComponent"
+            app:boxStrokeColor="?attr/colorPrimary"
+            app:hintTextColor="?attr/colorPrimary"
+            app:endIconMode="custom"
+            app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtFechaIngreso"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:focusable="false"
+                android:clickable="true"
+                android:maxLines="1" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Divider -->
         <View
@@ -327,7 +294,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:visibility="gone"
-                android:text="📷 Escanear Libreta"
+                android:text="📷 Seleccionar Foto de Libreta"
                 android:backgroundTint="@color/status_info"
                 style="@style/Widget.MaterialComponents.Button" />
 
@@ -413,7 +380,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:visibility="gone"
-                android:text="📷 Escanear Curso"
+                android:text="📷 Seleccionar Foto de Curso"
                 android:backgroundTint="@color/brand_gold"
                 style="@style/Widget.MaterialComponents.Button" />
 

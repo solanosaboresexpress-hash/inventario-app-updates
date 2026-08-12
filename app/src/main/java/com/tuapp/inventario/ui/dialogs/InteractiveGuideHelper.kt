@@ -39,6 +39,7 @@ object InteractiveGuideHelper {
         val rolLower = rolUsuario.lowercase()
         val isMaestro = rolLower.contains("maestro") || rolLower.contains("admin_region")
         val isAsistente = rolLower.contains("asistente")
+        val isSupervisor = rolLower.contains("supervisor") && !isAsistente
 
         val roleLabel = if (isMaestro) "Maestro" else if (isAsistente) "Asistente" else "Supervisor"
         val roleDesc = if (isMaestro) {
@@ -203,7 +204,6 @@ object InteractiveGuideHelper {
         return steps
     }
 
-    @Suppress("UNUSED_PARAMETER")
     fun getFullTourSteps(rolUsuario: String = "", usuarioNombre: String = ""): List<GuideStep> {
         val list = mutableListOf<GuideStep>()
 

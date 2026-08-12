@@ -1,8 +1,0 @@
-{
-  "versionCode": 144,
-  "versionName": "2.1.118",
-  "downloadUrl": "https://github.com/solanosaboresexpress-hash/inventario-app-updates/raw/main/inventario_app_v2.1.118.apk",
-  "fileName": "inventario_app_v2.1.118.apk",
-  "description": "v2.1.118 - Fix deserializacion Firestore (fechaVencimiento String->Date), campo tipo mapeado, escaner de documentos nativo con CameraX, categoria personal, dark mode automatico.",
-  "forceUpdate": false
-}

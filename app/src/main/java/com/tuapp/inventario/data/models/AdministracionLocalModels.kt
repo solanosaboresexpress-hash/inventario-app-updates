@@ -1,6 +1,5 @@
 package com.tuapp.inventario.data.models
 
-import com.google.firebase.firestore.PropertyName
 import java.util.Date
 
 /**
@@ -9,7 +8,6 @@ import java.util.Date
 data class DocumentoLocal(
     val id: String = "",
     val localId: String = "",
-    @PropertyName("tipo")
     val tipoDocumento: TipoDocumento = TipoDocumento.FUMIGACION,
     val nombreDocumento: String = "",
     val fechaVencimiento: Date? = null,
@@ -52,7 +50,6 @@ data class PersonalLocal(
     val apellido: String = "",
     val dni: String = "",
     val cargo: String = "",
-    val categoria: String = "",
     val telefono: String = "",
     val email: String = "",
     val fechaIngreso: Date? = null,
@@ -74,8 +71,6 @@ enum class EstadoPersonal(val displayName: String, val color: String) {
     SUSPENDIDO("Suspendido", "#FF9800"),
     INACTIVO("Inactivo", "#F44336")
 }
-
-val CATEGORIAS_PERSONAL = listOf("GERENTE", "ENCARGADO", "ENTRENADOR", "FULL-TIME", "PART-TIME")
 
 /**
  * Modelo para libreta sanitaria del personal
